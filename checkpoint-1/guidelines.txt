@@ -1,0 +1,30 @@
+
+We will start our project checkpoint presentation from next week. (Week 6)
+
+Here, you will - 
+
+Define your problem clearly.
+
+Show polynomial-time reductions to and from other known hard problems.
+
+Create a table of existing algorithms for the problem, including:
+
+Exact exponential algorithms
+
+Approximation algorithms
+
+Randomized algorithms
+
+Heuristic algorithms
+
+Metaheuristic algorithms
+
+Identify at least two algorithms from this list that you will implement.
+
+Design experiments to evaluate your implementations.
+
+Discuss both theoretical and real-world applications of your problem.
+
+If you want, you can also show some potential research direction (this is optional) that we can further work with.
+
+Time - 6*2.5 minutes = 15 minutes.

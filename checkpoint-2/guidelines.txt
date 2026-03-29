@@ -1,0 +1,28 @@
+For the final presentation, please ensure that the following components are clearly addressed:
+
+1. Clearly define the problem being addressed and explain its hardness or complexity.
+
+2. A brief overview of the existing algorithms relevant to the problem. Each algorithm must be accompanied by proper academic references and brief description
+
+3. Explain the chosen two algorithms in detail. The explanation should be supported with clear step-by-step illustrations or animations to facilitate understanding.
+
+4. Describe any modifications or improvements you propose for the selected algorithms. Provide clear insights and reasoning behind these changes.
+
+5. Conduct experiments to evaluate the impact of your proposed modifications. You must present results for:
+
+    - The original algorithms
+
+    - Your modified versions
+
+     If you design your own dataset, you must provide a clear justification for its design and relevance to the problem. But when existing dataset is used, provide references.
+
+6. At the end of the presentation, you must provide a GitHub repository link containing all code, datasets, and instructions required to reproduce your experiments in an organized way by executing a single master script file (can be python or shell script). The plots must match the ones present in the slides.
+
+Important Note:
+
+All reported results and plots must be genuine and derived from actual experiments. Any fabricated or manipulated results will result in  zero for both the group and individual marks. Academic integrity is expected.
+
+
+
+Duration: 3 * 6 = 18 minutes
+

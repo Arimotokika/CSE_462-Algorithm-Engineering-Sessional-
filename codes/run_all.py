@@ -7,7 +7,7 @@ import os
 import sys
 
 print("=" * 60)
-print("WTA Checkpoint 2 — Full Pipeline")
+print("WTA Checkpoint 2 - Full Pipeline (MMR + GA)")
 print("=" * 60)
 
 # Step 1: Generate dataset
