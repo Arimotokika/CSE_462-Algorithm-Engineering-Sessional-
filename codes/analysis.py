@@ -124,6 +124,22 @@ def _savefig(fig, name):
     print(f"  Saved: {path}")
 
 
+def _label_bars(ax, bars, fmt="{:.1f}", fontsize=7.5, min_show=0.0):
+    """Add a value label centred on top of every bar (skip near-zero bars)."""
+    ylim = ax.get_ylim()
+    span = max(ylim[1] - ylim[0], 1e-9)
+    for bar in bars:
+        h = bar.get_height()
+        if abs(h) < min_show:
+            continue
+        label = fmt.format(h)
+        # place label just above the bar; if bar is tiny use a small fixed offset
+        y = h + span * 0.012 if h >= 0 else h - span * 0.025
+        ax.text(bar.get_x() + bar.get_width() / 2.0, y,
+                label, ha="center", va="bottom" if h >= 0 else "top",
+                fontsize=fontsize, fontweight="bold", clip_on=True)
+
+
 # ── Plot 1: Box plots per tier (balanced instances) ──────────────────────────
 
 def plot_box_solution_quality(df):
@@ -137,6 +153,13 @@ def plot_box_solution_quality(df):
         palette = {ALGO_LABELS[a]: ALGO_COLORS[a] for a in ALGO_ORDER}
         sns.boxplot(data=sub, x="label", y="value", order=order,
                     palette=palette, ax=ax, width=0.6)
+        # Annotate median value above each box
+        for j, lbl in enumerate(order):
+            vals = sub[sub["label"] == lbl]["value"]
+            med = vals.median()
+            ax.text(j, ax.get_ylim()[1] * 0.97, f"med={med:.0f}",
+                    ha="center", va="top", fontsize=7.5, color="black",
+                    bbox=dict(boxstyle="round,pad=0.15", fc="white", alpha=0.7, ec="none"))
         ax.set_title(TIER_LABELS[tier], fontsize=12)
         ax.set_xlabel("")
         ax.set_ylabel("Expected Survival Value" if ax == axes[0] else "")
@@ -163,8 +186,9 @@ def plot_bar_mean_objective(df):
                  for t in TIERS]
         stds  = [sub[sub["tier"] == t]["std"].values[0] if t in sub["tier"].values else 0
                  for t in TIERS]
-        ax.bar(x + i * width, means, width, yerr=stds, capsize=3,
-               label=ALGO_LABELS[algo], color=ALGO_COLORS[algo])
+        bars = ax.bar(x + i * width, means, width, yerr=stds, capsize=3,
+                      label=ALGO_LABELS[algo], color=ALGO_COLORS[algo])
+        _label_bars(ax, bars, fmt="{:.0f}", fontsize=7)
 
     ax.set_xticks(x + 1.5 * width)
     ax.set_xticklabels([TIER_LABELS[t] for t in TIERS])
@@ -198,38 +222,57 @@ def plot_bar_improvement(df):
             else:
                 improvements.append(0)
         color = ALGO_COLORS[mod_algo]
-        ax.bar(x + i * width, improvements, width, label=label, color=color)
+        bars = ax.bar(x + i * width, improvements, width, label=label, color=color)
+        _label_bars(ax, bars, fmt="{:.1f}%", fontsize=8)
 
     ax.set_xticks(x + 0.5 * width)
     ax.set_xticklabels([TIER_LABELS[t] for t in TIERS])
-    ax.set_ylabel("Mean % Improvement")
-    ax.set_title("Improvement of Modified over Original (Balanced)")
+    ax.set_ylabel("Mean % Improvement (lower survival = better)")
+    ax.set_title("Improvement of Modified over Original (Balanced Instances)")
     ax.axhline(0, color="gray", linewidth=0.5)
     ax.legend()
     fig.tight_layout()
     _savefig(fig, "03_bar_improvement.png")
 
 
-# ── Plot 4: Time scalability (log-log) ───────────────────────────────────────
+# ── Plot 4: Time scalability (log-log) with trend lines ──────────────────────
 
 def plot_time_scalability(df):
     balanced = df[df["scenario"] == "balanced"].copy()
     summary = balanced.groupby(["tier", "algorithm"])["time_sec"].mean().reset_index()
 
-    fig, ax = plt.subplots(figsize=(9, 6))
+    # Extended x-axis range for trend line extrapolation
+    size_vals = np.array(sorted(TIER_SIZES.values()))
+    x_fine = np.logspace(np.log10(size_vals[0] * 0.7),
+                         np.log10(size_vals[-1] * 1.5), 200)
+
+    fig, ax = plt.subplots(figsize=(10, 6))
     for algo in ALGO_ORDER:
         sub = summary[summary["algorithm"] == algo]
-        sizes = [TIER_SIZES[t] for t in sub["tier"]]
+        sizes = np.array([TIER_SIZES[t] for t in sub["tier"]], dtype=float)
         times = sub["time_sec"].values
-        ax.plot(sizes, times, "o-", label=ALGO_LABELS[algo],
-                color=ALGO_COLORS[algo], linewidth=2, markersize=7)
 
+        # Plot actual data points
+        ax.plot(sizes, times, "o", color=ALGO_COLORS[algo], markersize=8, zorder=5)
+
+        # Power-law trend line: log(t) = a*log(n) + b
+        if len(sizes) >= 2:
+            log_s = np.log10(sizes)
+            log_t = np.log10(np.maximum(times, 1e-9))
+            coeffs = np.polyfit(log_s, log_t, 1)
+            trend = 10 ** np.polyval(coeffs, np.log10(x_fine))
+            ax.plot(x_fine, trend, "--", color=ALGO_COLORS[algo], linewidth=1.5,
+                    alpha=0.7, label=f"{ALGO_LABELS[algo]} (slope={coeffs[0]:.2f})")
+
+    # Tick labels at actual sizes
+    ax.set_xticks(size_vals)
+    ax.set_xticklabels([str(int(s)) for s in size_vals])
     ax.set_xscale("log")
     ax.set_yscale("log")
-    ax.set_xlabel("Problem Size (max targets)")
+    ax.set_xlabel("Problem Size (number of targets, balanced)")
     ax.set_ylabel("Mean Runtime (seconds)")
-    ax.set_title("Runtime Scalability (Balanced Instances)")
-    ax.legend()
+    ax.set_title("Runtime Scalability — Log-Log with Power-Law Trend")
+    ax.legend(fontsize=9)
     ax.grid(True, which="both", alpha=0.3)
     fig.tight_layout()
     _savefig(fig, "04_line_time_scalability.png")
@@ -251,8 +294,9 @@ def plot_bar_gap(df):
         sub = summary[summary["algorithm"] == algo]
         gaps = [sub[sub["tier"] == t]["gap_pct"].values[0]
                 if t in sub["tier"].values else 0 for t in TIERS]
-        ax.bar(x + i * width, gaps, width,
-               label=ALGO_LABELS[algo], color=ALGO_COLORS[algo])
+        bars = ax.bar(x + i * width, gaps, width,
+                      label=ALGO_LABELS[algo], color=ALGO_COLORS[algo])
+        _label_bars(ax, bars, fmt="{:.1f}%", fontsize=7)
 
     ax.set_xticks(x + 1.5 * width)
     ax.set_xticklabels([TIER_LABELS[t] for t in TIERS])
@@ -278,9 +322,10 @@ def plot_scenario_comparison(df):
             asub = summary[summary["algorithm"] == algo]
             vals = [asub[asub["scenario"] == s]["value"].values[0]
                     if s in asub["scenario"].values else 0 for s in SCENARIOS]
-            ax.bar(x + i * width, vals, width,
-                   label=ALGO_LABELS[algo] if tier == TIERS[0] else "",
-                   color=ALGO_COLORS[algo])
+            bars = ax.bar(x + i * width, vals, width,
+                          label=ALGO_LABELS[algo] if tier == TIERS[0] else "",
+                          color=ALGO_COLORS[algo])
+            _label_bars(ax, bars, fmt="{:.0f}", fontsize=6.5)
 
         ax.set_xticks(x + 1.5 * width)
         ax.set_xticklabels([s.capitalize() for s in SCENARIOS])
@@ -349,7 +394,8 @@ def plot_bar_scenario_improvement(df):
             else:
                 improvements.append(0)
         color = ALGO_COLORS[mod_algo]
-        ax.bar(x + i * width, improvements, width, label=label, color=color)
+        bars = ax.bar(x + i * width, improvements, width, label=label, color=color)
+        _label_bars(ax, bars, fmt="{:.1f}%", fontsize=8)
 
     ax.set_xticks(x + 0.5 * width)
     ax.set_xticklabels([s.capitalize() for s in SCENARIOS])
@@ -359,6 +405,68 @@ def plot_bar_scenario_improvement(df):
     ax.legend()
     fig.tight_layout()
     _savefig(fig, "08_bar_scenario_improvement.png")
+
+
+# ── Plot 9: GA improvement vs problem size (key story plot) ──────────────────
+
+def plot_ga_improvement_vs_size(df):
+    """
+    Line plot showing % improvement of GA_Modified over GA_Original across
+    all 3 scenarios and 3 tiers.  Shows that improvement grows with problem size.
+    """
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    scenario_styles = {
+        "balanced": {"linestyle": "-",  "marker": "o"},
+        "scarce":   {"linestyle": "--", "marker": "s"},
+        "rich":     {"linestyle": ":",  "marker": "^"},
+    }
+    scenario_colors = {
+        "balanced": "#2E7D32",
+        "scarce":   "#1565C0",
+        "rich":     "#B71C1C",
+    }
+
+    size_order = ["small", "medium", "large"]
+    size_labels = ["Small (20)", "Medium (100)", "Large (250)"]
+
+    for scenario in SCENARIOS:
+        improvements = []
+        for tier in size_order:
+            sub = df[(df["tier"] == tier) & (df["scenario"] == scenario)]
+            gao = sub[sub["algorithm"] == "GA_Original"].sort_values(
+                ["category", "instance_id"])["value"].values
+            gam = sub[sub["algorithm"] == "GA_Modified"].sort_values(
+                ["category", "instance_id"])["value"].values
+            if len(gao) > 0 and len(gam) > 0:
+                pct = np.nanmean(_safe_pct_improvement(gao, gam))
+                improvements.append(pct)
+            else:
+                improvements.append(np.nan)
+
+        ax.plot(size_labels, improvements,
+                color=scenario_colors[scenario],
+                linestyle=scenario_styles[scenario]["linestyle"],
+                marker=scenario_styles[scenario]["marker"],
+                linewidth=2.5, markersize=9,
+                label=f"{scenario.capitalize()} scenario")
+
+        # Annotate each point
+        for i, v in enumerate(improvements):
+            if not np.isnan(v):
+                ax.annotate(f"{v:.1f}%", (i, v),
+                            textcoords="offset points", xytext=(5, 6),
+                            fontsize=9, color=scenario_colors[scenario])
+
+    ax.axhline(0, color="gray", linewidth=0.8, linestyle="--")
+    ax.set_xlabel("Problem Size (tier)")
+    ax.set_ylabel("% Improvement: Hybrid GA over GA Original")
+    ax.set_title("Hybrid GA Improvement Grows with Problem Size\n"
+                 "(Why MMR seeding + elitism + threat mutation matter more at scale)")
+    ax.legend(fontsize=10)
+    ax.grid(True, alpha=0.3)
+    fig.tight_layout()
+    _savefig(fig, "09_ga_improvement_vs_size.png")
 
 
 # ── Summary tables & statistical tests ───────────────────────────────────────
@@ -439,6 +547,7 @@ def main():
     plot_scenario_comparison(df)
     plot_violin_value_dist(df)
     plot_bar_scenario_improvement(df)
+    plot_ga_improvement_vs_size(df)
 
     print_summary(df)
     print("\nDone!")
