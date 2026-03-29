@@ -1816,7 +1816,7 @@ $\Rightarrow$ T1 is 30$\times$ more likely to receive a mutated weapon than T2
 \node[draw, rounded corners, fill=green!20, text width=3cm, align=center] (fix2) at (0, 0) {\textbf{Fix 2:}\\Elitism +\\Stagnation};
 \node[draw, rounded corners, fill=green!20, text width=3cm, align=center] (fix3) at (4, 0) {\textbf{Fix 3:}\\Threat-Prop.\\Mutation};
 
-\node[draw, rounded corners, fill=blue!20, text width=3.5cm, align=center] (result) at (0, -3) {\textbf{Hybrid GA}\\36--54\% better\\on large instances};
+\node[draw, rounded corners, fill=blue!20, text width=3.5cm, align=center] (result) at (0, -3) {\textbf{Hybrid GA}\\12--52\% better\\on large instances};
 
 \draw[->, thick] (problem) -- (fix1);
 \draw[->, thick] (problem) -- (fix2);
@@ -2016,13 +2016,13 @@ All algorithms run on the \textbf{same instances} with \textbf{same time budgets
 \end{center}
 
 \vspace{-0.2cm}
-{\footnotesize \textbf{Key finding:} Hybrid GA improvement over standard GA grows dramatically with problem size -- from $\sim$1\% (small) to $\sim$54\% (large).}
+{\footnotesize \textbf{Key finding:} Hybrid GA improvement over standard GA grows dramatically with problem size -- from $\sim$-2\% (small) to $\sim$52\% (large).}
 \end{frame}
 
 \begin{frame}{Key Findings}
 \begin{block}{MMR-IR vs MMR (Original)}
 \begin{itemize}
-    \item \textbf{Consistent improvement:} 0.2--4.8\% across all tiers and scenarios
+    \item \textbf{Consistent improvement:} 0.1--3.1\% across all tiers and scenarios
     \item 1-opt and 2-opt local search reliably escape greedy suboptimality
     \item Negligible additional runtime (local search is $O(1)$ per trial)
 \end{itemize}
@@ -2030,9 +2030,9 @@ All algorithms run on the \textbf{same instances} with \textbf{same time budgets
 
 \begin{alertblock}{Hybrid GA vs GA (Original) -- The Main Story}
 \begin{itemize}
-    \item \textbf{Small:} 1--16\% improvement (modest)
-    \item \textbf{Medium:} 10--45\% improvement (significant)
-    \item \textbf{Large:} \textbf{36--54\% improvement} (dramatic)
+    \item \textbf{Small:} -2--1\% improvement (modest)
+    \item \textbf{Medium:} 10--41\% improvement (significant)
+    \item \textbf{Large:} \textbf{12--52\% improvement} (dramatic)
     \item Improvement \textbf{grows with problem size} -- exactly where it matters most
 \end{itemize}
 \end{alertblock}
@@ -2083,17 +2083,17 @@ MMR seed (warm start) + Elitism (preservation) + Threat-proportional mutation (g
 \toprule
 \textbf{Category} & \textbf{MMR (orig)} & \textbf{MMR-IR} & \textbf{GA (orig)} & \textbf{Hybrid GA} \\
 \midrule
-small\_balanced & 174 & 170 & 171 & 171 \\
-small\_scarce & 475 & 471 & 468 & 469 \\
-small\_rich & 74.5 & 72.2 & 87.8 & 73.8 \\
+small\_balanced & 174 & 170 & 165 & 168 \\
+small\_scarce & 475 & 471 & 462 & 465 \\
+small\_rich & 74.5 & 72.2 & 72.1 & 71.2 \\
 \midrule
-medium\_balanced & 645 & 642 & 1012 & 645 \\
-medium\_scarce & 2085 & 2079 & 2318 & 2083 \\
-medium\_rich & 244 & 243 & 443 & 243 \\
+medium\_balanced & 645 & 642 & 907 & 645 \\
+medium\_scarce & 2085 & 2079 & 2310 & 2082 \\
+medium\_rich & 243 & 243 & 412 & 243 \\
 \midrule
-large\_balanced & 1475 & 1473 & 2740 & 1474 \\
-large\_scarce & 5169 & 5164 & 6033 & 5169 \\
-large\_rich & 549 & 549 & 1188 & 549 \\
+large\_balanced & 1475 & 1473 & 2369 & 1474 \\
+large\_scarce & 5169 & 5164 & 5888 & 5169 \\
+large\_rich & 549 & 549 & 1140 & 549 \\
 \bottomrule
 \end{tabular}
 \end{table}
