@@ -15,6 +15,15 @@ Checkpoint 1 focuses on:
 - `presentation.tex` - Checkpoint 1 slide deck source.
 - `images/` - supporting visual assets used by the slides.
 
+## Intended Coverage
+
+Checkpoint 1 content is organized to satisfy the early milestone requirements:
+
+- define the WTA problem and motivation,
+- discuss hardness/complexity,
+- present survey-level algorithm context,
+- prepare groundwork for Checkpoint 2 implementation.
+
 ## Build Instructions
 
 Compile inside this folder:
@@ -25,6 +34,10 @@ pdflatex presentation.tex
 ```
 
 Two passes are recommended for stable table-of-contents and references.
+
+Generated file (after compile):
+
+- `presentation.pdf`
 
 ## Scope Note
 

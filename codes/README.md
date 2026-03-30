@@ -1,29 +1,29 @@
 # WTA Codes — CSE 462 Group 5 Checkpoint 2
 
-All source code for the Weapon-Target Assignment (WTA) experiments.
+This folder contains all executable code for dataset generation, experiments, and analysis.
 
 ---
 
 ## Files
 
-| File | Description |
-|------|-------------|
-| `run_all.py` | **Master script** — runs the full pipeline end-to-end |
-| `dataset_generator.py` | Generates 180 synthetic WTA instances across 9 categories |
-| `experiment_runner.py` | Runs all 4 algorithms on every instance, saves results to CSV |
-| `analysis.py` | Loads CSV results, generates 9 plots + Wilcoxon statistical tests |
-| `mmr_original.py` | MMR greedy heuristic (Hasan & Barua, faithful implementation) |
-| `mmr_modified.py` | MMR-IR: greedy + 1-opt + 2-opt local search (our modification) |
-| `ga_original.py` | Standard GA (Hasan & Barua, faithful implementation) |
-| `ga_modified.py` | Hybrid GA: MMR seed + elitism + threat-proportional mutation (our modification) |
-| `wta_utils.py` | Shared utilities: `compute_solution_value`, `expand_instance` |
+| File                   | Description                                                                     |
+| ---------------------- | ------------------------------------------------------------------------------- |
+| `run_all.py`           | **Master script** — runs the full pipeline end-to-end                           |
+| `dataset_generator.py` | Generates 180 synthetic WTA instances across 9 categories                       |
+| `experiment_runner.py` | Runs all 4 algorithms on every instance, saves results to CSV                   |
+| `analysis.py`          | Loads CSV results, generates 9 plots + Wilcoxon statistical tests               |
+| `mmr_original.py`      | MMR greedy heuristic (Hasan & Barua, faithful implementation)                   |
+| `mmr_modified.py`      | MMR-IR: greedy + 1-opt + 2-opt local search (our modification)                  |
+| `ga_original.py`       | Standard GA (Hasan & Barua, faithful implementation)                            |
+| `ga_modified.py`       | Hybrid GA: MMR seed + elitism + threat-proportional mutation (our modification) |
+| `wta_utils.py`         | Shared utilities: `compute_solution_value`, `expand_instance`                   |
 
 ---
 
-## Setup (one-time)
+## Environment Setup (one-time)
 
 ```bash
-# From the WTA root directory (one level up from codes/)
+# from repository root
 py -3 -m venv .venv
 
 # Activate — Git Bash / MSYS2
@@ -36,15 +36,23 @@ source ../.venv/Scripts/activate
 pip install -r requirements.txt
 ```
 
+If you run setup from repository root instead, use:
+
+```bash
+pip install -r codes/requirements.txt
+```
+
 ---
 
 ## Commands
 
 ### Run everything at once
+
 ```bash
 python run_all.py
 ```
-*Runtime: approximately 3 to 4 hours total (large tiers dominate).* 
+
+_Runtime: approximately 3 to 4 hours total (large tiers dominate)._
 
 ---
 
@@ -67,9 +75,12 @@ python experiment_runner.py --categories large_balanced,large_scarce,large_rich 
 python analysis.py
 ```
 
+This mode is useful if you need resumable execution by tier.
+
 ---
 
 ### Quick test (5 small instances, ~1 minute)
+
 ```bash
 python experiment_runner.py --categories small_balanced --instances 1-5
 python analysis.py
@@ -78,6 +89,7 @@ python analysis.py
 ---
 
 ### Per-algorithm tests
+
 ```bash
 python mmr_original.py   # smoke test: 3x3 example
 python mmr_modified.py   # MMR-O vs MMR-IR comparison
@@ -89,23 +101,24 @@ python ga_modified.py    # all 4 algorithms on 3x3
 
 ## Dataset Categories
 
-| Category | W | T | Scenario |
-|----------|---|---|----------|
-| small_balanced | 20 | 20 | Balanced (W=T) |
-| small_scarce | 10 | 20 | Scarce (W<T) |
-| small_rich | 30 | 20 | Rich (W>T) |
-| medium_balanced | 100 | 100 | Balanced |
-| medium_scarce | 50 | 100 | Scarce |
-| medium_rich | 150 | 100 | Rich |
-| large_balanced | 250 | 250 | Balanced |
-| large_scarce | 125 | 250 | Scarce |
-| large_rich | 375 | 250 | Rich |
+| Category        | W   | T   | Scenario       |
+| --------------- | --- | --- | -------------- |
+| small_balanced  | 20  | 20  | Balanced (W=T) |
+| small_scarce    | 10  | 20  | Scarce (W<T)   |
+| small_rich      | 30  | 20  | Rich (W>T)     |
+| medium_balanced | 100 | 100 | Balanced       |
+| medium_scarce   | 50  | 100 | Scarce         |
+| medium_rich     | 150 | 100 | Rich           |
+| large_balanced  | 250 | 250 | Balanced       |
+| large_scarce    | 125 | 250 | Scarce         |
+| large_rich      | 375 | 250 | Rich           |
 
 ---
 
 ## Output
 
 After full pipeline:
+
 - `results/experiment_results.csv` — 720 rows (180 instances × 4 algorithms)
 - `results/figures/01_box_solution_quality.png` — Box plots per tier
 - `results/figures/02_bar_mean_objective.png` — Mean objective per tier
@@ -118,6 +131,14 @@ After full pipeline:
 - `results/figures/09_ga_improvement_vs_size.png` — Hybrid GA gain vs problem size
 
 All generated figures are intended to match the plots used in the Checkpoint 2 presentation.
+
+Main tabular output:
+
+- `results/experiment_results.csv`
+
+Expected scale:
+
+- 720 rows = 180 instances * 4 algorithms.
 
 ---
 
@@ -140,3 +161,4 @@ Options:
 - Single-command reproduction entrypoint is `python run_all.py`.
 - Do not manually edit `results/experiment_results.csv`.
 - Regenerate figures with `python analysis.py` after any experiment rerun.
+- Keep dataset seed and category definitions unchanged unless reporting a new benchmark configuration.

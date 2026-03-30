@@ -1,42 +1,76 @@
 # CSE 462 Algorithm Engineering Sessional
 
-Weapon-Target Assignment (WTA) project for CSE 462, Group 5.
+Weapon-Target Assignment (WTA) project repository for CSE 462, Group 5.
 
-This repository contains both checkpoints:
+## Repository Scope
 
-- Checkpoint 1: problem framing, complexity discussion, algorithm survey, and first presentation build.
-- Checkpoint 2: full implementation, experimental evaluation, and reproducible pipeline.
+This repository contains two course milestones:
 
-## Checkpoint 2 Summary
+- Checkpoint 1: problem definition, hardness discussion, algorithm survey, and early presentation build.
+- Checkpoint 2: full implementation, modification design, experiments, and reproducible outputs.
 
-We solve the static WTA minimization objective:
+## WTA Objective
 
-Z = sum_j V_j * prod_i (1 - p_ij)^x_ij
+Static WTA is solved as a minimization problem:
 
-where V_j is target value, p_ij is weapon-target kill probability, and x_ij is assignment count.
+```text
+min Z = sum_j V_j * prod_i (1 - p_ij)^x_ij
+```
 
-### Algorithms implemented
+where:
+
+- `V_j` = value/importance of target `j`
+- `p_ij` = kill probability of weapon `i` on target `j`
+- `x_ij` = assignment decision for weapon-target pairing
+
+## Checkpoint 2 At A Glance
+
+### Implemented Algorithms
 
 - MMR (original): greedy marginal-return heuristic.
-- MMR-IR (modified): tie-aware greedy + 1-opt local reassignment + 2-opt swap refinement.
-- GA (original): baseline genetic algorithm with tournament selection, crossover, mutation, time budget.
-- Hybrid GA (modified): MMR-seeded initial population + elitism with stagnation control + threat-proportional mutation.
+- MMR-IR (modified): tie-aware greedy plus 1-opt and 2-opt refinement.
+- GA (original): baseline GA with tournament selection, crossover, mutation, time budget.
+- Hybrid GA (modified): MMR-seeded population, elitism with stagnation recovery, and threat-proportional mutation.
 
-### Dataset design
+### Benchmark Design
 
-- 180 synthetic instances across 9 categories:
-  - tiers: small (20), medium (100), large (250)
-  - scenarios: balanced (W=T), scarce (W<T), rich (W>T)
-- 20 instances per category.
-- RNG seed fixed at 42 for reproducibility.
+- 180 synthetic instances across 9 categories.
+- Size tiers: small (20), medium (100), large (250).
+- Scenario types: balanced (`W=T`), scarce (`W<T`), rich (`W>T`).
+- 20 instances per category, RNG seed fixed at 42.
 
-### Key findings from experiments
+### Result Summary
 
-- MMR-IR improves MMR consistently (roughly 0.2% to 4.8% by tier/scenario).
-- Hybrid GA strongly improves GA on larger scales (up to ~36% to 54% on large-tier settings).
-- Wilcoxon signed-rank tests support significance of improvements.
+- MMR-IR improves MMR consistently across tiers/scenarios.
+- Hybrid GA gives the largest gains on medium and large scales.
+- Statistical support uses Wilcoxon signed-rank testing.
 
-## Repository Structure
+## Quick Reproduction
+
+Run from repository root:
+
+```bash
+py -3 -m venv .venv
+.venv\Scripts\activate
+pip install -r codes/requirements.txt
+
+cd codes
+python run_all.py
+```
+
+`run_all.py` executes:
+
+1. dataset generation,
+2. experiment execution for all 4 algorithms,
+3. analysis and figure generation (9 plots).
+
+Generated outputs:
+
+- `codes/datasets/`
+- `codes/results/experiment_results.csv`
+- `codes/results/figures/`
+
+## Repository Layout
 
 ```text
 CSE_462-Algorithm-Engineering-Sessional/
@@ -69,36 +103,12 @@ CSE_462-Algorithm-Engineering-Sessional/
 `- files/
 ```
 
-## Reproducibility Quick Start
-
-```bash
-# from repository root
-py -3 -m venv .venv
-.venv\Scripts\activate
-pip install -r codes/requirements.txt
-
-cd codes
-python run_all.py
-```
-
-This single command chain will:
-
-1. generate dataset instances,
-2. run all four algorithms,
-3. produce results CSV and 9 analysis plots.
-
-Outputs are written under:
-
-- codes/datasets/
-- codes/results/experiment_results.csv
-- codes/results/figures/
-
 ## Documentation Index
 
-- Checkpoint 1 details: checkpoint-1/README.md
-- Checkpoint 2 presentation and compliance notes: checkpoint-2/README.md
-- Code-level usage and CLI: codes/README.md
+- Checkpoint 1 details: `checkpoint-1/README.md`
+- Checkpoint 2 guideline alignment: `checkpoint-2/README.md`
+- Code usage and CLI guide: `codes/README.md`
 
-## Academic Integrity Note
+## Academic Integrity
 
-All reported values and plots are generated from actual experiment runs in this repository.
+All reported plots and values are produced from real experiment execution in this repository.

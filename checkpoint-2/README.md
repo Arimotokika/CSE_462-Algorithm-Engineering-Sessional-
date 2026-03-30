@@ -15,6 +15,8 @@ The Checkpoint 2 guideline asks for the following items. This checkpoint address
 5. Experimental comparison on original vs modified algorithms using genuine outputs.
 6. GitHub link and single-script reproducibility path.
 
+Guideline source: `guidelines.txt` in this folder.
+
 ## Problem and Algorithms Presented
 
 - Problem: static Weapon-Target Assignment minimization objective.
@@ -30,6 +32,8 @@ The Checkpoint 2 guideline asks for the following items. This checkpoint address
 - 20 instances per category; total 180 instances.
 - Four algorithms evaluated on each instance, producing 720 result rows.
 - Fixed random seed for reproducibility.
+
+This design supports scale and scenario sensitivity analysis required by the checkpoint.
 
 ## Reported Findings (from presentation)
 
@@ -53,6 +57,11 @@ Pipeline stages executed by the script:
 2. run all four algorithms,
 3. generate final analysis plots and summary statistics.
 
+Expected outputs from full run:
+
+- 1 CSV result table (`experiment_results.csv`)
+- 9 analysis figures (`01` through `09` PNG plots)
+
 Generated artifacts are stored in:
 
 - `../codes/datasets/`
@@ -67,6 +76,10 @@ To build the current presentation PDF from this folder:
 pdflatex presentation.tex
 pdflatex presentation.tex
 ```
+
+Main produced slide deck:
+
+- `Group_5_Presentation_Checkpoint_2.pdf`
 
 ## Files in This Folder
 
