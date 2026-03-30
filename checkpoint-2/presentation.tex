@@ -2766,39 +2766,13 @@
   \end{block}
 \end{frame}
 
-% ── SLIDE: Mean objective + runtime (matched ratios) ──────────────────
-\begin{frame}{Mean Objective Value \& Mean Runtime Scalability}
+% ── SLIDE: Mean objective + gap ───────────────────────────────────────
+\begin{frame}{Mean Objective Value \& Optimality Gap}
   \begin{columns}[T]
     \begin{column}{0.49\textwidth}
       \centering
       \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{images/02_bar_mean_objective.png}\\
       {\scriptsize\color{navymid}Mean objective value ($Z$) by tier}
-    \end{column}
-    \begin{column}{0.49\textwidth}
-      \centering
-      \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{images/04_line_time_scalability.png}\\
-      {\scriptsize\color{navymid}Mean runtime (seconds, log-log scale)}
-    \end{column}
-  \end{columns}
-
-  \vspace{0.04cm}
-  \begin{exampleblock}{Result Description}
-    {\scriptsize
-    \begin{itemize}\itemsep2pt
-      \item Quality gap between GA\_Original and Hybrid GA widens as tier size grows.
-      \item MMR/MMR-IR require much lower mean runtime across all scales; GA variants approach the available time budget.
-      \item Hybrid GA converts the same budget into better solutions through stronger initialization and retention.
-    \end{itemize}}
-  \end{exampleblock}
-\end{frame}
-
-% ── SLIDE: Improvement + gap (same visual box for both) ───────────────
-\begin{frame}{Improvement (\%) \& Optimality Gap}
-  \begin{columns}[T]
-    \begin{column}{0.49\textwidth}
-      \centering
-      \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{images/03_bar_improvement.png}\\
-      {\scriptsize\color{navymid}Modified vs. original (\% gain)}
     \end{column}
     \begin{column}{0.49\textwidth}
       \centering
@@ -2808,14 +2782,57 @@
   \end{columns}
 
   \vspace{0.04cm}
+  \begin{exampleblock}{Result Description}
+    {\scriptsize
+    \begin{itemize}\itemsep2pt
+      \item Objective quality gap between GA\_Original and Hybrid GA widens as tier size grows.
+      \item GA\_Original has the largest gap from best-known, especially in medium/large tiers.
+      \item Modified variants reduce both mean objective and gap, tracking near best-known performance.
+    \end{itemize}}
+  \end{exampleblock}
+\end{frame}
+
+% ── SLIDE: Improvement by tier + scenario ─────────────────────────────
+\begin{frame}{Modified vs Original Gain: Tier \& Scenario}
+  \begin{columns}[T]
+    \begin{column}{0.49\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{images/03_bar_improvement.png}\\
+      {\scriptsize\color{navymid}Modified vs. original (\% gain)}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{images/08_bar_scenario_improvement.png}\\
+      {\scriptsize\color{navymid}Mean improvement by scenario type}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.04cm}
   \begin{alertblock}{Result Description}
     {\scriptsize
     \begin{itemize}\itemsep2pt
       \item MMR-IR gives modest but consistent gains; Hybrid GA gives large gains on medium/large tiers.
-      \item GA\_Original has the largest optimality gap, especially in large instances.
-      \item Modified variants reduce gap substantially and track near best-known performance.
+      \item Improvement remains positive across balanced, scarce, and rich scenarios.
+      \item This supports robustness of both modifications beyond a single operating condition.
     \end{itemize}}
   \end{alertblock}
+\end{frame}
+
+% ── SLIDE: Runtime shown alone ────────────────────────────────────────
+\begin{frame}{Mean Runtime Scalability (Log-Log)}
+  \centering
+  \includegraphics[width=0.94\textwidth,height=0.54\textheight,keepaspectratio]{images/04_line_time_scalability.png}\\[2pt]
+  {\scriptsize\color{navymid}Mean runtime (seconds, log-log scale)}
+
+  \vspace{0.06cm}
+  \begin{exampleblock}{Result Description}
+    {\scriptsize
+    \begin{itemize}\itemsep2pt
+      \item MMR/MMR-IR remain much faster across all sizes than GA-based methods.
+      \item GA variants trend close to the time budget as size grows, while Hybrid GA still improves quality.
+      \item Log-log slopes show scalable growth behavior and clear separation by algorithm family.
+    \end{itemize}}
+  \end{exampleblock}
 \end{frame}
 
 % ── SLIDE: Scenario comparison (very wide figure shown alone) ─────────
@@ -2835,18 +2852,18 @@
   \end{block}
 \end{frame}
 
-% ── SLIDE: Scenario + scale improvement ───────────────────────────────
-\begin{frame}{Scenario Improvement \& Hybrid GA Scaling Gain}
+% ── SLIDE: Two scaling-gain plots on one page ─────────────────────────
+\begin{frame}{Scaling Gain Across Problem Size}
   \begin{columns}[T]
-    \begin{column}{0.49\textwidth}
-      \centering
-      \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{images/08_bar_scenario_improvement.png}\\
-      {\scriptsize\color{navymid}Mean improvement by scenario type}
-    \end{column}
     \begin{column}{0.49\textwidth}
       \centering
       \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{images/09_ga_improvement_vs_size.png}\\
       {\scriptsize\color{navymid}Hybrid GA gain over GA\_Original across small/medium/large}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{images/10_mmr_improvement_vs_size.png}\\
+      {\scriptsize\color{navymid}MMR-IR gain over MMR across small/medium/large}
     \end{column}
   \end{columns}
 
@@ -2854,9 +2871,9 @@
   \begin{exampleblock}{Result Description}
     {\scriptsize
     \begin{itemize}\itemsep2pt
-      \item Improvement remains positive across balanced, scarce, and rich scenarios, indicating robust behavior.
-      \item Hybrid GA gain increases with problem size and is strongest in large-tier instances.
-      \item Together, these plots support both cross-scenario consistency and scale-driven benefit.
+      \item Both algorithm pairs show positive gain across size tiers.
+      \item Hybrid GA exhibits the stronger scale effect, while MMR-IR provides consistent incremental gain.
+      \item Showing both together highlights complementary impact: large GA uplift plus stable MMR refinement.
     \end{itemize}}
   \end{exampleblock}
 \end{frame}
@@ -2956,7 +2973,7 @@
     \begin{center}
       \texttt{python run\_all.py}
     \end{center}
-    Generates dataset $\rightarrow$ runs all 4 algorithms on 180 instances $\rightarrow$ produces 9 plots.
+    Generates dataset $\rightarrow$ runs all 4 algorithms on 180 instances $\rightarrow$ produces 10 plots.
   \end{block}
 
   \vspace{0.1cm}
@@ -2969,13 +2986,13 @@ CSE_462-Algorithm-Engineering-Sessional/
     run_all.py           # Master script
     dataset_generator.py # 180 instances
     experiment_runner.py # Run all algorithms
-    analysis.py          # 9 plots + stats
+    analysis.py          # 10 plots + stats
     mmr_original.py      # MMR (Hasan & Barua)
     mmr_modified.py      # MMR-IR (ours)
     ga_original.py       # GA (Hasan & Barua)
     ga_modified.py       # Hybrid GA (ours)
   datasets/              # JSON instances
-  results/figures/       # 9 PNG plots
+  results/figures/       # 10 PNG plots
 \end{verbatim}
   \end{exampleblock}
 \end{frame}

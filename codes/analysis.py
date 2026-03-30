@@ -18,6 +18,8 @@ Plots generated (saved to results/figures/):
   06_scenario_comparison.png      -- balanced vs scarce vs rich per tier
   07_violin_value_dist.png        -- violin plots: modified vs original
   08_bar_scenario_improvement.png -- improvement % by scenario type
+    09_ga_improvement_vs_size.png   -- Hybrid GA gain over GA across size/scenario
+    10_mmr_improvement_vs_size.png  -- MMR-IR gain over MMR across size/scenario
 """
 
 import os
@@ -498,6 +500,67 @@ def plot_ga_improvement_vs_size(df):
     _savefig(fig, "09_ga_improvement_vs_size.png")
 
 
+# ── Plot 10: MMR-IR improvement vs problem size ──────────────────────────────
+
+def plot_mmr_improvement_vs_size(df):
+    """
+    Line plot showing % improvement of MMR_Modified over MMR_Original across
+    all 3 scenarios and 3 tiers.
+    """
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    scenario_styles = {
+        "balanced": {"linestyle": "-",  "marker": "o"},
+        "scarce":   {"linestyle": "--", "marker": "s"},
+        "rich":     {"linestyle": ":",  "marker": "^"},
+    }
+    scenario_colors = {
+        "balanced": "#1F3A6E",
+        "scarce":   "#1976D2",
+        "rich":     "#6A1B9A",
+    }
+
+    size_order = ["small", "medium", "large"]
+    size_labels = ["Small (20)", "Medium (100)", "Large (250)"]
+
+    for scenario in SCENARIOS:
+        improvements = []
+        for tier in size_order:
+            sub = df[(df["tier"] == tier) & (df["scenario"] == scenario)]
+            mmro = sub[sub["algorithm"] == "MMR_Original"].sort_values(
+                ["category", "instance_id"])["value"].values
+            mmrm = sub[sub["algorithm"] == "MMR_Modified"].sort_values(
+                ["category", "instance_id"])["value"].values
+            if len(mmro) > 0 and len(mmrm) > 0:
+                pct = np.nanmean(_safe_pct_improvement(mmro, mmrm))
+                improvements.append(pct)
+            else:
+                improvements.append(np.nan)
+
+        ax.plot(size_labels, improvements,
+                color=scenario_colors[scenario],
+                linestyle=scenario_styles[scenario]["linestyle"],
+                marker=scenario_styles[scenario]["marker"],
+                linewidth=2.5, markersize=9,
+                label=f"{scenario.capitalize()} scenario")
+
+        for i, v in enumerate(improvements):
+            if not np.isnan(v):
+                ax.annotate(f"{v:.1f}%", (i, v),
+                            textcoords="offset points", xytext=(5, 6),
+                            fontsize=9, color=scenario_colors[scenario])
+
+    ax.axhline(0, color="gray", linewidth=0.8, linestyle="--")
+    ax.set_xlabel("Problem Size (tier)")
+    ax.set_ylabel("% Improvement: MMR-IR over MMR")
+    ax.set_title("MMR-IR Improvement over MMR by Problem Size\n"
+                 "(Local refinement gain across small/medium/large tiers)")
+    ax.legend(fontsize=10)
+    ax.grid(True, alpha=0.3)
+    fig.tight_layout()
+    _savefig(fig, "10_mmr_improvement_vs_size.png")
+
+
 # ── Summary tables & statistical tests ───────────────────────────────────────
 
 def print_summary(df):
@@ -577,6 +640,7 @@ def main():
     plot_violin_value_dist(df)
     plot_bar_scenario_improvement(df)
     plot_ga_improvement_vs_size(df)
+    plot_mmr_improvement_vs_size(df)
 
     print_summary(df)
     print("\nDone!")
