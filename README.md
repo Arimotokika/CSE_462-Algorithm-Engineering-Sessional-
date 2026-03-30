@@ -1,207 +1,104 @@
 # CSE 462 Algorithm Engineering Sessional
 
-## Weapon-Target Assignment (WTA) Problem — Group 5 — Checkpoint 2
+Weapon-Target Assignment (WTA) project for CSE 462, Group 5.
 
----
+This repository contains both checkpoints:
 
-## Problem Overview
+- Checkpoint 1: problem framing, complexity discussion, algorithm survey, and first presentation build.
+- Checkpoint 2: full implementation, experimental evaluation, and reproducible pipeline.
 
-The **Weapon-Target Assignment (WTA)** problem is an NP-complete combinatorial
-optimization problem: given W weapons and T enemy targets, assign weapons to targets
-to **minimize the total expected survival value** of all targets.
+## Checkpoint 2 Summary
 
-**Objective (minimize):**
+We solve the static WTA minimization objective:
 
-```
-Z = sum_j  V_j * prod_i (1 - p_ij)^x_ij
-```
+Z = sum_j V_j * prod_i (1 - p_ij)^x_ij
 
-- `V_j` = military value of target j
-- `p_ij` = kill probability of weapon i against target j
-- `x_ij` = weapons i assigned to target j (integer >= 0)
+where V_j is target value, p_ij is weapon-target kill probability, and x_ij is assignment count.
 
----
+### Algorithms implemented
 
-## Algorithms
+- MMR (original): greedy marginal-return heuristic.
+- MMR-IR (modified): tie-aware greedy + 1-opt local reassignment + 2-opt swap refinement.
+- GA (original): baseline genetic algorithm with tournament selection, crossover, mutation, time budget.
+- Hybrid GA (modified): MMR-seeded initial population + elitism with stagnation control + threat-proportional mutation.
 
-### MMR — Maximum Marginal Return (Original)
+### Dataset design
 
-Greedy heuristic from Hasan & Barua. At each step assigns the (weapon, target)
-pair with greatest marginal decrease in the objective. O(W²T), deterministic.
+- 180 synthetic instances across 9 categories:
+  - tiers: small (20), medium (100), large (250)
+  - scenarios: balanced (W=T), scarce (W<T), rich (W>T)
+- 20 instances per category.
+- RNG seed fixed at 42 for reproducibility.
 
-### MMR-IR — Iterative Re-evaluation (Our Modification)
+### Key findings from experiments
 
-Three independently-designed enhancements:
-
-1. **Tie-breaking by target value** — prefer highest-value target on greedy ties
-2. **1-opt incremental local search** — after greedy, try reassigning each weapon
-   to every other target; accept if objective improves; repeat until convergence
-3. **2-opt swap search** — try swapping targets of two weapons to escape 1-opt optima
-
-### GA — Genetic Algorithm (Original)
-
-Standard GA faithfully implementing Hasan & Barua:
-
-- Encoding: `chromosome[i]` = target assigned to weapon i
-- Population: max(W, T), Tournament selection (k=3)
-- Uniform crossover (rate=0.8), random mutation (rate=1/W)
-- Time-based termination
-
-### Hybrid GA — Our Modification
-
-Three novel modifications:
-
-1. **MMR-Seeded Initialization** — seed one individual with MMR greedy solution
-2. **Elitism + Stagnation Detection** — preserve top 10%; re-diversify after 5 stagnant generations
-3. **Threat-Proportional Mutation** _(WTA-specific, novel)_ — bias mutation toward
-   high-value poorly-covered targets using `remaining_threat[j] = V_j * survival_j`
-   as selection weights
-
----
-
-## Dataset
-
-180 synthetic instances across 9 categories (3 tiers × 3 scenarios).
-
-| Tier   | Scenario     | Weapons (W) | Targets (T) | Instances |
-| ------ | ------------ | ----------- | ----------- | --------- |
-| small  | balanced     | 20          | 20          | 20        |
-| small  | scarce (W<T) | 10          | 20          | 20        |
-| small  | rich (W>T)   | 30          | 20          | 20        |
-| medium | balanced     | 100         | 100         | 20        |
-| medium | scarce       | 50          | 100         | 20        |
-| medium | rich         | 150         | 100         | 20        |
-| large  | balanced     | 250         | 250         | 20        |
-| large  | scarce       | 125         | 250         | 20        |
-| large  | rich         | 375         | 250         | 20        |
-
-Parameters: `V_j ~ U(10,100)` integers, `p_ij ~ U(0.05, 0.90)`, RNG seed=42.
-
----
+- MMR-IR improves MMR consistently (roughly 0.2% to 4.8% by tier/scenario).
+- Hybrid GA strongly improves GA on larger scales (up to ~36% to 54% on large-tier settings).
+- Wilcoxon signed-rank tests support significance of improvements.
 
 ## Repository Structure
 
-```
+```text
 CSE_462-Algorithm-Engineering-Sessional/
-├── README.md
-├── codes/
-│   ├── run_all.py              # Master script — full pipeline
-│   ├── dataset_generator.py    # Generates 180 benchmark instances
-│   ├── experiment_runner.py    # Runs all 4 algorithms, saves CSV
-│   ├── analysis.py             # Generates 8 plots + stats
-│   ├── mmr_original.py         # MMR (Hasan & Barua)
-│   ├── mmr_modified.py         # MMR-IR (our modification)
-│   ├── ga_original.py          # GA (Hasan & Barua)
-│   ├── ga_modified.py          # Hybrid GA (our modification)
-│   └── wta_utils.py            # Shared utilities
-├── datasets/                   # Auto-generated JSON instances
-├── results/
-│   ├── experiment_results.csv  # 720-row results (180 instances x 4 algorithms)
-│   └── figures/                # 8 PNG plots
-├── checkpoint-1/               # Checkpoint 1 materials
-├── checkpoint-2/               # Checkpoint 2 guidelines & deep research
-└── files/                      # Reference papers
+|- README.md
+|- checkpoint-1/
+|  |- README.md
+|  |- guidelines.txt
+|  |- presentation.tex
+|  `- images/
+|- checkpoint-2/
+|  |- README.md
+|  |- guidelines.txt
+|  |- presentation.tex
+|  |- presentation_prev.tex
+|  `- images/
+|- codes/
+|  |- README.md
+|  |- run_all.py
+|  |- dataset_generator.py
+|  |- experiment_runner.py
+|  |- analysis.py
+|  |- mmr_original.py
+|  |- mmr_modified.py
+|  |- ga_original.py
+|  |- ga_modified.py
+|  |- wta_utils.py
+|  |- requirements.txt
+|  |- datasets/
+|  `- results/
+`- files/
 ```
 
----
-
-## Setup
+## Reproducibility Quick Start
 
 ```bash
-# From WTA root directory (one-time setup)
-cd "d:/Term Files/l4-t2/CSE 462/WTA"
+# from repository root
 py -3 -m venv .venv
-
-# Activate (Git Bash / MSYS2)
-source .venv/Scripts/activate
-
-# Activate (Windows CMD/PowerShell)
 .venv\Scripts\activate
+pip install -r codes/requirements.txt
 
-# Install dependencies
-pip install numpy pandas matplotlib seaborn scipy
-```
-
----
-
-## Running
-
-### Full pipeline (single command)
-
-```bash
 cd codes
 python run_all.py
 ```
 
-Estimated runtime: ~3.5 hours (large tier dominates).
+This single command chain will:
 
----
+1. generate dataset instances,
+2. run all four algorithms,
+3. produce results CSV and 9 analysis plots.
 
-### Run tiers separately (recommended — monitor progress)
+Outputs are written under:
 
-```bash
-cd codes
+- codes/datasets/
+- codes/results/experiment_results.csv
+- codes/results/figures/
 
-# Step 1: Generate dataset (~5 seconds)
-python dataset_generator.py
+## Documentation Index
 
-# Step 2a: Small tier — 60 instances, ~10 min
-python experiment_runner.py --categories small_balanced,small_scarce,small_rich
+- Checkpoint 1 details: checkpoint-1/README.md
+- Checkpoint 2 presentation and compliance notes: checkpoint-2/README.md
+- Code-level usage and CLI: codes/README.md
 
-# Step 2b: Medium tier — 60 instances, ~50 min
-python experiment_runner.py --categories medium_balanced,medium_scarce,medium_rich --append
+## Academic Integrity Note
 
-# Step 2c: Large tier — 60 instances, ~2 hours
-python experiment_runner.py --categories large_balanced,large_scarce,large_rich --append
-
-# Step 3: Generate all 8 plots + statistical tests
-python analysis.py
-```
-
----
-
-### Quick smoke test (5 instances)
-
-```bash
-cd codes
-python experiment_runner.py --categories small_balanced --instances 1-5
-python analysis.py
-```
-
----
-
-### Per-algorithm smoke tests
-
-```bash
-cd codes
-python mmr_original.py    # 3x3 example
-python mmr_modified.py    # MMR-O vs MMR-IR comparison
-python ga_original.py     # 3x3 example
-python ga_modified.py     # all 4 algorithms on 3x3
-```
-
----
-
-## Output Plots (`results/figures/`)
-
-| File                              | Description                                         |
-| --------------------------------- | --------------------------------------------------- |
-| `01_box_solution_quality.png`     | Box plots per tier x algorithm (balanced instances) |
-| `02_bar_mean_objective.png`       | Mean objective value grouped by tier                |
-| `03_bar_improvement.png`          | % improvement: modified vs original per tier        |
-| `04_line_time_scalability.png`    | Runtime scalability (log-log scale)                 |
-| `05_bar_gap.png`                  | Optimality gap from best-known solution             |
-| `06_scenario_comparison.png`      | Performance: balanced vs scarce vs rich             |
-| `07_violin_value_dist.png`        | Value distribution: original vs modified            |
-| `08_bar_scenario_improvement.png` | Improvement % by scenario type                      |
-
-Statistical significance: Wilcoxon signed-rank test (alpha=0.05) printed to console.
-
----
-
-## References
-
-1. Hasan, M. & Barua, A. — _Weapon-Target Assignment Problem_ (IntechOpen)
-2. Ahuja, R. K. et al. (2007) — _Exact and Heuristic Algorithms for the WTA_
-3. Lee, Z. J. et al. (2003) — _Efficiently Solving General WTA Problems_
-4. Manne, A. S. (1958) — _A Target-Assignment Problem_ (Operations Research)
+All reported values and plots are generated from actual experiment runs in this repository.

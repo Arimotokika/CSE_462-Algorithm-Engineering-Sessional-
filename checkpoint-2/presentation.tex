@@ -1,2126 +1,2983 @@
-% =============================================================================
-% WEAPON-TARGET ASSIGNMENT PROBLEM - Checkpoint 2 Presentation
-% Algorithm Engineering Sessional - CSE 462, Group 5
-% =============================================================================
+\documentclass[aspectratio=169,10pt]{beamer}
 
-\documentclass[aspectratio=43,8pt]{beamer}
-
-% =============================================================================
-% THEME AND COLORS
-% =============================================================================
-\usetheme{default}
-\usecolortheme{default}
-
-% Professional minimal color scheme - muted grayscale
-\definecolor{primaryblue}{RGB}{40, 40, 40}
-\definecolor{secondaryblue}{RGB}{80, 80, 80}
-\definecolor{accentred}{RGB}{100, 100, 100}
-\definecolor{accentgreen}{RGB}{60, 60, 60}
-\definecolor{lightgray}{RGB}{200, 250, 200}
-
-\setbeamercolor{structure}{fg=primaryblue}
-\setbeamercolor{frametitle}{bg=white, fg=primaryblue}
-\setbeamercolor{title}{fg=primaryblue}
-\setbeamercolor{block title}{bg=lightgray, fg=primaryblue}
-\setbeamercolor{block body}{bg=white}
-\setbeamercolor{block title alerted}{bg=lightgray, fg=primaryblue}
-\setbeamercolor{block title example}{bg=lightgray, fg=primaryblue}
-
-% Simplify itemize bullets
-\setbeamertemplate{itemize items}[circle]
-\setbeamertemplate{enumerate items}[default]
-
-% Remove shadows and rounded corners for cleaner look
-\setbeamertemplate{blocks}[default]
-\setbeamertemplate{title page}[default][colsep=-4bp,rounded=false]
-
-% Minimal navigation
-\setbeamertemplate{navigation symbols}{}
-
-% Clean frame title with reduced spacing
-\setbeamertemplate{frametitle}{
-  \vspace{0.2cm}
-  \insertframetitle
-  \vspace{0.05cm}
-  \hrule
-  \vspace{0.2cm}
-}
-
-% Maximize content area - reduce margins and spacing
-\setbeamersize{text margin left=0.5cm,text margin right=0.5cm}
-\setlength{\parskip}{3pt}
-
-% =============================================================================
-% PACKAGES
-% =============================================================================
+% ── Essential Packages ─────────────────────────────────────────────────
 \usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{lmodern}
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{graphicx}
+\usepackage{amsmath, amsfonts, amssymb}
 \usepackage{booktabs}
-\usepackage{array}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
 \usepackage{tikz}
-\usetikzlibrary{positioning, arrows.meta, shapes, calc}
+\usetikzlibrary{positioning}
+\usepackage{fontawesome5}
+\usepackage{array}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
-\usepackage{xcolor}
-\usepackage{hyperref}
-\usepackage{multirow}
+\usepackage{etoolbox}
+% ── Global frame content centering ─────────────────────────────────────
+\AtBeginEnvironment{frame}{\centering}
+% Center all tabular content by default (including inside columns)
+\BeforeBeginEnvironment{tabular}{\begingroup\centering}
+\AfterEndEnvironment{tabular}{\endgroup}
 
-% =============================================================================
-% FOOTER CONFIGURATION
-% =============================================================================
+% ── Color Definitions ──────────────────────────────────────────────────
+\definecolor{navydark}{RGB}{10, 25, 60}
+\definecolor{navymid}{RGB}{20, 50, 100}
+\definecolor{navylight}{RGB}{30, 80, 150}
+\definecolor{goldaccent}{RGB}{212, 160, 40}
+\definecolor{iceblue}{RGB}{200, 220, 255}
+\definecolor{offwhite}{RGB}{245, 248, 255}
+\definecolor{tealaccent}{RGB}{0, 130, 140}
+\definecolor{tealbg}{RGB}{220, 242, 244}
+\definecolor{DarkSlate}{HTML}{001F2D}
+\definecolor{TealMain}{HTML}{1A7D7B}
+\definecolor{TealLight}{HTML}{D9ECEA}
+\definecolor{HighlightGold}{HTML}{E69100}
+\definecolor{navy}{HTML}{0D1B2A}
+\definecolor{navymidHex}{HTML}{1B2E45}
+\definecolor{teal}{HTML}{0D9488}
+\definecolor{teallt}{HTML}{5EEAD4}
+\definecolor{offwhiteHex}{HTML}{F0F4F8}
+\definecolor{graylt}{HTML}{E2E8F0}
+\definecolor{mygray}{HTML}{94A3B8}
+\definecolor{amber}{HTML}{F59E0B}
+\definecolor{mygreen}{HTML}{22C55E}
+\definecolor{mytext}{HTML}{1E293B}
+\definecolor{lightyellow}{HTML}{FFF3CD}
+\definecolor{lightgreen}{HTML}{E8F5E9}
+
+% ── Beamer Theme ───────────────────────────────────────────────────────
+\usetheme{Madrid}
+\usecolortheme{default}
+
+\setbeamercolor{palette primary}{bg=navydark, fg=white}
+\setbeamercolor{palette secondary}{bg=navymid, fg=white}
+\setbeamercolor{palette tertiary}{bg=navylight, fg=white}
+\setbeamercolor{frametitle}{bg=navydark, fg=white}
+\setbeamercolor{title}{fg=white}
+\setbeamercolor{subtitle}{fg=goldaccent}
+\setbeamercolor{background canvas}{bg=offwhite}
+\setbeamercolor{block title}{bg=navymid, fg=white}
+\setbeamercolor{block body}{bg=iceblue!30, fg=navydark}
+\setbeamercolor{itemize item}{fg=goldaccent}
+\setbeamercolor{itemize subitem}{fg=navylight}
+% alert block colours (used in Section 5)
+\setbeamercolor{block title alerted}{bg=tealaccent, fg=white}
+\setbeamercolor{block body alerted}{bg=tealbg, fg=navydark}
+% example block colours
+\setbeamercolor{block title example}{bg=navylight, fg=white}
+\setbeamercolor{block body example}{bg=iceblue!20, fg=navydark}
+
 \setbeamertemplate{navigation symbols}{}
-\setbeamertemplate{footline}{
-  \hfill\usebeamerfont{page number in head/foot}\insertframenumber{} / \inserttotalframenumber\hspace*{1em}\vskip2pt
+\setbeamertemplate{footline}[frame number]
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=TealMain,
+    citecolor=TealMain,
 }
 
-% =============================================================================
-% TITLE INFORMATION
-% =============================================================================
-\title[WTA Problem]{\textbf{Weapon-Target Assignment Problem}}
-\subtitle{Algorithm Engineering Sessional -- Checkpoint 2 Presentation}
-\author[Team WTA]{Team Members}
-\institute[CSE 462]{CSE 462: Algorithm Engineering Sessional}
-\date{March 2026}
+% ── Helper commands ────────────────────────────────────────────────────
+\newcommand{\sectionbar}{%
+  {\color{teal}\rule{\linewidth}{0.4pt}}\\[2pt]}
 
-% =============================================================================
-% DOCUMENT BEGINS
-% =============================================================================
 \begin{document}
 
-% =============================================================================
-% TITLE SLIDE
-% =============================================================================
+% ── FRONT PAGE ─────────────────────────────────────────────────────────
+{
+\setbeamercolor{background canvas}{bg=navydark}
 \begin{frame}[plain]
-\begin{center}
-\vspace{0.3cm}
-% BUET Logo
-\includegraphics[width=0.15\textwidth]{images/buet_logo.png}
+  \begin{center}
 
-\vspace{0.3cm}
-{\Large\textbf{\textcolor{primaryblue}{Weapon-Target Assignment Problem}}}
+    {\color{goldaccent}\rule{0.18\textwidth}{2pt}}
 
-\vspace{0.3cm}
-{\normalsize CSE 462: Algorithm Engineering Sessional}
+    \vspace{0.12cm}
+    \includegraphics[width=1.7cm]{images/buet_logo.png}
 
-{\normalsize Checkpoint 2 Presentation}
+    \vspace{0.15cm}
+    {\large\bfseries\color{white} Weapon-Target Assignment Problem}
 
-\vspace{0.5cm}
-\begin{tabular}{ll}
-\textbf{Team Members} & \\
-Hozifa Rahman Hamim & (ID: 1705083) \\
-Md. Azizul Haque Nadim & (ID: 1905059) \\
-Sadia Tabassum & (ID: 1905091) \\
-Ahmmad Nur Swapnil & (ID: 2005009) \\
-Most. Sonia Khatun & (ID: 2005025) \\
-Shahriar Ahmed Seam & (ID: 2005093) \\
-\end{tabular}
+    \vspace{0.12cm}
+    {\small\color{iceblue} CSE 462: Algorithm Engineering Sessional}\\[2pt]
+    {\small\color{iceblue} Final Presentation}
 
-\vspace{0.5cm}
-{\small Department of Computer Science and Engineering (CSE)}
+    \vspace{0.2cm}
+    \colorbox{navymid}{%
+      \begin{minipage}{0.86\textwidth}
+        \vspace{0.08cm}
+        {\small\bfseries\color{goldaccent} Team Members}\\[4pt]
+        {\scriptsize\color{white}
+        \begin{tabular}{l@{\qquad}l}
+          Hozifa Rahman Hamim      & (ID: 1705083) \\[1pt]
+          Md.\ Azizul Haque Nadim  & (ID: 1905059) \\[1pt]
+          Sadia Tabassum           & (ID: 1905091) \\[1pt]
+          Ahmmad Nur Swapnil       & (ID: 2005009) \\[1pt]
+          Most.\ Sonia Khatun      & (ID: 2005025) \\[1pt]
+          Shahriar Ahmed Seam      & (ID: 2005093) \\
+        \end{tabular}
+        }
+        \vspace{0.05cm}
+      \end{minipage}
+    }
 
-{\small Bangladesh University of Engineering and Technology (BUET)}
+    \vspace{0.2cm}
+    {\small\color{iceblue}
+      Department of Computer Science and Engineering (CSE)\\[3pt]
+      Bangladesh University of Engineering and Technology (BUET)
+    }
 
-\vspace{0.3cm}
-{\footnotesize\textit{March 2026}}
-\end{center}
+    \vspace{0.12cm}
+    {\small\itshape\color{goldaccent} 30th March 2026}
+
+    \vspace{0.08cm}
+    {\color{goldaccent}\rule{0.18\textwidth}{2pt}}
+
+  \end{center}
 \end{frame}
+}
 
-% =============================================================================
-% REAL-WORLD WTA EXAMPLES SLIDE
-% =============================================================================
-\begin{frame}{Real-World Motivation: WTA in Action}
-\begin{columns}[t]
-\column{0.48\textwidth}
-\begin{center}
-\includegraphics[width=0.95\textwidth]{images/iron_dome_image.png}
-
-{\footnotesize\textbf{Air Defense (Iron Dome)}}
-\end{center}
-
-\vspace{0.1cm}
-{\scriptsize\textbf{WTA Mapping:}}
-\begin{itemize}\setlength{\itemsep}{0pt}
-    \item[\textcolor{blue}{$\bullet$}] Interceptor Missiles = \textbf{Weapons}
-    \item[\textcolor{red}{$\bullet$}] Incoming Rockets = \textbf{Targets}
-    \item[\textcolor{green!60!black}{$\rightarrow$}] Assignment = \textbf{WTA Solution}
-\end{itemize}
-
-\column{0.52\textwidth}
-\begin{center}
-\includegraphics[width=0.95\textwidth]{images/ground_attack_image.png}
-
-{\footnotesize\textbf{Ground Attack Scenario}}
-\end{center}
-
-\vspace{0.1cm}
-{\scriptsize\textbf{WTA Mapping:}}
-\begin{itemize}\setlength{\itemsep}{0pt}
-    \item[\textcolor{blue}{$\bullet$}] W1--W5 (with costs) = \textbf{Weapons}
-    \item[\textcolor{red}{$\bullet$}] T1--T20 (with values) = \textbf{Targets}
-    \item[\textcolor{green!60!black}{$\rightarrow$}] Arrows = \textbf{Assignments}
-\end{itemize}
-\end{columns}
-\end{frame}
-
-% =============================================================================
-% OUTLINE SLIDE
-% =============================================================================
-\begin{frame}{Presentation Outline}
-\begin{columns}[t]
-\column{0.48\textwidth}
-\begin{block}{Part 1: Theory \& Background}
-\begin{enumerate}
-    \item \textbf{Problem Definition}
-    \begin{itemize}
-        \item Formal definition \& formulation
-        \item Classifications
-    \end{itemize}
-    \item \textbf{NP-Hardness Proofs}
-    \begin{itemize}
-        \item Reduction from SUBSET PRODUCT
-        \item Reduction to Multiple Knapsack
-    \end{itemize}
-    \item \textbf{Algorithm Survey}
-    \begin{itemize}
-        \item Exact, approximation, heuristic, metaheuristic
-    \end{itemize}
-\end{enumerate}
-\end{block}
-
-\column{0.48\textwidth}
-\begin{block}{Part 2: Implementation \& Results}
-\begin{enumerate}
-\setcounter{enumi}{3}
-    \item \textbf{Selected Algorithms}
-    \begin{itemize}
-        \item Maximum Marginal Return (MMR)
-        \item Genetic Algorithm (GA)
-    \end{itemize}
-    \item \textbf{Our Modifications}
-    \begin{itemize}
-        \item MMR-IR: local search enhancement
-        \item Hybrid GA: 3 novel modifications
-    \end{itemize}
-    \item \textbf{Experiments \& Results}
-    \begin{itemize}
-        \item 180 instances, 9 plots, statistics
-    \end{itemize}
-\end{enumerate}
-\end{block}
-\end{columns}
-\end{frame}
-
-% =============================================================================
+% ==========================================================================
 % SECTION 1: PROBLEM DEFINITION
-% =============================================================================
-\section{Problem Definition}
+% ==========================================================================
 
-\begin{frame}{Section 1: Problem Definition}
-\begin{center}
-{\Large\textcolor{primaryblue}{\textbf{What is the Weapon-Target Assignment Problem?}}}
+{
+\setbeamercolor{background canvas}{bg=navydark}
+\begin{frame}[plain]
 
-\vspace{0.5cm}
-{\normalsize A fundamental combinatorial optimization problem in operations research}
-\end{center}
+  \begin{center}
+    {\color{goldaccent}\rule{0.15\textwidth}{2pt}}
+    \hspace{0.5em}
+    {\color{white}\large\textbf{Section 1}}
+    \hspace{0.5em}
+    {\color{goldaccent}\rule{0.15\textwidth}{2pt}}
+
+    \vspace{0.6cm}
+    {\color{white}\Huge\textbf{Problem Definition}}
+
+    \vspace{0.4cm}
+    {\color{iceblue}\normalsize Formal definition \& mathematical formulation}\\[6pt]
+    {\color{iceblue}\normalsize Complexity class \& hardness analysis}
+  \end{center}
+\end{frame}
+}
+
+% ── SLIDE: Real-World Motivation ──────────────────────────────────────
+\begin{frame}{Real-World Motivation: Iron Dome}
+
+  \begin{columns}[T]
+
+    \begin{column}{0.48\textwidth}
+
+      \begin{block}{\small\faShield*\quad Israel's Missile Defense System}
+        {\footnotesize
+        Iron Dome uses \textbf{WTA algorithms} to assign interceptor
+        missiles to incoming rockets in real time, achieving a
+        \textbf{$\approx$90\% interception rate} under extreme time
+        pressure.
+        }
+      \end{block}
+
+      \vspace{0.35cm}
+
+      {\small\color{navymid}\textbf{Problem Mapping}}
+
+      \vspace{0.2cm}
+
+      {\footnotesize
+      \begin{tabular}{>{\color{navylight}}r @{\hspace{0.4em}$\longrightarrow$\hspace{0.4em}} l}
+        Incoming Rockets    & \textbf{Targets} $(T)$      \\[4pt]
+        Interceptor Missiles & \textbf{Weapons} $(W)$     \\[4pt]
+        Optimal Pairing     & \textbf{WTA Solution} $(X)$ \\
+      \end{tabular}
+      }
+
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+
+      \begin{tikzpicture}
+        \fill[tealaccent, rounded corners=4pt] (0,0) rectangle (5.3,3.2);
+        \fill[tealbg, rounded corners=3pt] (0.08,0.08) rectangle (5.22,3.12);
+        \node[tealaccent, font=\small\bfseries, anchor=north west] at (0.2, 3.02)
+          {\faCheckCircle\quad Why WTA Matters};
+        \node[navydark, font=\footnotesize, anchor=north west, text width=4.6cm] at (0.2, 2.62)
+          {%
+            \textbullet\; \textbf{Real-time decisions} — seconds to react\\[2pt]
+            \textbullet\; \textbf{Scarce resources} — fewer interceptors than threats\\[2pt]
+            \textbullet\; \textbf{Priority targets} — protect high-value assets first
+          };
+      \end{tikzpicture}
+
+      \vspace{0.3cm}
+
+      \begin{tikzpicture}
+        \fill[navydark, rounded corners=4pt] (0,0) rectangle (5.3,1.5);
+        \node[white, font=\scriptsize, align=center, text width=4.9cm] at (2.65, 0.75)
+          {\textbf{Core Question:}\\[3pt]
+           Which weapon engages which target\\to minimize total expected damage?};
+      \end{tikzpicture}
+
+    \end{column}
+
+  \end{columns}
+
 \end{frame}
 
+% ── SLIDE: Presentation Outline ───────────────────────────────────────
+\begin{frame}{Presentation Outline}
+
+  \begin{columns}[T]
+
+    \begin{column}{0.48\textwidth}
+
+      \begin{tikzpicture}
+        \fill[navymid, rounded corners=3pt] (0,0) rectangle (5.3,0.5);
+        \node[white, font=\small\bfseries, anchor=west] at (0.15,0.25)
+          {\faBook\quad Part 1: Foundations};
+      \end{tikzpicture}
+
+      \vspace{0.15cm}
+
+      {\footnotesize
+      \begin{enumerate}
+        \setlength\itemsep{4pt}
+
+        \item \textbf{Problem Definition}
+          \begin{itemize}
+            \setlength\itemsep{1pt}
+            {\scriptsize
+            \item Formal definition \& mathematical formulation
+            \item Complexity class \& hardness analysis
+            }
+          \end{itemize}
+
+        \item \textbf{Algorithm Survey}
+          \begin{itemize}
+            \setlength\itemsep{1pt}
+            {\scriptsize
+            \item Overview of existing approaches
+            \item Academic references \& brief descriptions
+            }
+          \end{itemize}
+
+        \item \textbf{Chosen Algorithms in Detail}
+          \begin{itemize}
+            \setlength\itemsep{1pt}
+            {\scriptsize
+            \item Step-by-step explanation of MMR algorithm
+            \item Step-by-step explanation of Genetic algorithm
+            \item Visual illustrations for clarity
+            }
+          \end{itemize}
+
+      \end{enumerate}
+      }
+
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+
+      \begin{tikzpicture}
+        \fill[tealaccent, rounded corners=3pt] (0,0) rectangle (5.3,0.5);
+        \node[white, font=\small\bfseries, anchor=west] at (0.15,0.25)
+          {\faFlask\quad Part 2: Contributions};
+      \end{tikzpicture}
+
+      \vspace{0.15cm}
+
+      {\footnotesize
+      \begin{enumerate}
+        \setlength\itemsep{4pt}
+        \setcounter{enumi}{3}
+
+        \item \textbf{Proposed Modifications}
+          \begin{itemize}
+            \setlength\itemsep{1pt}
+            {\scriptsize
+            \item Improvements to selected algorithms
+            \item Reasoning \& theoretical insights
+            }
+          \end{itemize}
+
+        \item \textbf{Experimental Setup}
+          \begin{itemize}
+            \setlength\itemsep{1pt}
+            {\scriptsize
+            \item Dataset design and scenario construction
+            \item Benchmark protocol and comparison settings
+            }
+          \end{itemize}
+
+        \item \textbf{Experimental Results}
+          \begin{itemize}
+            \setlength\itemsep{1pt}
+            {\scriptsize
+            \item Original vs.\ modified algorithm outcomes
+            \item Runtime-quality tradeoff and key findings
+            }
+          \end{itemize}
+
+      \end{enumerate}
+      }
+
+    \end{column}
+
+  \end{columns}
+
+\end{frame}
+
+% ── SLIDE: Problem Definition ─────────────────────────────────────────
 \begin{frame}{Problem Definition}
-\begin{block}{Weapon-Target Assignment (WTA) Problem}
-The WTA problem involves the \textbf{strategic allocation of a set of weapons to a set of targets} to achieve a specific defensive or offensive objective.
-\end{block}
 
-\vspace{0.3cm}
-\begin{alertblock}{Core Challenge: Stochastic Nature of Combat}
-Every engagement is modeled as a \textbf{probabilistic event} where a weapon has a specific likelihood of destroying its assigned target.
-\end{alertblock}
+  \begin{tikzpicture}
+    \fill[navymid, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\small\bfseries, anchor=west] at (0.2,0.225)
+      {\faShield*\quad Weapon-Target Assignment (WTA) Problem};
+  \end{tikzpicture}
 
-\vspace{0.3cm}
-\begin{exampleblock}{Computational Complexity}
-\begin{itemize}
-    \item The problem is mathematically proven to be \textbf{NP-complete}
-    \item As the number of weapons and targets grows, complexity increases \textbf{exponentially}
-    \item Finding an absolute optimal solution becomes extremely difficult for large instances
-\end{itemize}
-\end{exampleblock}
+  \vspace{0.15cm}
+  {\footnotesize
+  Optimally allocate weapons to targets to \textbf{minimize residual threat}
+  under real-time operational constraints.
+  }
+
+  \vspace{0.3cm}
+
+  \begin{tikzpicture}
+    \fill[tealaccent, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\small\bfseries, anchor=west] at (0.2,0.225)
+      {\faBolt\quad Core Challenge: Stochastic Combat};
+  \end{tikzpicture}
+
+  \vspace{0.15cm}
+  {\footnotesize
+  Weapon $w_i$ destroys target $t_j$ with kill probability $p_{ij} \in [0,1]$.
+  Assignments must be optimized \textbf{under uncertainty}, in real time.
+  }
+
+  \vspace{0.3cm}
+
+  \begin{tikzpicture}
+    \fill[navydark, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\small\bfseries, anchor=west] at (0.2,0.225)
+      {\faMicrochip\quad Computational Complexity};
+  \end{tikzpicture}
+
+  \vspace{0.15cm}
+  {\footnotesize
+  \begin{itemize}
+    \setlength\itemsep{3pt}
+    \item[\color{goldaccent}$\blacktriangleright$]
+      Proven \textbf{NP-complete} — no polynomial-time exact solution exists
+    \item[\color{goldaccent}$\blacktriangleright$]
+      Search space grows \textbf{exponentially} with weapons and targets
+    \item[\color{goldaccent}$\blacktriangleright$]
+      Large instances require \textbf{heuristic or metaheuristic} approaches
+  \end{itemize}
+  }
+
 \end{frame}
 
-\begin{frame}{Classification: Asset-based vs. Target-based}
-\begin{block}{Two Perspectives of WTA}
-The WTA problem can be viewed from two distinct perspectives depending on whether the objective prioritizes \textbf{destruction of enemy forces} or \textbf{protection of friendly resources}.
-\end{block}
+% ── SLIDE: Classification ─────────────────────────────────────────────
+\begin{frame}{Classification: Asset-based vs.\ Target-based}
 
-\vspace{0.3cm}
-\begin{columns}[t]
-\column{0.48\textwidth}
-\begin{alertblock}{Target-based Perspective}
-Values assigned to each \textbf{enemy target} based on threat they pose.
-\begin{itemize}
-    \item \textbf{Goal:} Maximize total damage inflicted on incoming targets
-    \item \textbf{Math:} \textbf{Minimize} expected survival value of targets
-    \item (Equivalent to maximizing damage)
-\end{itemize}
-\end{alertblock}
+  \begin{tikzpicture}
+    \fill[navymid, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\small\bfseries, anchor=west] at (0.2,0.225)
+      {\faBalanceScale\quad Two Perspectives of WTA};
+  \end{tikzpicture}
 
-\column{0.48\textwidth}
-\begin{exampleblock}{Asset-based Perspective}
-Values assigned to \textbf{defended assets} (cities, bases) rather than targets.
-\begin{itemize}
-    \item \textbf{Goal:} Maximize combined survival value of friendly assets
-    \item \textbf{Requirement:} Map which targets attack which assets
-    \item \textbf{Math:} \textbf{Maximize} expected value of surviving assets
-\end{itemize}
-\end{exampleblock}
-\end{columns}
+  \vspace{0.15cm}
+  {\footnotesize
+  WTA is framed by two objectives: \textbf{destroy enemy forces}
+  or \textbf{protect friendly assets}.
+  }
+
+  \vspace{0.4cm}
+
+  \begin{columns}[T]
+
+    \begin{column}{0.48\textwidth}
+
+      \begin{tikzpicture}
+        \fill[navydark, rounded corners=3pt] (0,0) rectangle (5.3,0.42);
+        \node[white, font=\small\bfseries, anchor=west] at (0.15,0.21)
+          {\faCrosshairs\quad Target-based};
+      \end{tikzpicture}
+
+      \vspace{0.2cm}
+      {\footnotesize
+      Values assigned to each \textbf{enemy target} based on threat they pose.
+
+      \vspace{0.15cm}
+      \textbf{Goal:} Maximize total damage inflicted on incoming targets.
+      }
+
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+
+      \begin{tikzpicture}
+        \fill[tealaccent, rounded corners=3pt] (0,0) rectangle (5.3,0.42);
+        \node[white, font=\small\bfseries, anchor=west] at (0.15,0.21)
+          {\faCity\quad Asset-based};
+      \end{tikzpicture}
+
+      \vspace{0.2cm}
+      {\footnotesize
+      Values assigned to \textbf{defended assets} (cities, bases) rather than targets.
+
+      \vspace{0.15cm}
+      \textbf{Goal:} Maximize combined survival value of friendly assets.
+      }
+
+    \end{column}
+
+  \end{columns}
+
 \end{frame}
 
+% ── SLIDE: Parameters and Variables ──────────────────────────────────
 \begin{frame}{Mathematical Representation: Parameters and Variables}
-\begin{block}{Target-based Formulation -- Parameters}
-\begin{itemize}
-    \item $W = \{1, \dots, m\}$: The set of available \textbf{weapons}
-    \item $T = \{1, \dots, n\}$: The set of \textbf{targets} to be engaged
-    \item $V_j$: The \textbf{strategic military value} or importance of target $j$
-    \item $p_{ij}$: The ``\textbf{probability of kill}'' -- chance that weapon $i$ will destroy target $j$
-\end{itemize}
-\end{block}
 
-\vspace{0.3cm}
-\begin{exampleblock}{Decision Variable}
-$$x_{ij} \in \{0, 1\}$$
-\textbf{Binary variable:} $x_{ij} = 1$ if weapon $i$ is assigned to target $j$, 0 otherwise.
+  \begin{tikzpicture}
+    \fill[navymid, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\small\bfseries, anchor=west] at (0.2,0.225)
+      {\faTable\quad Target-based Formulation -- Parameters};
+  \end{tikzpicture}
 
-Each weapon is assigned to exactly one target.
-\end{exampleblock}
+  \vspace{0.2cm}
+  {\footnotesize
+  \begin{itemize}
+    \setlength\itemsep{4pt}
+    \item[\color{goldaccent}$\blacktriangleright$]
+      $W = \{1,\ldots,m\}$: The set of available \textbf{weapon types}
+    \item[\color{goldaccent}$\blacktriangleright$]
+      $T = \{1,\ldots,n\}$: The set of \textbf{targets} to be engaged
+    \item[\color{goldaccent}$\blacktriangleright$]
+      $v_j$: The \textbf{strategic military value} or importance of target $j$
+    \item[\color{goldaccent}$\blacktriangleright$]
+      $p_{ij}$: The \textbf{probability of kill} — chance that one weapon of type $i$ will destroy target $j$
+    \item[\color{goldaccent}$\blacktriangleright$]
+      $w_i$: The \textbf{total quantity} of weapons of type $i$ available
+  \end{itemize}
+  }
+
+  \vspace{0.3cm}
+
+  \begin{tikzpicture}
+    \fill[navydark, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\small\bfseries, anchor=west] at (0.2,0.225)
+      {\faSlidersH\quad Decision Variable};
+  \end{tikzpicture}
+
+  \vspace{0.3cm}
+
+  \begin{center}
+    {\large $x_{ij} \in \{0, 1, 2, \ldots\}$}
+  \end{center}
+
+  \vspace{0.15cm}
+  {\footnotesize
+  \textbf{Integer variable} representing the number of weapons of type $i$ assigned to target $j$
+  }
+
 \end{frame}
 
+% ── SLIDE: Objective Functions ────────────────────────────────────────
 \begin{frame}{Mathematical Representation: Objective Functions}
-\begin{block}{Goal: Maximize damage (or equivalently, minimize survival)}
-While the goal is to maximize damage, the standard convention is to minimize remaining survival value.
-\end{block}
 
-\vspace{0.2cm}
-\begin{columns}[t]
-\column{0.48\textwidth}
-\begin{alertblock}{1. Maximizing Total Expected Damage}
-\begin{equation*}
-\text{Max } Z = \sum_{j=1}^{n} V_j \left[ 1 - \prod_{i=1}^{m} (1 - p_{ij})^{x_{ij}} \right]
-\end{equation*}
-\end{alertblock}
+  \begin{tikzpicture}
+    \fill[navymid, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\footnotesize\bfseries, anchor=west] at (0.2,0.225)
+      {\faBullseye\quad Goal: Maximize damage (or equivalently, minimize survival)};
+  \end{tikzpicture}
 
-\column{0.48\textwidth}
-\begin{exampleblock}{2. Minimizing Expected Survival Value}
-\begin{equation*}
-\text{Min } Z = \sum_{j=1}^{n} V_j \prod_{i=1}^{m} (1 - p_{ij})^{x_{ij}}
-\end{equation*}
-\end{exampleblock}
-\end{columns}
+  \vspace{0.15cm}
+  {\footnotesize
+  While the goal is to maximize damage, the standard convention is to minimize
+  remaining survival value.
+  }
 
-\vspace{0.3cm}
-\begin{block}{Key Insight}
-$\prod_{i=1}^{m} (1 - p_{ij})^{x_{ij}}$ = \textbf{Probability that target $j$ survives ALL assigned weapons}
+  \vspace{0.35cm}
 
-The product captures the \textbf{combined effect} of multiple weapons attacking the same target.
-\end{block}
+  \begin{columns}[T]
+
+    \begin{column}{0.48\textwidth}
+      {\footnotesize\color{navydark}\textbf{Maximizing Total Expected Damage}}
+      \vspace{0.2cm}
+      {\small
+      \[
+        \text{Max } Z = \sum_{j=1}^{n} v_j
+        \left[ 1 - \prod_{i=1}^{m} (1-p_{ij})^{x_{ij}} \right]
+      \]
+      }
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      {\footnotesize\color{tealaccent}\textbf{Minimizing Expected Survival Value}}
+      \vspace{0.2cm}
+      {\small
+      \[
+        \text{Min } Z = \sum_{j=1}^{n} v_j \prod_{i=1}^{m} (1-p_{ij})^{x_{ij}}
+      \]
+      }
+    \end{column}
+
+  \end{columns}
+
+  \vspace{0.35cm}
+
+  \begin{tikzpicture}
+    \fill[navydark, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\footnotesize\bfseries, anchor=west] at (0.2,0.225)
+      {\faLightbulb\quad Key Insight};
+  \end{tikzpicture}
+
+  \vspace{0.15cm}
+  {\footnotesize
+  $\prod_{i=1}^{m}(1-p_{ij})^{x_{ij}}$ $=$ \textbf{Probability that target $j$ survives ALL assigned weapons}\\[3pt]
+  The product captures the \textbf{combined effect} of multiple weapons attacking the same target.
+  }
+
 \end{frame}
 
+% ── SLIDE: Constraints ────────────────────────────────────────────────
 \begin{frame}{Mathematical Representation: Constraints}
-\begin{block}{Constraint 1: Each Weapon Assigned Once}
-\begin{equation*}
-\sum_{j=1}^{n} x_{ij} = 1, \quad \forall i \in W
-\end{equation*}
-\textbf{Meaning:} Every weapon must be assigned to exactly one target.
-\end{block}
 
-\vspace{0.3cm}
-\begin{alertblock}{Constraint 2: Integrality}
-\begin{equation*}
-x_{ij} \in \{0, 1\}
-\end{equation*}
-\textbf{Meaning:} Binary assignment -- weapon $i$ is either assigned to target $j$ or not.
-\end{alertblock}
+  \begin{tikzpicture}
+    \fill[navymid, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\footnotesize\bfseries, anchor=west] at (0.2,0.225)
+      {Constraint 1: Resource Availability};
+  \end{tikzpicture}
 
-\vspace{0.3cm}
-\begin{exampleblock}{Complete Formulation Summary}
-\textbf{Minimize} $\sum_{j} V_j \prod_{i} (1-p_{ij})^{x_{ij}}$ \quad
-\textbf{s.t.} $\sum_{j} x_{ij} = 1$, \quad $x_{ij} \in \{0,1\}$
-\end{exampleblock}
+  \vspace{0.2cm}
+  \[
+    \sum_{j=1}^{n} x_{ij} \leq w_i, \quad \forall i \in W
+  \]
+  \vspace{-0.2cm}
+  {\footnotesize
+  \textbf{Meaning:} Total weapons of type $i$ assigned across all targets cannot exceed available quantity $w_i$
+  }
+
+  \vspace{0.3cm}
+
+  \begin{tikzpicture}
+    \fill[tealaccent, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\footnotesize\bfseries, anchor=west] at (0.2,0.225)
+      {Constraint 2: Integrality};
+  \end{tikzpicture}
+
+  \vspace{0.2cm}
+  \[
+    x_{ij} \in \{0, 1, 2, \ldots\}
+  \]
+  \vspace{-0.2cm}
+  {\footnotesize
+  \textbf{Meaning:} We can only assign \textbf{whole numbers} of weapons (discrete assignments)
+  }
+
+  \vspace{0.3cm}
+
+  \begin{tikzpicture}
+    \fill[navydark, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\footnotesize\bfseries, anchor=west] at (0.2,0.225)
+      {Complete Formulation Summary};
+  \end{tikzpicture}
+
+  \vspace{0.2cm}
+  {\footnotesize
+  \textbf{Minimize} $\displaystyle\sum_j v_j \prod_i (1-p_{ij})^{x_{ij}}$
+  \quad \textbf{s.t.} \quad
+  $\displaystyle\sum_j x_{ij} \leq w_i, \quad x_{ij} \in \mathbb{Z}^+$
+  }
+
 \end{frame}
 
-\begin{frame}{Linear vs. Non-Linear Assignment}
-\begin{columns}[t]
-\column{0.48\textwidth}
-\begin{block}{Linear Assignment Problem (LAP)}
-\begin{itemize}
-    \item \textbf{Structure:} One weapon assigned to exactly one target (\textbf{One-to-One})
-    \item \textbf{Linearity:} Objective function is linear
-    \item Assignments are \textbf{independent}
-    \item \textcolor{accentgreen}{\textbf{Polynomial time solvable}} (Hungarian algorithm)
-\end{itemize}
-\end{block}
-
-\column{0.48\textwidth}
-\begin{alertblock}{Non-Linear Assignment (Non-LAP)}
-\begin{itemize}
-    \item \textbf{Structure:} Multiple weapons can be assigned to single target (\textbf{Many-to-One})
-    \item \textbf{Non-Linearity:} Due to ``\textbf{diminishing returns}''
-    \item Additional weapons = \textbf{overkill} effect
-    \item \textcolor{accentred}{\textbf{NP-complete!}}
-\end{itemize}
-\end{alertblock}
-\end{columns}
-
-\vspace{0.3cm}
-\begin{center}
-\begin{tikzpicture}[scale=0.7]
-% LAP
-\node at (-3.5, 1.8) {\textbf{LAP (One-to-One)}};
-\node[circle, draw, fill=blue!20, minimum size=0.6cm] (w1) at (-5, 0.5) {$W_1$};
-\node[circle, draw, fill=blue!20, minimum size=0.6cm] (w2) at (-5, -0.8) {$W_2$};
-\node[circle, draw, fill=blue!20, minimum size=0.6cm] (w2b) at (-5, -2.1) {$W_3$};
-\node[circle, draw, fill=red!20, minimum size=0.6cm] (t1) at (-2, 0.5) {$T_1$};
-\node[circle, draw, fill=red!20, minimum size=0.6cm] (t2) at (-2, -0.8) {$T_2$};
-\node[circle, draw, fill=red!20, minimum size=0.6cm] (t2b) at (-2, -2.1) {$T_3$};
-\draw[->, thick] (w1) -- (t1);
-\draw[->, thick] (w2) -- (t2);
-\draw[->, thick] (w2b) -- (t2b);
-
-% Non-LAP
-\node at (4, 1.8) {\textbf{Non-LAP (Many-to-One)}};
-\node[circle, draw, fill=blue!20, minimum size=0.6cm] (w3) at (2, 0.5) {$W_1$};
-\node[circle, draw, fill=blue!20, minimum size=0.6cm] (w4) at (2, -0.8) {$W_2$};
-\node[circle, draw, fill=blue!20, minimum size=0.6cm] (w5) at (2, -2.1) {$W_3$};
-\node[circle, draw, fill=red!20, minimum size=0.6cm] (t3) at (5, 0) {$T_1$};
-\node[circle, draw, fill=red!20, minimum size=0.6cm] (t4) at (5, -1.5) {$T_2$};
-\draw[->, thick] (w3) -- (t3);
-\draw[->, thick] (w4) -- (t3);
-\draw[->, thick] (w5) -- (t4);
-\node at (6.5, 0) {\footnotesize Multiple};
-\node at (6.5, -0.4) {\footnotesize weapons};
-\end{tikzpicture}
-\end{center}
-\end{frame}
-
-% =============================================================================
-% SECTION 2: NP-HARDNESS PROOFS
-% =============================================================================
-\section{NP-Hardness Proofs}
-
-\begin{frame}{Section 2: NP-Hardness Proofs}
-\begin{center}
-{\Large\textcolor{primaryblue}{\textbf{Polynomial-Time Reductions}}}
-
-\vspace{0.5cm}
-{\normalsize Proving WTA is NP-complete through formal reductions}
-\end{center}
-\end{frame}
-
+% ── SLIDE: WTA Decision Problem ──────────────────────────────────────
 \begin{frame}{WTA Decision Problem}
-\begin{block}{Decision Version of WTA}
-\textbf{Given:}
-\begin{itemize}
-    \item Survival probability $q_{i,j} = 1 - p_{i,j}$
-    \item Threshold value $k$
-\end{itemize}
 
-\textbf{Question:} Does there exist an assignment $x_{i,j} \in \{0,1\}$ such that:
-\begin{equation*}
-D = \sum_{j=1}^n V_j \prod_{i=1}^m q_{i,j}^{x_{i,j}} \leq k
-\end{equation*}
-\end{block}
+  \begin{tikzpicture}
+    \fill[navymid, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\footnotesize\bfseries, anchor=west] at (0.2,0.225)
+      {\faQuestion\quad Decision Version of WTA};
+  \end{tikzpicture}
 
-\begin{alertblock}{Subject to Constraints}
-$$\sum_{j=1}^n x_{i,j} \leq W_i \quad \text{for } i = 1, \ldots, m$$
-$$x_{i,j} \in \{0, 1\}$$
-where $x_{i,j} = 1$ if weapon $i$ assigned to target $j$, and $x_{i,j} = 0$ otherwise.
+  \vspace{0.2cm}
+  {\footnotesize
+  \textbf{Given:}
+  \begin{itemize}
+    \setlength\itemsep{2pt}
+    \item[\color{goldaccent}$\blacktriangleright$] Survival probability $q_{i,j} = 1 - p_{i,j}$
+    \item[\color{goldaccent}$\blacktriangleright$] Threshold value $k$
+  \end{itemize}
+  \textbf{Question:} Does there exist an assignment $x_{i,j} \in \{0,1\}$ such that:
+  \[
+    D = \sum_{j=1}^{n} V_j \prod_{i=1}^{m} q_{i,j}^{x_{i,j}} \leq k
+  \]
+  }
 
-$D$ represents \textbf{total expected damage} (weighted survival probability of all targets)
-\end{alertblock}
+  \vspace{0.2cm}
+
+  \begin{tikzpicture}
+    \fill[navydark, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\footnotesize\bfseries, anchor=west] at (0.2,0.225)
+      {\faLock\quad Subject to Constraints};
+  \end{tikzpicture}
+
+  \vspace{0.2cm}
+  {\footnotesize
+  \[
+    \sum_{j=1}^{n} x_{i,j} \leq W_i \quad \text{for } i = 1,\ldots,m
+    \qquad x_{i,j} \in \{0,1\}
+  \]
+  where $x_{i,j} = 1$ if weapon $i$ assigned to target $j$, and $x_{i,j} = 0$ otherwise.\\[3pt]
+  $D$ represents \textbf{total expected damage} (weighted survival probability of all targets).
+  }
+
 \end{frame}
 
+% ── SLIDE: Two Reductions ─────────────────────────────────────────────
 \begin{frame}{Two Polynomial-Time Reductions}
-\begin{block}{Our Approach}
-We demonstrate two polynomial-time reductions:
-\end{block}
 
-\vspace{0.3cm}
-\begin{columns}[t]
-\column{0.48\textwidth}
-\begin{alertblock}{Reduction 1}
-\textbf{SUBSET PRODUCT $\leq_p$ WTA}
+  \begin{tikzpicture}
+    \fill[navymid, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\footnotesize\bfseries, anchor=west] at (0.2,0.225)
+      {\faProjectDiagram\quad Our Approach};
+  \end{tikzpicture}
 
-\vspace{0.2cm}
-$\Rightarrow$ Proves \textbf{WTA is NP-hard}
+  \vspace{0.15cm}
+  {\footnotesize We demonstrate two polynomial-time reductions:}
 
-\vspace{0.2cm}
-{\small (Reduce FROM a known NP-complete problem TO WTA)}
-\end{alertblock}
+  \vspace{0.3cm}
 
-\column{0.48\textwidth}
-\begin{exampleblock}{Reduction 2}
-\textbf{WTA $\leq_p$ Multiple Knapsack}
+  \begin{columns}[T]
 
-\vspace{0.2cm}
-$\Rightarrow$ Shows WTA reduces to another known NP-hard problem
+    \begin{column}{0.48\textwidth}
+      \begin{tikzpicture}
+        \fill[navydark, rounded corners=3pt] (0,0) rectangle (5.3,0.42);
+        \node[white, font=\footnotesize\bfseries, anchor=west] at (0.15,0.21)
+          {Reduction 1};
+      \end{tikzpicture}
+      \vspace{0.15cm}
+      {\footnotesize
+      \textbf{SUBSET PRODUCT $\leq_p$ WTA}\\[6pt]
+      $\Rightarrow$ Proves \textbf{WTA is NP-hard}\\[6pt]
+      Reduce FROM a known NP-complete problem TO WTA.
+      }
+    \end{column}
 
-\vspace{0.2cm}
-{\small (Shows connection between problems)}
-\end{exampleblock}
-\end{columns}
+    \begin{column}{0.48\textwidth}
+      \begin{tikzpicture}
+        \fill[tealaccent, rounded corners=3pt] (0,0) rectangle (5.3,0.42);
+        \node[white, font=\footnotesize\bfseries, anchor=west] at (0.15,0.21)
+          {Reduction 2};
+      \end{tikzpicture}
+      \vspace{0.15cm}
+      {\footnotesize
+      \textbf{WTA $\leq_p$ Multiple Knapsack}\\[6pt]
+      $\Rightarrow$ Shows WTA reduces to another NP-hard problem\\[6pt]
+      Shows connection between problems.
+      }
+    \end{column}
 
-\vspace{0.5cm}
-\begin{center}
-\begin{tikzpicture}[scale=0.7, transform shape]
-\node[draw, rounded corners, fill=blue!10] (sp) at (0,0) {SUBSET PRODUCT};
-\node[draw, rounded corners, fill=red!20] (wta) at (4.5,0) {\textbf{WTA}};
-\node[draw, rounded corners, fill=green!10] (mk) at (9,0) {Multiple Knapsack};
-\draw[->, very thick] (sp) -- node[above] {$\leq_p$} (wta);
-\draw[->, very thick] (wta) -- node[above] {$\leq_p$} (mk);
-\node[below] at (sp.south) {\footnotesize NP-complete};
-\node[below] at (wta.south) {\footnotesize \textbf{NP-complete}};
-\node[below] at (mk.south) {\footnotesize NP-hard};
-\end{tikzpicture}
-\end{center}
+  \end{columns}
+
+  \vspace{0.5cm}
+
+  \begin{center}
+  \begin{tikzpicture}[node distance=3.8cm]
+    \node[draw=navylight, rounded corners=4pt, fill=navylight!20,
+          font=\scriptsize, minimum height=0.65cm, minimum width=2.8cm] (SP)
+      {SUBSET PRODUCT};
+    \node[below=0.1cm, font=\tiny, text=navymid] at (SP.south) {NP-complete};
+
+    \node[draw=red!50, rounded corners=4pt, fill=red!15,
+          font=\scriptsize\bfseries, minimum height=0.65cm, minimum width=1.6cm,
+          right of=SP] (WTA)
+      {WTA};
+    \node[below=0.1cm, font=\tiny\bfseries, text=red!70!black] at (WTA.south)
+      {NP-complete};
+
+    \node[draw=tealaccent, rounded corners=4pt, fill=tealbg,
+          font=\scriptsize, minimum height=0.65cm, minimum width=2.8cm,
+          right of=WTA] (MK)
+      {Multiple Knapsack};
+    \node[below=0.1cm, font=\tiny, text=tealaccent] at (MK.south) {NP-hard};
+
+    \draw[->, thick, navydark, shorten >=2pt, shorten <=2pt]
+      (SP) -- node[above, font=\tiny]{$\leq_p$} (WTA);
+    \draw[->, thick, navydark, shorten >=2pt, shorten <=2pt]
+      (WTA) -- node[above, font=\tiny]{$\leq_p$} (MK);
+  \end{tikzpicture}
+  \end{center}
+
 \end{frame}
 
+% ── SLIDE: Reduction 1 Construction ──────────────────────────────────
 \begin{frame}{Reduction 1: SUBSET PRODUCT $\leq_p$ WTA}
-\begin{block}{SUBSET PRODUCT Problem (NP-complete)}
-\textbf{Given:} Set $A = \{a_1, a_2, \ldots, a_m\}$ and target product $b$
 
-\textbf{Find:} Subset $X \subseteq A$ where $\prod_{x \in X} a_x = b$
-\end{block}
+  \begin{tikzpicture}
+    \fill[navymid, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\footnotesize\bfseries, anchor=west] at (0.2,0.225)
+      {SUBSET PRODUCT Problem (NP-complete)};
+  \end{tikzpicture}
 
-\vspace{0.2cm}
-\begin{exampleblock}{WTA Instance Construction}
-Let $P = \prod_{i=1}^m a_i$. Construct WTA with:
-\begin{itemize}
-    \item \textbf{Targets:} 2 targets with values $V_1 = V_2 = P$
-    \item \textbf{Weapons:} $m + 2$ weapons: $W_1, W_2, \ldots, W_m, W_\alpha, W_\beta$
-    \item \textbf{Survival probabilities:}
-    \begin{columns}
-    \column{0.45\textwidth}
-    \begin{itemize}
-        \item $q_{i,1} = q_{i,2} = \frac{1}{a_i}$ for $i = 1, \ldots, m$
-    \end{itemize}
-    \column{0.45\textwidth}
-    \begin{itemize}
-        \item $q_{\alpha,1} = q_{\alpha,2} = \frac{b}{2P}$
-        \item $q_{\beta,1} = q_{\beta,2} = \frac{1}{2b}$
-    \end{itemize}
-    \end{columns}
-    \item \textbf{Threshold:} $k = 1$ (we ask if $D \leq 1$)
-\end{itemize}
-\end{exampleblock}
+  \vspace{0.15cm}
+  {\footnotesize
+  \textbf{Given:} Set $A = \{a_1, a_2, \ldots, a_m\}$ and target product $b$\\
+  \textbf{Find:} Subset $X \subseteq A$ where $\prod_{x \in X} a_x = b$
+  }
 
-\begin{alertblock}{Time Complexity}
-Constructs WTA with 2 targets and $m+2$ weapons in $O(m)$ time -- \textbf{Polynomial!}
-\end{alertblock}
-\end{frame}
+  \vspace{0.25cm}
 
-\begin{frame}{Reduction 1: Forward Direction}
-\begin{block}{Forward ($\Rightarrow$): SUBSET PRODUCT has solution $\Rightarrow$ WTA has solution}
-Suppose $X \subseteq \{1, \ldots, m\}$ with $\prod_{x \in X} a_x = b$. Let $Y = \{1, \ldots, m\} \setminus X$.
+  \begin{tikzpicture}
+    \fill[tealaccent, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\footnotesize\bfseries, anchor=west] at (0.2,0.225)
+      {WTA Instance Construction};
+  \end{tikzpicture}
 
-Then:
-$$\prod_{i \in X} \frac{1}{a_i} = \frac{1}{b}, \quad \prod_{y \in Y} \frac{1}{a_y} = \frac{b}{P}$$
+  \vspace{0.15cm}
+  {\footnotesize
+  Let $P = \prod_{i=1}^{m} a_i$. Construct WTA with:
+  \begin{itemize}
+    \setlength\itemsep{2pt}
+    \item[\color{goldaccent}$\blacktriangleright$] \textbf{Targets:} 2 targets with values $V_1 = V_2 = P$
+    \item[\color{goldaccent}$\blacktriangleright$] \textbf{Weapons:} $m+2$ weapons: $W_1, W_2, \ldots, W_m, W_\alpha, W_\beta$
+    \item[\color{goldaccent}$\blacktriangleright$] \textbf{Survival probabilities:} $q_{i,1} = q_{i,2} = \frac{1}{a_i}$ for $i=1,\ldots,m$; \quad $q_{\alpha,1} = q_{\alpha,2} = \frac{b}{2P}$; \quad $q_{\beta,1} = q_{\beta,2} = \frac{1}{2b}$
+    \item[\color{goldaccent}$\blacktriangleright$] \textbf{Threshold:} $k = 1$ (we ask if $D \leq 1$)
+  \end{itemize}
+  }
 
-\textbf{Assignment:} $\{W_x : x \in X\} \cup \{W_\alpha\} \rightarrow T_1$ and $\{W_y : y \in Y\} \cup \{W_\beta\} \rightarrow T_2$
+  \vspace{0.25cm}
 
-\textbf{Total damage:}
-\begin{align*}
-D &= V_1 \cdot \frac{b}{2P} \cdot \frac{1}{b} + V_2 \cdot \frac{1}{2b} \cdot \frac{b}{P} \\
-&= P \cdot \frac{b}{2P} \cdot \frac{1}{b} + P \cdot \frac{1}{2b} \cdot \frac{b}{P} = \frac{1}{2} + \frac{1}{2} = 1 \leq k \quad \checkmark
-\end{align*}
-\end{block}
-\end{frame}
+  \begin{tikzpicture}
+    \fill[navydark, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\footnotesize\bfseries, anchor=west] at (0.2,0.225)
+      {\faClock\quad Time Complexity};
+  \end{tikzpicture}
 
-\begin{frame}{Reduction 1: Backward Direction (Part 1)}
-\begin{block}{Backward ($\Leftarrow$): WTA has solution $\Rightarrow$ SUBSET PRODUCT has solution}
-Suppose WTA has solution with $D \leq 1$. Let $X', Y'$ be weapons assigned to $T_1, T_2$.
-\end{block}
-
-\begin{alertblock}{Claim: $W_\alpha$ and $W_\beta$ cannot both target the same target}
-\textit{Proof:} If both assigned to $T_1$ (symmetric for $T_2$):
-$$D \geq P \cdot \frac{1}{2b} \cdot \frac{b}{2P} \cdot \frac{1}{\prod_{x \in X' \setminus \{\alpha, \beta\}} a_x} + \frac{P}{\prod_{y \in Y'} a_y} \geq \frac{1}{4} + 1 > 1 \quad \Rightarrow\!\Leftarrow$$
-
-So $W_\alpha \to T_1$ and $W_\beta \to T_2$. Let $X = X' \setminus \{\alpha\}$, $Y = Y' \setminus \{\beta\}$.
-\end{alertblock}
-
-\begin{block}{From the Assignment}
-With $W_\alpha \to T_1$ and $W_\beta \to T_2$:
-$$D = P \cdot \frac{b}{2P} \prod_{x \in X} \frac{1}{a_x} + P \cdot \frac{1}{2b} \prod_{y \in Y} \frac{1}{a_y} \leq 1$$
-\end{block}
+  \vspace{0.1cm}
+  {\footnotesize
+  Constructs WTA with 2 targets and $m+2$ weapons in $O(m)$ time --- \textbf{Polynomial!}
+  }
 
 \end{frame}
 
-\begin{frame}{Reduction 1: Backward Direction (Part 2)}
+% ── SLIDE: Proof of Correctness ───────────────────────────────────────
+\begin{frame}{Reduction 1: Proof of Correctness}
 
-\begin{exampleblock}{Algebraic Derivation}
-Let $z = \prod_{x \in X} a_x$. Then:
-$$\frac{b}{2z} + \frac{z}{2b} \leq 1$$
+  \begin{tikzpicture}
+    \fill[navymid, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\footnotesize\bfseries, anchor=west] at (0.2,0.225)
+      {Forward Direction ($\Rightarrow$): SUBSET PRODUCT has solution $\Rightarrow$ WTA has solution};
+  \end{tikzpicture}
 
-Multiply by $2bz > 0$:
-$$b^2 + z^2 \leq 2bz \quad \Rightarrow \quad (b - z)^2 \leq 0$$
+  \vspace{0.15cm}
+  {\footnotesize
+  Suppose $X \subseteq \{1,\ldots,m\}$ with $\prod_{x \in X} a_x = b$. Let $Y = \{1,\ldots,m\} \setminus X$. Then:
+  \[
+    \prod_{i \in X} \frac{1}{a_i} = \frac{1}{b}, \qquad \prod_{y \in Y} \frac{1}{a_y} = \frac{b}{P}
+  \]
+  \textbf{Assignment:} $\{W_x : x \in X\} \cup \{W_\alpha\} \to T_1$ and $\{W_y : y \in Y\} \cup \{W_\beta\} \to T_2$\\
+  \textbf{Total damage:}
+  \[
+    D = P \cdot \frac{b}{2P} \cdot \frac{1}{b} + P \cdot \frac{1}{2b} \cdot \frac{b}{P} = \frac{1}{2} + \frac{1}{2} = 1 \leq k \quad \checkmark
+  \]
+  }
 
-Since $(b-z)^2 \geq 0$, we must have $(b-z)^2 = 0$, so:
-$$b = z = \prod_{x \in X} a_x$$
-\end{exampleblock}
+  \vspace{0.2cm}
 
-\begin{alertblock}{Conclusion}
-$X$ is a valid solution to SUBSET PRODUCT! $\checkmark$
+  \begin{tikzpicture}
+    \fill[navydark, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\footnotesize\bfseries, anchor=west] at (0.2,0.225)
+      {Backward Direction ($\Leftarrow$): WTA has solution $\Rightarrow$ SUBSET PRODUCT has solution};
+  \end{tikzpicture}
 
-\textbf{Time Complexity:} $O(m)$ -- Polynomial reduction complete.
-\end{alertblock}
+  \vspace{0.15cm}
+  {\footnotesize
+  Suppose WTA has solution with $D \leq 1$. Let $X', Y'$ be weapons assigned to $T_1, T_2$.\\
+  \textbf{Claim:} $W_\alpha$ and $W_\beta$ cannot both target the same target.\\
+  \textit{Proof:} If both assigned to $T_1$ (symmetric for $T_2$):
+  \[
+    D \geq P \cdot \frac{1}{2b} \cdot \frac{b}{2P} \cdot \frac{1}{\prod_{x \in X' \setminus \{\alpha,\beta\}} a_x}
+    + \frac{P}{\prod_{y \in Y'} a_y} \geq \frac{1}{4} + 1 > 1 \implies\Leftarrow
+  \]
+  }
+
 \end{frame}
 
+% ── SLIDE: Backward Direction Continued ──────────────────────────────
+\begin{frame}{Reduction 1: Backward Direction (Continued)}
+
+  \begin{tikzpicture}
+    \fill[navymid, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\footnotesize\bfseries, anchor=west] at (0.2,0.225)
+      {From the Assignment};
+  \end{tikzpicture}
+
+  \vspace{0.1cm}
+  {\footnotesize
+  With $W_\alpha \to T_1$ and $W_\beta \to T_2$:
+  \[
+    D = P \cdot \frac{b}{2P} \prod_{x \in X} \frac{1}{a_x} + P \cdot \frac{1}{2b} \prod_{y \in Y} \frac{1}{a_y} \leq 1
+  \]
+  }
+
+  \vspace{0.1cm}
+
+  \begin{tikzpicture}
+    \fill[tealaccent, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\footnotesize\bfseries, anchor=west] at (0.2,0.225)
+      {Algebraic Derivation};
+  \end{tikzpicture}
+
+  \vspace{0.1cm}
+  {\footnotesize
+  Let $z = \prod_{x \in X} a_x$. Then:
+  \[
+    \frac{b}{2z} + \frac{z}{2b} \leq 1
+  \]
+  Multiply by $2bz > 0$:
+  \[
+    b^2 + z^2 \leq 2bz \implies (b-z)^2 \leq 0
+  \]
+  Since $(b-z)^2 \geq 0$, we must have $(b-z)^2 = 0$, so:
+  \[
+    b = z = \prod_{x \in X} a_x
+  \]
+  }
+
+  \vspace{0.1cm}
+
+  \begin{tikzpicture}
+    \fill[navydark, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\footnotesize\bfseries, anchor=west] at (0.2,0.225)
+      {\faCheckCircle\quad Conclusion};
+  \end{tikzpicture}
+
+  \vspace{0.1cm}
+  {\footnotesize
+  $X$ is a valid solution to SUBSET PRODUCT! $\checkmark$ \quad
+  \textbf{Time Complexity:} $O(m)$ --- Polynomial reduction complete.
+  }
+
+\end{frame}
+
+% ── SLIDE: Reduction 2 ────────────────────────────────────────────────
 \begin{frame}{Reduction 2: WTA $\leq_p$ Multiple Knapsack}
-\begin{block}{Multiple Knapsack Construction}
-Given WTA with $m$ targets, $n$ weapons, probabilities $\{p_{i,j}\}$:
-\begin{itemize}
-    \item \textbf{Knapsacks:} $m$ knapsacks (one per target) with Capacity $C_j = \infty$
-    \item \textbf{Items:} $w_i$ items for weapon type $i$ (one per copy)
-    \item \textbf{Profit:} $v_{ij} = -\log(1 - p_{i,j}) = -\log(q_{i,j})$
-    \item \textbf{Question:} Does assignment with value $\geq V$ exist?
-\end{itemize}
-\end{block}
 
-\begin{exampleblock}{Objective Transformation (Key Insight)}
-For single target $j$, minimizing $\prod q_{i,j}^{x_{i,j}}$ equals minimizing:
-$$\log\left(\prod_{i=1}^n q_{i,j}^{x_{i,j}}\right) = \sum_{i=1}^n x_{i,j} \log(q_{i,j})$$
+  \begin{tikzpicture}
+    \fill[navymid, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\footnotesize\bfseries, anchor=west] at (0.2,0.225)
+      {\faBox\quad Multiple Knapsack Construction};
+  \end{tikzpicture}
 
-Equivalent to \textbf{maximizing}:
-$$-\sum_{i=1}^n x_{i,j} \log(q_{i,j}) = \sum_{i=1}^n x_{i,j} \cdot v_{ij}$$
+  \vspace{0.15cm}
+  {\footnotesize
+  Given WTA with $m$ targets, $n$ weapons, probabilities $\{p_{i,j}\}$:
+  \begin{itemize}
+    \setlength\itemsep{2pt}
+    \item[\color{goldaccent}$\blacktriangleright$] \textbf{Knapsacks:} $m$ knapsacks (one per target)
+    \item[\color{goldaccent}$\blacktriangleright$] \textbf{Capacity:} $C_j = \infty$ (or sufficiently large)
+    \item[\color{goldaccent}$\blacktriangleright$] \textbf{Items:} $n$ items (one per weapon type)
+    \item[\color{goldaccent}$\blacktriangleright$] \textbf{Profit:} $v_{ij} = -\log(1-p_{i,j}) = -\log(q_{i,j})$
+    \item[\color{goldaccent}$\blacktriangleright$] \textbf{Weight:} $w_{ij} = 0$ (or 1 if weapon limits exist)
+  \end{itemize}
+  }
 
-This is \textbf{exactly the Multiple Knapsack objective!}
-\end{exampleblock}
+  \vspace{0.25cm}
+
+  \begin{tikzpicture}
+    \fill[navydark, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\footnotesize\bfseries, anchor=west] at (0.2,0.225)
+      {\faLightbulb\quad Objective Transformation (Key Insight)};
+  \end{tikzpicture}
+
+  \vspace{0.15cm}
+  {\footnotesize
+  For single target $j$, minimizing $\prod q_{i,j}^{x_{i,j}}$ equals minimizing:
+  \[
+    \log\left(\prod_{i=1}^{n} q_{i,j}^{x_{i,j}}\right) = \sum_{i=1}^{n} x_{i,j} \log(q_{i,j})
+  \]
+  Equivalent to \textbf{maximizing}:
+  \[
+    -\sum_{i=1}^{n} x_{i,j}\log(q_{i,j}) = \sum_{i=1}^{n} x_{i,j} \cdot v_{ij}
+  \]
+  This is \textbf{exactly the Multiple Knapsack objective!}
+  }
+
 \end{frame}
 
+% ── SLIDE: Constraint Mapping ─────────────────────────────────────────
 \begin{frame}{Reduction 2: Constraint Mapping \& Conclusion}
 
-\begin{block}{Constraint Mapping}
-\begin{itemize}
-    \item \textbf{WTA constraint:} $\sum_{j=1}^m x_{i,j} \leq W_i$ (weapon type $i$ used at most $W_i$ times)
-    \item \textbf{Maps to:} $\sum_{j=1}^m y_{ij} \leq 1$ (each item in at most one knapsack) when $W_i = 1$
-    \item For general $W_i$: Create $W_i$ copies of item $i$
-\end{itemize}
-\end{block}
+  \begin{tikzpicture}
+    \fill[navymid, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\footnotesize\bfseries, anchor=west] at (0.2,0.225)
+      {\faProjectDiagram\quad Constraint Mapping};
+  \end{tikzpicture}
 
-\begin{exampleblock}{Equivalence}
-Assignment $x_{i,j}$ optimal for WTA $\Leftrightarrow$ $y_{ij} = x_{i,j}$ optimal for Multiple Knapsack
+  \vspace{0.15cm}
+  {\footnotesize
+  \begin{itemize}
+    \setlength\itemsep{3pt}
+    \item[\color{goldaccent}$\blacktriangleright$]
+      \textbf{WTA constraint:} $\sum_{j=1}^{m} x_{i,j} \leq W_i$ (weapon type $i$ used at most $W_i$ times)
+    \item[\color{goldaccent}$\blacktriangleright$]
+      \textbf{Maps to:} $\sum_{j=1}^{m} y_{ij} \leq 1$ (each item in at most one knapsack) when $W_i = 1$
+    \item[\color{goldaccent}$\blacktriangleright$]
+      For general $W_i$: Create $W_i$ copies of item $i$
+  \end{itemize}
+  }
 
-\textbf{Logarithmic transformation preserves ordering of solutions!}
+  \vspace{0.25cm}
 
-\textbf{Time:} $O(nm)$ to compute all $v_{ij} = -\log(1 - p_{i,j})$
-\end{exampleblock}
+  \begin{tikzpicture}
+    \fill[tealaccent, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\footnotesize\bfseries, anchor=west] at (0.2,0.225)
+      {Equivalence};
+  \end{tikzpicture}
 
-\begin{alertblock}{Final Conclusion}
-\begin{center}
-\textbf{WTA is in NP} (solution verifiable in polynomial time) + \textbf{WTA is NP-hard}
+  \vspace{0.15cm}
+  {\footnotesize
+  Assignment $x_{i,j}$ optimal for WTA $\Leftrightarrow$ $y_{ij} = x_{i,j}$ optimal for Multiple Knapsack\\
+  \textbf{Logarithmic transformation preserves ordering of solutions!}\\
+  \textbf{Time:} $O(nm)$ to compute all $v_{ij} = -\log(1-p_{i,j})$
+  }
 
-$\Rightarrow$ \textbf{The Weapon-Target Assignment Problem is NP-complete!}
-\end{center}
-\end{alertblock}
+  \vspace{0.25cm}
+
+  \begin{tikzpicture}
+    \fill[navydark, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\footnotesize\bfseries, anchor=west] at (0.2,0.225)
+      {\faTrophy\quad Final Conclusion};
+  \end{tikzpicture}
+
+  \vspace{0.15cm}
+  \begin{center}
+  {\footnotesize
+  \textbf{WTA is in NP} (solution verifiable in polynomial time) $+$ \textbf{WTA is NP-hard}\\[4pt]
+  {\color{goldaccent}$\Rightarrow$} \textbf{The Weapon-Target Assignment Problem is NP-complete!}
+  }
+  \end{center}
+
 \end{frame}
 
-% =============================================================================
-% SECTION 3: ALGORITHM SURVEY
-% =============================================================================
-\section{Algorithm Survey}
+% ==========================================================================
+% SECTION 2: EXISTING ALGORITHMS SURVEY
+% ==========================================================================
 
-\begin{frame}{Section 3: Existing Algorithms Survey}
-\begin{center}
-{\Large\textcolor{primaryblue}{\textbf{Comprehensive Algorithm Categories for WTA}}}
+{
+\setbeamercolor{background canvas}{bg=navydark}
+\begin{frame}[plain]
 
-\vspace{0.5cm}
-{\normalsize Five major categories of solution approaches}
-\end{center}
+  \begin{center}
+    {\color{goldaccent}\rule{0.15\textwidth}{2pt}}
+    \hspace{0.5em}
+    {\color{white}\large\textbf{Section 2}}
+    \hspace{0.5em}
+    {\color{goldaccent}\rule{0.15\textwidth}{2pt}}
 
-\vspace{0.3cm}
-\begin{columns}[t]
-\column{0.32\textwidth}
-\begin{block}{Exact}
-\begin{itemize}
-    \item Optimal solutions
-    \item Exponential time
-    \item Small instances
-\end{itemize}
-\end{block}
+    \vspace{0.6cm}
+    {\color{white}\Huge\textbf{Existing Algorithms Survey}}
 
-\column{0.32\textwidth}
-\begin{alertblock}{Approximation}
-\begin{itemize}
-    \item Provable bounds
-    \item Polynomial time
-    \item Large instances
-\end{itemize}
-\end{alertblock}
+    \vspace{0.4cm}
+    {\color{iceblue}\normalsize Five Major Categories of Solution Approaches}
+  \end{center}
+\end{frame}
+}
 
-\column{0.32\textwidth}
-\begin{exampleblock}{Randomized}
-\begin{itemize}
-    \item Probabilistic
-    \item Quality $\propto$ samples
-    \item Baseline approach
-\end{itemize}
-\end{exampleblock}
-\end{columns}
+\begin{frame}{Existing Algorithms Survey}
+    \centering
+    \begin{tcolorbox}[colback=TealLight!30, colframe=TealMain, arc=0mm, leftrule=5mm,
+      title=\textbf{Comprehensive Algorithm Categories for WTA}]
+        \centering \small Five major categories of solution approaches
+    \end{tcolorbox}
 
-\vspace{0.3cm}
-\begin{columns}[c]
-\column{0.45\textwidth}
-\begin{block}{Heuristic}
-Fast, problem-specific, near-optimal
-\end{block}
-
-\column{0.45\textwidth}
-\begin{alertblock}{Metaheuristic}
-General-purpose, exploration/exploitation balance
-\end{alertblock}
-\end{columns}
+    \vspace{0.2cm}
+    \begin{columns}[t]
+        \begin{column}{0.45\textwidth}
+            \begin{itemize}
+                \item[\color{goldaccent}$\blacktriangleright$] \textbf{\color{TealMain}Exact:} Optimal solutions, but exponential time complexity.
+                \item[\color{goldaccent}$\blacktriangleright$] \textbf{\color{TealMain}Approximation:} Provable bounds within polynomial time.
+                \item[\color{goldaccent}$\blacktriangleright$] \textbf{\color{TealMain}Randomized:} Probabilistic search where quality $\propto$ samples.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.45\textwidth}
+            \begin{itemize}
+                \item[\color{goldaccent}$\blacktriangleright$] \textbf{\color{TealMain}Heuristic:} Fast, problem-specific, and near-optimal.
+                \item[\color{goldaccent}$\blacktriangleright$] \textbf{\color{TealMain}Metaheuristic:} General-purpose optimization with exploration balance.
+            \end{itemize}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 \begin{frame}{Category 1: Exact Exponential Algorithms}
-\begin{block}{Guarantee Optimal Solutions with Proven Bounds}
-These algorithms guarantee finding the optimal solution but have exponential time complexity.
-\end{block}
 
-\vspace{0.2cm}
-\begin{table}[h]
-\centering
-\small
-\begin{tabular}{p{1.8cm}p{3.8cm}p{1.6cm}p{1.7cm}p{0.6cm}}
-\toprule
-\textbf{Algorithm} & \textbf{Description} & \textbf{Complexity} & \textbf{Solution Quality} & \textbf{Ref} \\
-\midrule
-\textbf{Branch-and-Bound (B\&B)} & Uses LP/IP relaxations with branching on weapon-target assignments. Employs maximum marginal return for branching strategy and network flow for lower bounds. & Worst-case: $O(2^{mn})$ nodes & \textcolor{accentgreen}{Optimal}; handles up to $80 \times 80$ instances & \cite{ahuja2007} \\
-\addlinespace
-\textbf{Branch-Price-and-Cut (BPC)} & Reformulates WTA for column generation with efficient pricing problem solver. Uses clique cuts and power cone optimization for tight relaxations. & Polynomial per iteration; $O(nm \cdot K)$ & \textcolor{accentgreen}{Optimal}; solves $10000+$ in seconds & \cite{bertsimas2025} \\
-\bottomrule
-\end{tabular}
-\end{table}
+  \begin{tikzpicture}
+    \fill[navymid, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\small\bfseries, anchor=west] at (0.2,0.225)
+      {Guaranteed Optimal Solutions};
+  \end{tikzpicture}
+
+  \vspace{0.4cm}
+  \begin{center}
+  \small
+  \begin{tabular}{lp{4cm}lp{1cm}}
+    \rowcolor{DarkSlate}
+    \textcolor{white}{Algorithm} & \textcolor{white}{Description} & \textcolor{white}{Complexity} & \textcolor{white}{Ref} \\
+    Branch-and-Bound & LP/IP relaxations with MMR branching logic & $O(2^{mn})$ & \hyperlink{ref1}{[1]} \\
+    Branch-Price-Cut & Column generation for large-scale variables & $O(nm \cdot K)$ & \hyperlink{ref2}{[2]} \\
+    Branch-and-Adjust & Compact linear under-approximation & Exp.\ Worst & \hyperlink{ref3}{[3]} \\
+  \end{tabular}
+  \end{center}
 \end{frame}
 
 \begin{frame}{Category 2: Approximation Algorithms}
-\begin{block}{Provable Bounds with Polynomial Time Complexity}
-These algorithms provide theoretical guarantees on solution quality while running in polynomial time.
-\end{block}
 
-\vspace{0.2cm}
-\begin{table}[h]
-\centering
-\small
-\begin{tabular}{p{1.8cm}p{3.6cm}p{1.6cm}p{1.7cm}p{0.8cm}}
-\toprule
-\textbf{Algorithm} & \textbf{Description} & \textbf{Complexity} & \textbf{Solution Quality} & \textbf{Ref} \\
-\midrule
-\textbf{Piecewise Linear Approx.} & Approximates nonlinear survival probability using piecewise linear convex functions with breakpoints. & $O(mn \cdot B)$ & Provable $\delta$-error bounds & \cite{andersen2022} \\
-\addlinespace
-\textbf{LP Relaxation + Rounding} & Relaxes integer constraints to LP, solves continuous problem, then rounds to feasible integer solution. & $O(\text{poly}(m,n))$ & No guarantee; may violate constraints & \cite{ahuja2007} \\
-\addlinespace
-\textbf{Lagrangian Relaxation} & Relaxes weapon constraints via Lagrangian multipliers, decomposes into independent target subproblems. & $O(T \cdot nm)$ & Provides lower bounds; typically 5-15\% gap & \cite{kwon1999} \\
-\bottomrule
-\end{tabular}
-\end{table}
+  \begin{tikzpicture}
+    \fill[navymid, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\small\bfseries, anchor=west] at (0.2,0.225)
+      {Provable Bounds, Polynomial Time};
+  \end{tikzpicture}
+
+  \vspace{0.4cm}
+  \begin{center}
+  \small
+  \begin{tabular}{lp{4.2cm}lp{1cm}}
+    \rowcolor{DarkSlate}
+    \textcolor{white}{Algorithm} & \textcolor{white}{Description} & \textcolor{white}{Complexity} & \textcolor{white}{Ref} \\
+    Piecewise Linear & Nonlinear survival probability approximation & $O(mnB)$ & \hyperlink{ref4}{[4,3]} \\
+    LP Relaxation & Continuous relaxation followed by rounding & $O(poly)$ & \hyperlink{ref1}{[1]} \\
+    Lagrangian & Independent target subproblem decomposition & $O(Tnm)$ & \hyperlink{ref5}{[5,6]} \\
+  \end{tabular}
+  \end{center}
 \end{frame}
 
-\begin{frame}{Categories 3 \& 4: Randomized and Heuristic Algorithms}
-\begin{columns}[t]
-\column{0.48\textwidth}
-\begin{block}{Randomized Algorithms}
-\small
-\begin{tabular}{p{1.5cm}p{2.8cm}}
-\toprule
-\textbf{Algorithm} & \textbf{Description} \\
-\midrule
-\textbf{Monte Carlo} & Generates random assignments, evaluates each, selects best. $O(S \cdot mn)$ \\
-\addlinespace
-\textbf{Constructive} & Probabilistic weapon-target selection based on marginal returns with randomness. \\
-\bottomrule
-\end{tabular}
-\end{block}
+\begin{frame}{Category 3: Randomized Algorithms}
 
-\column{0.48\textwidth}
-\begin{alertblock}{Heuristic Algorithms}
-\small
-\begin{tabular}{p{1.5cm}p{2.8cm}}
-\toprule
-\textbf{Algorithm} & \textbf{Description} \\
-\midrule
-\textbf{MMR} & Greedy: max marginal return per step. $O(W^2T)$, near-optimal \cite{intechopen2020} \\
-\addlinespace
-\textbf{VLSN} & Very Large-Scale Neighborhood search via improvement graphs \cite{ahuja2007} \\
-\bottomrule
-\end{tabular}
-\end{alertblock}
-\end{columns}
+  \begin{tikzpicture}
+    \fill[navymid, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\small\bfseries, anchor=west] at (0.2,0.225)
+      {Probabilistic Exploration};
+  \end{tikzpicture}
+
+  \vspace{0.4cm}
+  \begin{center}
+  \small
+  \begin{tabular}{lp{4.5cm}lp{1cm}}
+    \rowcolor{DarkSlate}
+    \textcolor{white}{Algorithm} & \textcolor{white}{Description} & \textcolor{white}{Complexity} & \textcolor{white}{Ref} \\
+    Monte Carlo & Random sampling; evaluates survival rates & $O(Smn)$ & \hyperlink{ref7}{[7]} \\
+    Randomized Heuristic & Probabilistic selection via Marginal Return & $O(Rmn)$ & \hyperlink{ref8}{[8]} \\
+  \end{tabular}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Category 4: Heuristic Algorithms}
+
+  \begin{tikzpicture}
+    \fill[navymid, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\small\bfseries, anchor=west] at (0.2,0.225)
+      {Fast, Near-Optimal Search};
+  \end{tikzpicture}
+
+  \vspace{0.4cm}
+  \begin{center}
+  \small
+  \begin{tabular}{lp{4.5cm}lp{1cm}}
+    \rowcolor{DarkSlate}
+    \textcolor{white}{Algorithm} & \textcolor{white}{Description} & \textcolor{white}{Complexity} & \textcolor{white}{Ref} \\
+    MMR & Greedy; sequential assignment based on return & $O(mn)$ & \hyperlink{ref1}{[1,9]} \\
+    VLSN & Improvement graphs; multi-exchange moves & $O(m^2n^2)$ & \hyperlink{ref1}{[1]} \\
+    MRBCH & Weapon-target-sensor triplet optimization & $O(mn\log mn)$ & \hyperlink{ref10}{[10]} \\
+  \end{tabular}
+  \end{center}
 \end{frame}
 
 \begin{frame}{Category 5: Metaheuristic Algorithms}
-\begin{block}{General-Purpose Optimization Frameworks}
-Metaheuristics are adaptable frameworks that balance exploration and exploitation.
-\end{block}
 
-\vspace{0.2cm}
-\begin{table}[h]
-\centering
-\small
-\begin{tabular}{p{1.6cm}p{3.5cm}p{1.6cm}p{1.7cm}p{0.9cm}}
-\toprule
-\textbf{Algorithm} & \textbf{Description} & \textbf{Complexity} & \textbf{Solution Quality} & \textbf{Ref} \\
-\midrule
-\textbf{Genetic Algorithm (GA)} & Population-based evolution with crossover and mutation operators. Uses tournament selection and fitness evaluation. & $O(G \cdot P \cdot mn)$ $G$=gens, $P$=pop & Good for medium-large; 5-10\% gap & \cite{lee2003} \\
-\addlinespace
-\textbf{Ant Colony (ACO)} & Pheromone-based probabilistic construction. Transition probability weighted by heuristic info. & $O(I \cdot A \cdot mn)$ $I$=iters, $A$=ants & Competitive; avoids premature convergence & \cite{lee2002} \\
-\addlinespace
-\textbf{Simulated Annealing} & Temperature-based acceptance of worse solutions for escaping local optima. Gradual cooling schedule. & $O(I \cdot mn)$ & Good quality; sensitive to cooling schedule & \cite{kline2020} \\
-\bottomrule
-\end{tabular}
-\end{table}
+  \begin{tikzpicture}
+    \fill[navymid, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\small\bfseries, anchor=west] at (0.2,0.225)
+      {General-Purpose Optimization};
+  \end{tikzpicture}
+
+  \vspace{0.4cm}
+  \begin{center}
+  \small
+  \begin{tabular}{lp{4.5cm}lp{1cm}}
+    \rowcolor{DarkSlate}
+    \textcolor{white}{Algorithm} & \textcolor{white}{Description} & \textcolor{white}{Complexity} & \textcolor{white}{Ref} \\
+    Genetic (GA) & Crossover and mutation population search & $O(GPmn)$ & \hyperlink{ref11}{[11,12]} \\
+    Ant Colony (ACO) & Pheromone construction and local search & $O(IAmn)$ & \hyperlink{ref13}{[13,14]} \\
+    Modified Pareto & Multi-objective optimization for WTA & $O(IAmnK)$ & \hyperlink{ref15}{[15]} \\
+  \end{tabular}
+  \end{center}
 \end{frame}
 
 \begin{frame}{Complexity Comparison Summary}
-\begin{block}{When to Use Each Category?}
-The choice depends on instance size, time constraints, and solution quality requirements.
-\end{block}
+    \centering
+    \begin{tcolorbox}[colback=navymid, colframe=navydark, fonttitle=\bfseries,
+      title={\color{white}When to Use Each Category?}]
+        \centering \scriptsize\color{white} Choice depends on instance size, time constraints, and quality requirements.
+    \end{tcolorbox}
 
-\vspace{0.3cm}
-\begin{table}[h]
-\centering
-\begin{tabular}{llll}
-\toprule
-\textbf{Category} & \textbf{Typical Complexity} & \textbf{Instance Size Limit} & \textbf{Use Case} \\
-\midrule
-Exact & $O(2^{mn})$ - Exponential & $< 1000$ variables & When optimality required \\
-Approximation & $O(\text{poly}(m,n))$ & $> 10000$ & Need theoretical bounds \\
-Randomized & $O(S \cdot mn)$ & Any (quality $\propto S$) & Baselines, diversity \\
-Heuristic & $O(mn)$ - $O(m^2n^2)$ & $> 1000$ & \textcolor{accentgreen}{Real-time systems} \\
-Metaheuristic & $O(I \cdot P \cdot mn)$ & $> 10000$ & \textcolor{accentgreen}{Large-scale optimization} \\
-\bottomrule
-\end{tabular}
-\end{table}
+    \vspace{-0.1cm}
+    \begin{center}
+    \scriptsize
+    \begin{tabular}{llll}
+      \rowcolor{DarkSlate}
+      \textcolor{white}{Category} & \textcolor{white}{Complexity} & \textcolor{white}{Instance Limit} & \textcolor{white}{Use Case} \\
+      Exact & $O(2^{mn})$ & $<$ 1000 variables & Global Optimality \\
+      Approximation & $O(poly(m, n))$ & $>$ 10000 & Theoretical Bounds \\
+      Randomized & $O(S \cdot mn)$ & Any (quality $\propto S$) & Baselines \\
+      Heuristic & $O(mn) - O(m^2n^2)$ & $>$ 1000 & Real-time Systems \\
+      Metaheuristic & $O(I \cdot P \cdot mn)$ & $>$ 10000 & Large-scale Optimization \\
+    \end{tabular}
+    \end{center}
 
-\vspace{0.3cm}
-\begin{center}
-\begin{tikzpicture}[scale=0.7]
-\draw[thick, ->] (0,0) -- (11,0) node[right] {Instance Size};
-\draw[thick, ->] (0,0) -- (0,2.2) node[above] {Best Choice};
-\node[fill=blue!20, rounded corners, inner sep=4pt] at (1.5,1.2) {\footnotesize Exact};
-\node[fill=yellow!30, rounded corners, inner sep=4pt] at (3.8,1.2) {\footnotesize Approximation};
-\node[fill=green!20, rounded corners, inner sep=4pt] at (6.2,1.2) {\footnotesize Heuristic};
-\node[fill=orange!25, rounded corners, inner sep=4pt] at (9,1.2) {\footnotesize Metaheuristic};
-\draw[dashed] (2.5,0) -- (2.5,1.8);
-\draw[dashed] (5,0) -- (5,1.8);
-\draw[dashed] (7.5,0) -- (7.5,1.8);
-\node at (1.5,-0.3) {\tiny $<100$};
-\node at (3.8,-0.3) {\tiny $100\text{-}500$};
-\node at (6.2,-0.3) {\tiny $500\text{-}1000$};
-\node at (9,-0.3) {\tiny $>1000$};
-\end{tikzpicture}
-\end{center}
+    \vspace{0.2cm}
+    \begin{tikzpicture}[scale=0.8, every node/.style={scale=0.7}]
+      \draw[thick, ->] (0,0) -- (10,0) node[right] {Instance Size};
+      \draw[thick, ->] (0,0) -- (0,1.5) node[above] {Best Choice};
+      \node[fill=TealLight, draw=TealMain, rounded corners] at (1,0.7) {Exact};
+      \node[fill=TealLight, draw=TealMain, rounded corners] at (3.5,0.7) {Approx.};
+      \node[fill=TealLight, draw=TealMain, rounded corners] at (6,0.7) {Heuristic};
+      \node[fill=TealLight, draw=TealMain, rounded corners] at (8.5,0.7) {Meta-H};
+      \draw[dashed] (2,0) -- (2,1);
+      \draw[dashed] (5,0) -- (5,1);
+      \draw[dashed] (7.5,0) -- (7.5,1);
+    \end{tikzpicture}
 \end{frame}
 
-% =============================================================================
-% SECTION 4: SELECTED ALGORITHMS
-% =============================================================================
-\section{Selected Algorithms}
+% ==========================================================================
+% SECTION 3: MMR & GENETIC ALGORITHM
+% ==========================================================================
 
-\begin{frame}{Section 4: Algorithms We Implement}
-\begin{center}
-{\Large\textcolor{primaryblue}{\textbf{Maximum Marginal Return (MMR) and Genetic Algorithm (GA)}}}
+{
+\setbeamercolor{background canvas}{bg=navydark}
+\begin{frame}[plain]
 
-\vspace{0.3cm}
-{\normalsize Detailed algorithms with step-by-step examples}
-\end{center}
+  \begin{center}
+    {\color{goldaccent}\rule{0.15\textwidth}{2pt}}
+    \hspace{0.5em}
+    {\color{white}\large\textbf{Section 3}}
+    \hspace{0.5em}
+    {\color{goldaccent}\rule{0.15\textwidth}{2pt}}
 
-\vspace{0.2cm}
-\begin{columns}[t]
-\column{0.48\textwidth}
-\begin{block}{\textbf{MMR} -- Greedy Heuristic}
-\begin{itemize}
-    \item Fast: $O(W^2T)$ complexity
-    \item Deterministic output
-    \item Near-optimal ($<$5\% gap)
-    \item \textbf{Ideal for real-time systems}
-\end{itemize}
-\end{block}
+    \vspace{0.6cm}
+    {\color{white}\Huge\textbf{MMR \& Genetic Algorithm}}
 
-\column{0.48\textwidth}
-\begin{alertblock}{\textbf{GA} -- Metaheuristic}
-\begin{itemize}
-    \item Flexible: $O(G \cdot P \cdot W \cdot T)$
-    \item Population-based exploration
-    \item Avoids local optima
-    \item \textbf{Ideal for large instances}
-\end{itemize}
-\end{alertblock}
-\end{columns}
+    \vspace{0.4cm}
+    {\color{iceblue}\normalsize Step-by-step illustration with a $3\times3$ instance}
+  \end{center}
+\end{frame}
+}
+
+% ── SLIDE: Problem Instance ───────────────────────────────────────────
+\begin{frame}{Problem Instance}
+  \begin{columns}[T]
+    \begin{column}{0.57\textwidth}
+      {\small\bfseries\color{navydark} Target Values}\\[4pt]
+      \begin{tabular}{>{\columncolor{teal}\color{white}\bfseries}l
+                      >{\columncolor{lightgreen}}c
+                      >{\columncolor{lightgreen}}c
+                      >{\columncolor{lightgreen}}c}
+        \toprule
+        \rowcolor{navy}
+          \color{white} &
+          \color{white}Target 0 &
+          \color{white}Target 1 &
+          \color{white}Target 2 \\
+        \midrule
+        Value & 10 & 20 & 30 \\
+        \bottomrule
+      \end{tabular}
+
+      \vspace{0.35cm}
+      {\small\bfseries\color{navydark}
+        Kill Probabilities $p[\text{weapon}][\text{target}]$}\\[4pt]
+      \begin{tabular}{>{\columncolor{teal}\color{white}\bfseries}l ccc}
+        \toprule
+        \rowcolor{navy}
+          \color{white} &
+          \color{white}Target 0 &
+          \color{white}Target 1 &
+          \color{white}Target 2 \\
+        \midrule
+        Weapon 0 & 0.3 & 0.2 & 0.1 \\
+        Weapon 1 & 0.1 & 0.4 & 0.2 \\
+        Weapon 2 & 0.2 & 0.3 &
+          \cellcolor{lightyellow}\textbf{0.5} \\
+        \bottomrule
+      \end{tabular}
+    \end{column}
+
+    \begin{column}{0.38\textwidth}
+      \colorbox{navy}{%
+        \begin{minipage}{\linewidth}
+          \vspace{0.2cm}\centering
+          {\color{teal}\bfseries Objective}\\[0.2cm]
+          {\color{white}\small Minimize total\\survival value\\of all targets}\\[0.25cm]
+          {\color{teallt}\bfseries
+            $\displaystyle\sum_j V_j \cdot \prod_i (1-p_{ij})$}\\[0.25cm]
+          {\color{mygray}\small Each weapon assigned\\to exactly one target}
+          \vspace{0.2cm}
+        \end{minipage}}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.25cm}
+  \colorbox{navymidHex}{\begin{minipage}{\linewidth}
+    {\color{graylt}\small\itshape
+     Both algorithms solve the same problem ---
+     they differ in \emph{how} they search for the optimal allocation.}
+  \end{minipage}}
 \end{frame}
 
-\begin{frame}{Why MMR + GA?}
-\begin{columns}[t]
-\column{0.48\textwidth}
-\begin{block}{\textbf{Maximum Marginal Return (MMR)}}
-\textbf{Why selected:}
-\begin{itemize}
-    \item \textcolor{accentgreen}{$O(W^2T)$} -- fastest complexity
-    \item Simple to implement and verify
-    \item Often near-optimal ($<$5\% gap)
-    \item \textbf{Ideal for real-time missile defense}
-\end{itemize}
-
-\vspace{0.2cm}
-\textbf{Key Formula:}
-$$\Delta_{ij} = V_j \cdot q_j \cdot (1 - q_{ij})$$
-{\small (Marginal reduction in survival)}
-\end{block}
-
-\column{0.48\textwidth}
-\begin{alertblock}{\textbf{Genetic Algorithm (GA)}}
-\textbf{Why selected:}
-\begin{itemize}
-    \item Population-based global search
-    \item Natural selection drives optimization
-    \item Well-studied for combinatorial problems
-    \item \textbf{Effective for large instances ($>$100)}
-    \item Easy to incorporate domain knowledge
-\end{itemize}
-
-\vspace{0.2cm}
-\textbf{Key Idea:}
-
-{\small Evolve population of solutions through selection, crossover, and mutation}
-\end{alertblock}
-\end{columns}
-
-\vspace{0.3cm}
-\begin{exampleblock}{Complementary Approaches}
-\textbf{MMR} provides fast, deterministic baseline; \textbf{GA} performs global stochastic search across diverse solution space. Together, they represent greedy vs. evolutionary paradigms.
-\end{exampleblock}
+% ── SLIDE: MMR Overview ───────────────────────────────────────────────
+\begin{frame}{MMR Algorithm --- Overview}
+  {\large\bfseries\color{navydark} Maximum Marginal Return (Greedy)}\par
+  \vspace{3pt}
+  \begin{columns}[T]
+    \begin{column}{0.55\textwidth}
+      \begin{enumerate}\itemsep10pt
+        \item \textbf{Scan all pairs}
+          \par {\small For every unallocated weapon $w$ and every target $t$:}
+          \par {\small\colorbox{navymidHex}{\color{teallt}
+            $\;\text{decrease} = V[t] \times p[w][t]\;$}}
+        \item \textbf{Pick best pair}
+          \par {\small Select weapon-target with \emph{maximum} decrease}
+          {\small\color{mygray} ``most bang for the buck''}
+        \item \textbf{Assign \& update}
+          \par {\small Assign weapon $\to$ target.\quad
+            $V[t] \mathrel{-}= \text{maxDecrease}$}
+          {\small Remove weapon from pool.}
+        \item \textbf{Repeat}
+          \par {\small Return to step~1 until all weapons assigned.}
+      \end{enumerate}
+    \end{column}
+    \begin{column}{0.42\textwidth}
+      \colorbox{offwhiteHex}{\begin{minipage}{\linewidth}
+        \vspace{6pt}
+        {\small\bfseries\color{teal} Key Properties}\\[6pt]
+        {\small\color{navydark}\bfseries Complexity:\;}
+          {\small $O(W^2 \times T)$}\\[5pt]
+        {\small\color{navydark}\bfseries Deterministic:\;}
+          {\small same input $\to$ same output}\\[5pt]
+        {\small\color{navydark}\bfseries Optimality:\;}
+          {\small local optimum only}\\[5pt]
+        {\small\color{navydark}\bfseries Speed:\;}
+          {\small very fast, single pass}
+        \vspace{6pt}
+      \end{minipage}}
+      \vspace{16pt}
+      \colorbox{navymidHex}{\begin{minipage}{\linewidth}
+        \vspace{5pt}
+        {\color{teallt}\small\itshape
+         Greedy commits to the locally best choice each round ---
+         fast but may miss the globally optimal solution.}
+        \vspace{5pt}
+      \end{minipage}}
+    \end{column}
+  \end{columns}
 \end{frame}
 
-% ===== MMR ALGORITHM =====
-\begin{frame}{Algorithm 1: Maximum Marginal Return (MMR)}
-\begin{block}{Core Idea}
-\textbf{Greedy approach:} At each step, assign the unallocated weapon and target pair that yields the \textbf{maximum decrease} in survival value.
-\end{block}
-
-\vspace{0.2cm}
-\begin{exampleblock}{Key Concepts}
-\begin{itemize}
-    \item \textbf{Tracking Value:} We track remaining survival value for each target.
-    \item \textbf{Decrease Calculation:} $\text{decrease} = V[t] \times p[w][t]$
-    \item \textbf{Value Update:} Once assigned, the target's value is permanently reduced:
-    $$V[t] \gets V[t] - \text{decrease}$$
-    \item \textbf{Iteration:} Repeat until all weapons are allocated.
-\end{itemize}
-\end{exampleblock}
-
-\begin{alertblock}{Example: Diminishing Returns}
-If T1 has $V=10$, W1 ($p=0.7$) yields decrease = 7.0.
-New $V = 10 - 7 = 3.0$.
-A second weapon W3 ($p=0.8$) on T1 now yields decrease = $3.0 \times 0.8 = 2.4$.
-\end{alertblock}
-\end{frame}
-
-\begin{frame}[fragile]{MMR Algorithm: Pseudocode}
-\begin{algorithm}[H]
-\caption{Maximum Marginal Return (MMR) Algorithm}
-\begin{algorithmic}[1]
-\State $solution.Allocations \gets \emptyset$
-\State $solution.Value \gets MaxValue$
-\State $allocatedWeaponCount \gets 0$
-\While{$allocatedWeaponCount \leq noOfWeapons$}
-    \State $maxDecrease \gets MinValue$
-    \State $k \gets 1$
-    \While{$k \leq unallocatedWeapons.Count$}
-        \State $i \gets 1$
-        \While{$i \leq noOfTargets$}
-            \State $decrease \gets targetValues[i] \times killProbabilities[i][k]$
-            \If{$decrease > maxDecrease$}
-                \State $maxDecrease \gets decrease$
-                \State $allocatedTarget \gets i$
-                \State $allocatedWeapon \gets k$
-            \EndIf
-            \State $i \gets i + 1$
+% ── SLIDE: MMR Pseudocode ─────────────────────────────────────────────
+\begin{frame}[shrink=20]{MMR Algorithm --- Pseudocode}
+  \begin{center}
+  {\footnotesize
+  \begin{algorithm}[H]
+    \caption{MMR Algorithm}
+    \begin{algorithmic}[1]
+      \State $\textit{solution.Allocations} \leftarrow \{\}$
+      \State $\textit{solution.Value} \leftarrow \textsc{MaxValue}$
+      \State $\textit{allocatedWeaponCount} \leftarrow 0$
+      \While{$\textit{allocatedWeaponCount} < \textit{numOfWeapons}$}
+        \State $\textit{maxDecrease} \leftarrow 0$;\quad $k \leftarrow 1$
+        \While{$k \leq \textit{numOfTargets}$}
+          \State $\textit{decrease} \leftarrow \textit{solution.Value}[k] \times \textit{KillProbabilities}[\textit{unallocatedWeapon}][k]$
+          \If{$\textit{decrease} > \textit{maxDecrease}$}
+            \State $\textit{maxDecrease} \leftarrow \textit{decrease}$
+            \State $\textit{allocatedTarget} \leftarrow k$
+          \EndIf
+          \State $k \leftarrow k + 1$
         \EndWhile
-        \State $k \gets k + 1$
-    \EndWhile
-    \State $unallocatedWeapons.Remove(allocatedWeapon)$
-    \State $solution.Allocations[allocatedWeapon] \gets allocatedTarget$
-    \State $targetValues[allocatedTarget] \gets targetValues[allocatedTarget] - maxDecrease$
-    \State $allocatedWeaponCount \gets allocatedWeaponCount + 1$
-\EndWhile
-\State $solution.Value \gets \Call{CalculateSolutionValue}{solution.Allocations}$
-\State \Return $solution$
-\end{algorithmic}
-\end{algorithm}
+        \State $\textit{unallocatedWeapons}.\textsc{Remove}(\textit{allocatedWeapon})$
+        \State $\textit{solution.Allocation}[\textit{allocatedWeapon}] \leftarrow \textit{allocatedTarget}$
+        \State $\textit{solution.Value}[\textit{allocatedTarget}] \mathrel{-}= \textit{maxDecrease}$
+        \State $\textit{allocatedWeaponCount} \leftarrow \textit{allocatedWeaponCount} + 1$
+      \EndWhile
+      \State $\textit{solution.value} \leftarrow \textsc{CalculateSolutionValue}(\textit{solution},\,\textit{allocations})$
+      \State \Return $\textit{solution}$
+    \end{algorithmic}
+  \end{algorithm}
+  }
+  \end{center}
 \end{frame}
 
-\begin{frame}{MMR Example: Problem Setup (Naval Air Defense)}
-\begin{columns}
-\column{0.48\textwidth}
-\textbf{Incoming Missiles (Targets):}
-\begin{itemize}
-    \item \textcolor{red}{T1}: Aircraft Carrier ($V=10$)
-    \item \textcolor{orange}{T2}: Destroyer ($V=6$)
-    \item \textcolor{yellow!80!black}{T3}: Supply Ship ($V=3$)
-\end{itemize}
+% ── SLIDE: MMR Round 1 ────────────────────────────────────────────────
+\begin{frame}{MMR --- Round 1: Find Maximum Decrease}
+  {\small Scan all pairs.\quad
+    $\text{decrease} = \text{current\_value}[t]
+      \times \text{kill\_prob}[w][t]$}
 
-\vspace{0.3cm}
-\textbf{Defensive Weapons:}
-\begin{itemize}
-    \item W1, W2, W3, W4 (4 interceptors)
-\end{itemize}
+  \begin{columns}[T]
+    \begin{column}{0.57\textwidth}
+      \vspace{4pt}
+      \begin{tabular}{cccc}
+        \toprule
+        \rowcolor{navy}
+          \color{white}\bfseries Weapon &
+          \color{white}\bfseries Target &
+          \color{white}\bfseries Calculation &
+          \color{white}\bfseries Decrease \\
+        \midrule
+        W0 & T0 & $10\times0.3$ & 3.0 \\
+        W0 & T1 & $20\times0.2$ & 4.0 \\
+        W0 & T2 & $30\times0.1$ & 3.0 \\
+        W1 & T0 & $10\times0.1$ & 1.0 \\
+        W1 & T1 & $20\times0.4$ & 8.0 \\
+        W1 & T2 & $30\times0.2$ & 6.0 \\
+        W2 & T0 & $10\times0.2$ & 2.0 \\
+        W2 & T1 & $20\times0.3$ & 6.0 \\
+        \rowcolor{lightyellow}
+        \bfseries W2 & \bfseries T2 &
+          $\mathbf{30\times0.5}$ &
+          \cellcolor{amber}\color{white}\bfseries 15.0 $\leftarrow$ MAX \\
+        \bottomrule
+      \end{tabular}
+    \end{column}
 
-\vspace{0.3cm}
-\textbf{Goal:} Maximize expected damage prevented
-
-\column{0.48\textwidth}
-\textbf{Kill Probability Matrix $P_{ij}$:}
-\begin{table}[h]
-\centering
-\small
-\begin{tabular}{c|ccc}
-     & T1 & T2 & T3 \\ \hline
-W1 & 0.7 & 0.8 & 0.9 \\
-W2 & 0.6 & 0.7 & 0.8 \\
-W3 & 0.8 & 0.6 & 0.7 \\
-W4 & 0.5 & 0.9 & 0.6 \\
-\end{tabular}
-\end{table}
-
-\vspace{0.3cm}
-\textbf{Objective Function:}
-$$\text{Max } \sum_{j} V_j \times P_{kill,j}$$
-\end{columns}
+    \begin{column}{0.38\textwidth}
+      \colorbox{navy}{\begin{minipage}{\linewidth}
+        \vspace{0.2cm}\centering
+        {\color{teal}\bfseries Result}\\[0.2cm]
+        {\color{white}\Large\bfseries W2 $\rightarrow$ T2}\\[0.15cm]
+        {\color{amber} Decrease: 15.0}\\[0.2cm]
+        {\color{teal}\rule{3cm}{0.3pt}}\\[0.15cm]
+        {\color{mygray}\small Update:}\\
+        {\color{teallt}\small $V[\text{T2}] = 30 - 15 = 15$}\\[0.1cm]
+        {\color{mygray}\small W2 removed from pool}\\[0.1cm]
+        {\color{teallt}\small Remaining: W0, W1}
+        \vspace{0.2cm}
+      \end{minipage}}
+    \end{column}
+  \end{columns}
 \end{frame}
 
-\begin{frame}{MMR Iteration 1: Calculate Initial Marginal Returns}
-\textbf{Algorithm Step:} Calculate marginal return for all weapon-target pairs
+% ── SLIDE: MMR Rounds 2 & 3 ───────────────────────────────────────────
+\begin{frame}{MMR --- Rounds 2 \& 3 $\rightarrow$ Final Result}
+  \begin{columns}[T]
+    \begin{column}{0.46\textwidth}
+      \colorbox{navymidHex}{\color{teallt}\bfseries\small
+        Round 2 | W: W0,W1 | V: T0=10,T1=20,T2=15}
+      \vspace{3pt}
 
-\vspace{0.2cm}
-\textbf{Formula:} $MR_{ij} = V_j \times P_{ij}$ (since no weapons assigned yet)
+      \begin{tabular}{ccc}
+        \toprule
+        \rowcolor{navy}
+          \color{white}\bfseries W$\times$T &
+          \color{white}\bfseries Calc &
+          \color{white}\bfseries Dec \\
+        \midrule
+        W0$\to$T0 & $10\times0.3$ & 3.0 \\
+        W0$\to$T1 & $20\times0.2$ & 4.0 \\
+        W0$\to$T2 & $15\times0.1$ & 1.5 \\
+        W1$\to$T0 & $10\times0.1$ & 1.0 \\
+        \rowcolor{lightyellow}
+        \bfseries W1$\to$T1 & $\mathbf{20\times0.4}$ &
+          \cellcolor{amber}\color{white}\bfseries 8.0$\leftarrow$ \\
+        W1$\to$T2 & $15\times0.2$ & 3.0 \\
+        \bottomrule
+      \end{tabular}
 
-\vspace{0.3cm}
-\begin{table}[h]
-\centering
-\begin{tabular}{c|ccc}
-\toprule
-     & T1 ($V=10$) & T2 ($V=6$) & T3 ($V=3$) \\ \midrule
-W1 & $10 \times 0.7 = 7.0$ & $6 \times 0.8 = 4.8$ & $3 \times 0.9 = 2.7$ \\
-W2 & $10 \times 0.6 = 6.0$ & $6 \times 0.7 = 4.2$ & $3 \times 0.8 = 2.4$ \\
-W3 & $10 \times 0.8 = \textcolor{red}{\textbf{8.0}}$ & $6 \times 0.6 = 3.6$ & $3 \times 0.7 = 2.1$ \\
-W4 & $10 \times 0.5 = 5.0$ & $6 \times 0.9 = 5.4$ & $3 \times 0.6 = 1.8$ \\
-\bottomrule
-\end{tabular}
-\end{table}
+      \vspace{4pt}
+      {\small\bfseries\color{navydark} W1 $\to$ T1}
+      {\small $\;V[\text{T1}]=20-8=12$}
+    \end{column}
 
-\begin{alertblock}{MMR Choice}
-\textbf{Highest Marginal Return = 8.0} $\Rightarrow$ Assign \textbf{W3 $\rightarrow$ T1}
-\end{alertblock}
+    \begin{column}{0.46\textwidth}
+      \colorbox{navymidHex}{\color{teallt}\bfseries\small
+        Round 3 | W: W0 | V: T0=10,T1=12,T2=15}
+      \vspace{3pt}
 
-\textbf{Current State:} T1: $P_{kill} = 0.8$, Expected = 8.0 \quad \textbf{Remaining:} W1, W2, W4
+      \begin{tabular}{ccc}
+        \toprule
+        \rowcolor{navy}
+          \color{white}\bfseries W$\times$T &
+          \color{white}\bfseries Calc &
+          \color{white}\bfseries Dec \\
+        \midrule
+        \rowcolor{lightyellow}
+        \bfseries W0$\to$T0 & $\mathbf{10\times0.3}$ &
+          \cellcolor{amber}\color{white}\bfseries 3.0$\leftarrow$ \\
+        W0$\to$T1 & $12\times0.2$ & 2.4 \\
+        W0$\to$T2 & $15\times0.1$ & 1.5 \\
+        \bottomrule
+      \end{tabular}
+
+      \vspace{4pt}
+      {\small\bfseries\color{navydark} W0 $\to$ T0}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.25cm}
+  \colorbox{navy}{\begin{minipage}{\linewidth}
+    \vspace{0.15cm}\centering
+    {\color{teal}\bfseries Final MMR Allocation}\\[0.15cm]
+    \begin{tabular}{ccc}
+      \colorbox{navymidHex}{\color{white}\small W0$\to$T0\;(p=0.3)} &
+      \colorbox{navymidHex}{\color{white}\small W1$\to$T1\;(p=0.4)} &
+      \colorbox{navymidHex}{\color{white}\small W2$\to$T2\;(p=0.5)}
+    \end{tabular}\\[0.15cm]
+    {\color{amber}\bfseries allocation = [0,\; 1,\; 2]}
+    \vspace{0.15cm}
+  \end{minipage}}
 \end{frame}
 
-\begin{frame}{MMR Iteration 2: Recalculate with Diminishing Returns}
-\textbf{Algorithm Step:} Update marginal returns accounting for W3 already on T1
+% ── SLIDE: GA Overview ────────────────────────────────────────────────
+\begin{frame}{Genetic Algorithm --- Overview}
+  \begin{columns}[T]
 
-\vspace{0.2cm}
-\textbf{For T1 (already has W3, $P_{kill} = 0.8$):}
-\begin{itemize}
-    \item W1: $P'_{kill} = 1-(0.3 \times 0.2) = 0.94$, $MR = 10(0.94-0.8) = 1.4$
-    \item W2: $P'_{kill} = 1-(0.4 \times 0.2) = 0.92$, $MR = 10(0.92-0.8) = 1.2$
-    \item W4: $P'_{kill} = 1-(0.5 \times 0.2) = 0.90$, $MR = 10(0.90-0.8) = 1.0$
-\end{itemize}
+    % ── Left: encoding + population + parameters ──────────────────────
+    \begin{column}{0.50\textwidth}
 
-\vspace{0.2cm}
-\begin{table}[h]
-\centering
-\begin{tabular}{c|ccc}
-\toprule
-     & T1 (has W3) & T2 (empty) & T3 (empty) \\ \midrule
-W1 & 1.4 & 4.8 & 2.7 \\
-W2 & 1.2 & 4.2 & 2.4 \\
-W4 & 1.0 & \textcolor{red}{\textbf{5.4}} & 1.8 \\
-\bottomrule
-\end{tabular}
-\end{table}
+      \colorbox{offwhiteHex}{\begin{minipage}{\linewidth}
+        \vspace{3pt}
+        {\normalsize\bfseries\color{navydark} Chromosome Encoding}\\[5pt]
+        {\small\texttt{chromosome[i] = target assigned to weapon} $i$}\\[4pt]
+        {\small\color{navymid}\itshape
+          $[2,\,0,\,1]\ \Rightarrow\ $W0$\to$T2,\; W1$\to$T0,\; W2$\to$T1}
+        \vspace{3pt}
+      \end{minipage}}
 
-\begin{alertblock}{MMR Choice}
-\textbf{Highest Marginal Return = 5.4} $\Rightarrow$ Assign \textbf{W4 $\rightarrow$ T2}
-\end{alertblock}
+      \vspace{0.20cm}
 
-\textbf{Current State:} T1: 8.0, T2: $6 \times 0.9 = 5.4$ \quad \textbf{Total: 13.4}
+      \colorbox{offwhiteHex}{\begin{minipage}{\linewidth}
+        \vspace{3pt}
+        {\normalsize\bfseries\color{navydark} Population}\\[5pt]
+        {\small $\texttt{pop\_size} = \max(W,\,T) = 3$}\\[4pt]
+        {\small\color{navymid}\itshape 3 random chromosomes initially}
+        \vspace{3pt}
+      \end{minipage}}
+
+      \vspace{0.20cm}
+
+      \colorbox{offwhiteHex}{\begin{minipage}{\linewidth}
+        \vspace{3pt}
+        {\normalsize\bfseries\color{navydark} Parameters}\\[5pt]
+        {\small
+        \renewcommand{\arraystretch}{1}
+        \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.45\linewidth}>{\raggedright\arraybackslash}p{0.45\linewidth}@{}}
+          \toprule
+          \rowcolor{navydark}
+            \color{white}\bfseries Parameter & \color{white}\bfseries Value \\
+          \midrule
+          $P_{\text{crossover}}$ & 0.8 \\
+          Tournament $k$         & 3 \\
+          $P_{\text{mutation}}$  & $1/W = 0.33$ \\
+          pop\_size              & $\max(W,\,T) = 3$ \\
+          \bottomrule
+        \end{tabular}
+        }
+        \vspace{3pt}
+      \end{minipage}}
+
+    \end{column}
+
+    % ── Middle: evolutionary loop diagram ────────────────────────────
+    \begin{column}{0.26\textwidth}
+      \vspace{0.2cm}
+      \small
+      {\small\bfseries\color{navydark} Evolutionary Loop}\\[6pt]
+      \begin{tikzpicture}[
+          node distance=0.70cm,
+          box/.style={draw=teal, fill=navymid, text=white,
+                      rounded corners=3pt,
+                      minimum width=2cm, minimum height=0.6cm,
+                      font=\small\bfseries, align=center}]
+        \node[box] (init)  {Init};
+        \node[box, below=of init]  (fit)   {Fitness};
+        \node[box, below=of fit]   (sel)   {Select};
+        \node[box, below=of sel]   (cross) {Crossover};
+        \node[box, below=of cross] (mut)   {Mutate};
+        \draw[->, teal, thick] (init)  -- (fit);
+        \draw[->, teal, thick] (fit)   -- (sel);
+        \draw[->, teal, thick] (sel)   -- (cross);
+        \draw[->, teal, thick] (cross) -- (mut);
+        \draw[->, teal, thick, dashed]
+          (mut.east) -- ++(0.4,0)
+          |- (init.east)
+          node[pos=0.22, right, font=\scriptsize\itshape, text=goldaccent]
+            {time left?};
+      \end{tikzpicture}
+    \end{column}
+
+    % ── Right: loop description ───────────────────────────────────────
+    \begin{column}{0.22\textwidth}
+      \vspace{2.15cm}
+      {\normalsize\color{navydark}\raggedright
+        Loop repeats until time budget
+        exhausted.\\[9pt]
+        Best solution is tracked across all
+        generations.}
+    \end{column}
+
+  \end{columns}
 \end{frame}
 
-\begin{frame}{MMR Iterations 3 \& 4: Complete Assignment}
-\textbf{Iteration 3:} Marginal returns for W1, W2
-
-\begin{table}[h]
-\centering
-\begin{tabular}{c|ccc}
-\toprule
-     & T1 (has W3) & T2 (has W4) & T3 (empty) \\ \midrule
-W1 & 1.4 & 0.48 & \textcolor{red}{\textbf{2.7}} \\
-W2 & 1.2 & 0.42 & 2.4 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-$\Rightarrow$ Assign \textbf{W1 $\rightarrow$ T3} (MR = 2.7)
-
-\vspace{0.3cm}
-\textbf{Iteration 4:} Only W2 remains
-
-\begin{table}[h]
-\centering
-\begin{tabular}{c|ccc}
-\toprule
-     & T1 (has W3) & T2 (has W4) & T3 (has W1) \\ \midrule
-W2 & \textcolor{red}{\textbf{1.2}} & 0.42 & 0.24 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-$\Rightarrow$ Assign \textbf{W2 $\rightarrow$ T1} (MR = 1.2)
-
-\begin{exampleblock}{Note: Diminishing Returns}
-T3 with W1 has $P_{kill} = 0.9$, so adding W2: $P'_{kill} = 1-(0.2 \times 0.1) = 0.98$, $MR = 3(0.98-0.9) = 0.24$
-\end{exampleblock}
-\end{frame}
-
-\begin{frame}{MMR: Final Solution}
-\begin{center}
-\begin{tikzpicture}[scale=0.7]
-% Targets
-\node[draw, circle, fill=red!30, minimum size=1.5cm] (T1) at (0,0) {T1};
-\node[draw, circle, fill=orange!30, minimum size=1.5cm] (T2) at (4,0) {T2};
-\node[draw, circle, fill=yellow!30, minimum size=1.5cm] (T3) at (8,0) {T3};
-
-% Weapons assigned
-\node[draw, rectangle, fill=green!30] (W3) at (-0.7,2.5) {W3};
-\node[draw, rectangle, fill=green!30] (W2) at (0.7,2.5) {W2};
-\node[draw, rectangle, fill=green!30] (W4) at (4,2.5) {W4};
-\node[draw, rectangle, fill=green!30] (W1) at (8,2.5) {W1};
-
-% Assignment arrows
-\draw[->, very thick, blue] (W3) -- (T1);
-\draw[->, very thick, blue] (W2) -- (T1);
-\draw[->, very thick, blue] (W4) -- (T2);
-\draw[->, very thick, blue] (W1) -- (T3);
-
-% Labels
-\node[below] at (T1.south) {\small $V=10$};
-\node[below] at (T2.south) {\small $V=6$};
-\node[below] at (T3.south) {\small $V=3$};
-\end{tikzpicture}
-\end{center}
-
-\begin{block}{Final Assignment \& Expected Value}
-\begin{itemize}
-    \item \textbf{T1 (Aircraft Carrier):} W2, W3 $\rightarrow$ $P_{kill} = 1-(0.4 \times 0.2) = 0.92$, EV = $10 \times 0.92 = 9.2$
-    \item \textbf{T2 (Destroyer):} W4 $\rightarrow$ $P_{kill} = 0.9$, EV = $6 \times 0.9 = 5.4$
-    \item \textbf{T3 (Supply Ship):} W1 $\rightarrow$ $P_{kill} = 0.9$, EV = $3 \times 0.9 = 2.7$
-\end{itemize}
-\end{block}
-
-\begin{alertblock}{Total Expected Value (Damage Prevented)}
-$9.2 + 5.4 + 2.7 = \mathbf{17.3}$ \quad (out of max $10+6+3 = 19$)
-\end{alertblock}
-\end{frame}
-
-\begin{frame}{MMR: Algorithm Analysis}
-\begin{columns}[t]
-\column{0.48\textwidth}
-\begin{block}{Advantages}
-\begin{itemize}
-    \item \textbf{Fast:} $O(W^2 \cdot T)$ time complexity
-    \item \textbf{Simple:} Easy to implement
-    \item \textbf{Real-time capable:} Suitable for time-critical defense systems
-    \item \textbf{Good results:} Often near-optimal
-    \item \textbf{Adaptive:} Considers current state when making decisions
-\end{itemize}
-\end{block}
-
-\column{0.48\textwidth}
-\begin{alertblock}{Disadvantages}
-\begin{itemize}
-    \item \textbf{No optimality guarantee:} May miss globally optimal solution
-    \item \textbf{Greedy nature:} Early decisions can't be reversed
-    \item \textbf{Local optimization:} Focuses on immediate best choice
-\end{itemize}
-\end{alertblock}
-
-\begin{exampleblock}{When to Use MMR}
-\begin{itemize}
-    \item Speed is critical
-    \item Near-optimal is acceptable
-    \item Real-time defense systems
-    \item Large-scale problems
-\end{itemize}
-\end{exampleblock}
-\end{columns}
-\end{frame}
-
-% ===== GENETIC ALGORITHM =====
-\begin{frame}{Algorithm 2: Genetic Algorithm (GA)}
-\begin{columns}[t]
-\column{0.48\textwidth}
-\begin{block}{Core Idea}
-\textbf{Bio-inspired approach:} Evolve a population of candidate solutions through natural selection -- fitter individuals survive and reproduce.
-\end{block}
-
-\vspace{0.2cm}
-\begin{center}
-\begin{tikzpicture}[scale=0.55, transform shape]
-\node[draw, rounded corners, fill=blue!20] (init) at (0,3.6) {\textbf{Init}};
-\node[draw, rounded corners, fill=green!20] (eval) at (0,2.4) {\textbf{Fitness}};
-\node[draw, rounded corners, fill=orange!20] (sel) at (0,1.2) {\textbf{Select}};
-\node[draw, rounded corners, fill=red!20] (cross) at (0,0) {\textbf{Crossover}};
-\node[draw, rounded corners, fill=purple!20] (mut) at (0,-1.2) {\textbf{Mutate}};
-\draw[->, thick] (init) -- (eval);
-\draw[->, thick] (eval) -- (sel);
-\draw[->, thick] (sel) -- (cross);
-\draw[->, thick] (cross) -- (mut);
-\draw[->, thick, dashed, draw=teal] (mut.east) -- +(1.5,0) |- node[pos=0.25, right, text=teal] {time left?} (0, 3.0);
-\end{tikzpicture}
-\end{center}
-
-\column{0.48\textwidth}
-\begin{exampleblock}{GA for WTA}
-\begin{itemize}
-    \item \textbf{Chromosome Encoding:} \text{target assigned to weapon }$i$
-    \item \textbf{Population Size:} $pop\_size = \max(W, T)$
-    \item \textbf{Fitness:} $-Z$ (negative survival value; higher = better)
-    \item \textbf{Selection:} Tournament ($k=3$)
-    \item \textbf{Crossover:} Uniform ($p_{crossover} = 0.8$)
-    \item \textbf{Mutation:} Random ($p_{mutation} = 1/W = 0.33$)
-\end{itemize}
-\end{exampleblock}
-
-\begin{alertblock}{Key Advantage}
-Explores \textbf{many solutions simultaneously} -- can escape local optima that trap greedy methods
-\end{alertblock}
-\end{columns}
-\end{frame}
-
-\begin{frame}[fragile]{GA: Encoding for WTA}
-\begin{block}{Chromosome Representation}
-Each individual (chromosome) is a vector of length $W$ (number of weapons):
-$$\text{chromosome}[i] = j \quad \Rightarrow \quad \text{weapon } i \text{ assigned to target } j$$
-\end{block}
-
-\vspace{0.3cm}
-\begin{center}
-\begin{tikzpicture}[scale=0.8]
-% Chromosome
-\node at (-1.5, 0) {\textbf{Chromosome:}};
-\draw (0, -0.4) rectangle (1, 0.4); \node at (0.5, 0) {\textbf{2}}; \node at (0.5, 0.8) {\footnotesize $W_0$};
-\draw (1.2, -0.4) rectangle (2.2, 0.4); \node at (1.7, 0) {\textbf{0}}; \node at (1.7, 0.8) {\footnotesize $W_1$};
-\draw (2.4, -0.4) rectangle (3.4, 0.4); \node at (2.9, 0) {\textbf{1}}; \node at (2.9, 0.8) {\footnotesize $W_2$};
-
-% Meaning
-\node at (-1.5, -1.5) {\textbf{Meaning:}};
-\node[right] at (0, -1.5) {\footnotesize $W_0 \to T_2$, $W_1 \to T_0$, $W_2 \to T_1$};
-\end{tikzpicture}
-\end{center}
-
-\vspace{0.3cm}
-\begin{columns}[t]
-\column{0.48\textwidth}
-\begin{exampleblock}{Properties}
-\begin{itemize}
-    \item Fixed-length: always $W$ genes
-    \item Each gene $\in \{0, 1, \ldots, T-1\}$
-    \item Multiple weapons can target same target (many-to-one)
-    \item Every weapon assigned to exactly one target
-\end{itemize}
-\end{exampleblock}
-
-\column{0.48\textwidth}
-\begin{alertblock}{Fitness Function (Survival Value $Z$)}
-$$Z = \sum_{j=0}^{T-1} V_j \prod_{\substack{i: \text{chrom}[i]=j}} (1 - p_{ij})$$
-
-Lower $Z$ = lower survival = \textbf{better} solution
-\end{alertblock}
-\end{columns}
-\end{frame}
-
-\begin{frame}[fragile]{GA Algorithm: Pseudocode}
-\begin{algorithm}[H]
-\caption{Genetic Algorithm}
-\begin{algorithmic}[1]
-\State $startTime \gets \text{Now}$
-\State $endTime \gets startTime + allowedSearchTime$
-\State $solution.Allocations \gets \emptyset$, \ \ $solution.Value \gets MaxValue$
-\If{$noOfTargets > noOfWeapons$}
-    \State $noOfIndividuals \gets noOfTargets$
-\Else
-    \State $noOfIndividuals \gets noOfWeapons$
-\EndIf
-\State $population \gets \Call{GenerateInitialPopulation}{noOfIndividuals}$
-\While{$\text{Now} < endTime$}
-    \State $individualNo \gets 1$
-    \While{$individualNo \leq noOfIndividuals$}
-        \State $solFromIndv \gets population[individualNo]$
-        \State $solValue \gets \Call{CalculateSolutionValue}{solFromIndv}$
-        \If{$solValue < solution.Value$}
-            \State $solution \gets solFromIndv$
+% ── SLIDE: GA Pseudocode ──────────────────────────────────────────────
+\begin{frame}[shrink=20]{Genetic Algorithm --- Pseudocode}
+  \begin{center}
+  {\footnotesize
+  \begin{algorithm}[H]
+    \caption{Genetic Algorithm}
+    \begin{algorithmic}[1]
+      \State $\textit{startTime} \leftarrow \textsc{Now}$
+      \State $\textit{endTime} \leftarrow \textit{startTime} + \textit{allowedSearchTime}$
+      \State $\textit{solution.Allocations} \leftarrow \{\}$
+      \State $\textit{solution.value} \leftarrow \textsc{MaxValue}$
+      \If{$\textit{noOfTargets} > \textit{noOfWeapons}$}
+        \State $\textit{noOfIndividuals} \leftarrow \textit{noOfTargets}$
+      \Else
+        \State $\textit{noOfIndividuals} \leftarrow \textit{noOfWeapons}$
+      \EndIf
+      \State $\textit{population} \leftarrow \textsc{GenerateInitialPopulation}(\textit{noOfIndividuals})$
+      \State $\textit{individualNo} \leftarrow 1$
+      \While{$\textsc{CurrentTime} < \textit{endTime}$}
+        \State $\textit{indFromIndiv} \leftarrow \textit{population}[\textit{individualNo}]$
+        \State $\textit{indValue} \leftarrow \textsc{CalculateSolutionValue}(\textit{indFromIndiv})$
+        \If{$\textit{indValue} < \textit{solution.value}$}
+          \State $\textit{solution.value} \leftarrow \textit{indValue}$;\quad $\textit{solution} \leftarrow \textit{indFromIndiv}$
         \EndIf
-        \State $individualNo \gets individualNo + 1$
-    \EndWhile
-    \State $parents \gets \Call{SelectParents}{population}$
-    \State $population \gets \Call{CrossOver}{parents}$
-    \State $population \gets \Call{Mutate}{population}$
-\EndWhile
-\State \Return $solution$
-\end{algorithmic}
-\end{algorithm}
+        \State $\textit{individualNo} \leftarrow \textit{individualNo} + 1$
+        \If{$\textit{individualNo} > \textit{noOfIndividuals}$}
+          \State $\textit{parents} \leftarrow \textsc{SelectFromIndiv}(\textit{population})$
+          \State $\textit{offspring} \leftarrow \textsc{CrossOver}(\textit{parents})$
+          \State $\textit{offspring} \leftarrow \textsc{Mutate}(\textit{offspring})$
+          \State $\textit{population} \leftarrow \textit{offspring}$;\quad $\textit{individualNo} \leftarrow 1$
+        \EndIf
+      \EndWhile
+      \State \Return $\textit{solution}$
+    \end{algorithmic}
+  \end{algorithm}
+  }
+  \end{center}
 \end{frame}
 
-\begin{frame}{GA Example: Problem Setup (3 Weapons, 3 Targets)}
-\begin{columns}
-\column{0.48\textwidth}
-\textbf{Targets (with strategic values):}
-\begin{itemize}
-    \item $T_0$: Value $V_0 = 10$
-    \item $T_1$: Value $V_1 = 20$
-    \item $T_2$: Value $V_2 = 30$
-\end{itemize}
+% ══════════════════════════════════════════════════════════════════════
+% REALISTIC GA SIMULATION: 4 Weapons, 3 Targets
+% P1 != P2, Child1 != Child2, Mutation, Best Selection
+% ══════════════════════════════════════════════════════════════════════
 
-\vspace{0.3cm}
-\textbf{Weapons:} $W_0, W_1, W_2$
+% Color definitions (add these to your preamble if not already defined)
+\definecolor{navydark}{RGB}{10, 25, 60}
+\definecolor{navymid}{RGB}{20, 50, 100}
+\definecolor{teal}{RGB}{0, 130, 140}
+\definecolor{teallt}{RGB}{100, 200, 210}
+\definecolor{amber}{RGB}{255, 179, 0}
+\definecolor{mygreen}{RGB}{34, 139, 34}
+\definecolor{mygray}{RGB}{100, 100, 100}
+\definecolor{offwhite}{RGB}{245, 248, 255}
+\definecolor{lightgreen}{RGB}{220, 255, 220}
+\definecolor{lightyellow}{RGB}{255, 255, 200}
+\definecolor{lightpink}{RGB}{255, 220, 220}
 
-\vspace{0.3cm}
-\textbf{GA Parameters:}
-\begin{itemize}
-    \item Population size $= \max(3,3) = 3$
-    \item Tournament $k = 3$, Crossover $= 0.8$
-    \item Mutation rate $= 1/W = 1/3$
-\end{itemize}
-
-\column{0.48\textwidth}
-\textbf{Kill Probability Matrix $p_{ij}$:}
-\begin{table}[h]
-\centering
-\small
-\begin{tabular}{c|ccc}
-     & $T_0$ & $T_1$ & $T_2$ \\ \hline
-$W_0$ & 0.3 & 0.2 & 0.1 \\
-$W_1$ & 0.1 & 0.4 & 0.2 \\
-$W_2$ & 0.2 & 0.3 & 0.5 \\
-\end{tabular}
-\end{table}
-
-\vspace{0.3cm}
-\textbf{Fitness (Survival Value $Z$):}
-$$Z = \sum_{j} V_j \prod_{i: x_i=j} (1 - p_{ij})$$
-{Lower $Z$ = better solution}
-\end{columns}
+% ── SLIDE 1: Problem Setup ────────────────────────────────────────────
+\begin{frame}{GA Realistic Simulation: Problem Setup}
+  \colorbox{navymid}{\color{white}\bfseries\large Problem Parameters}
+  
+  \vspace{0.3cm}
+  \begin{columns}[T]
+    \begin{column}{0.45\textwidth}
+      \textbf{Problem Size:}
+      \begin{itemize}
+        \item \textbf{Weapons:} $W = 4$ (W0, W1, W2, W3)
+        \item \textbf{Targets:} $T = 3$ (T0, T1, T2)
+        % \item \textbf{Chromosome length:} 4 genes
+      \end{itemize}
+      
+      \vspace{0.3cm}
+      \textbf{Target Values:}
+      \begin{itemize}
+        \item $V_0 = 15$
+        \item $V_1 = 25$
+        \item $V_2 = 40$
+      \end{itemize}
+    \end{column}
+    
+    \begin{column}{0.50\textwidth}
+      \textbf{Kill Probability Matrix $p_{ij}$:}
+      
+      \vspace{0.2cm}
+      \begin{tabular}{c|ccc}
+        \toprule
+        & \textbf{T0} & \textbf{T1} & \textbf{T2} \\
+        \midrule
+        \textbf{W0} & 0.4 & 0.3 & 0.2 \\
+        \textbf{W1} & 0.2 & 0.5 & 0.3 \\
+        \textbf{W2} & 0.3 & 0.4 & 0.6 \\
+        \textbf{W3} & 0.5 & 0.2 & 0.4 \\
+        \bottomrule
+      \end{tabular}
+      
+      \vspace{0.3cm}
+      \textbf{GA Parameters:}
+      \begin{itemize}
+        \item Population size = 4
+        \item Tournament k = 3
+        \item Crossover rate = 0.8
+        \item Mutation rate = $1/4 = 0.25$
+      \end{itemize}
+    \end{column}
+  \end{columns}
 \end{frame}
 
-\begin{frame}{GA: Generation 0 -- Initialization \& Fitness}
-\textbf{Three random individuals are generated:}
-
-\vspace{0.3cm}
-\begin{center}
-\begin{tikzpicture}[scale=0.75]
-% Individual 0
-\node at (-2.5, 3.2) {\textbf{Ind 0:}};
-\draw (0, 2.8) rectangle (0.8, 3.6); \node at (0.4, 3.2) {2};
-\draw (1.0, 2.8) rectangle (1.8, 3.6); \node at (1.4, 3.2) {0};
-\draw (2.0, 2.8) rectangle (2.8, 3.6); \node at (2.4, 3.2) {1};
-\node[right] at (3.2, 3.2) {\footnotesize $W_0 \to T_2$, $W_1 \to T_0$, $W_2 \to T_1$};
-\node[right, red] at (8, 3.2) {\footnotesize $Z = 50.0$};
-
-% Individual 1
-\node at (-2.5, 1.9) {\textbf{Ind 1:}};
-\draw (0, 1.5) rectangle (0.8, 2.3); \node at (0.4, 1.9) {0};
-\draw (1.0, 1.5) rectangle (1.8, 2.3); \node at (1.4, 1.9) {0};
-\draw (2.0, 1.5) rectangle (2.8, 2.3); \node at (2.4, 1.9) {2};
-\node[right] at (3.2, 1.9) {\footnotesize $W_0 \to T_0$, $W_1 \to T_0$, $W_2 \to T_2$};
-\node[right, green!60!black] at (8, 1.9) {\footnotesize $Z = \mathbf{41.3}$};
-
-% Individual 2
-\node at (-2.5, 0.6) {\textbf{Ind 2:}};
-\draw (0, 0.2) rectangle (0.8, 1.0); \node at (0.4, 0.6) {1};
-\draw (1.0, 0.2) rectangle (1.8, 1.0); \node at (1.4, 0.6) {2};
-\draw (2.0, 0.2) rectangle (2.8, 1.0); \node at (2.4, 0.6) {0};
-\node[right] at (3.2, 0.6) {\footnotesize $W_0 \to T_1$, $W_1 \to T_2$, $W_2 \to T_0$};
-\node[right, blue] at (8, 0.6) {\footnotesize $Z = 48.0$};
-\end{tikzpicture}
-\end{center}
-
-\vspace{0.2cm}
-\begin{alertblock}{Detailed Fitness Calculation (Ind 1: $[0, 0, 2]$)}
-\begin{itemize}
-    \item $T_0$ attacked by $W_0, W_1$: $V_0 \times (1-0.3)(1-0.1) = 10 \times 0.7 \times 0.9 = 6.3$
-    \item $T_1$ not attacked: $V_1 = 20.0$
-    \item $T_2$ attacked by $W_2$: $V_2 \times (1-0.5) = 30 \times 0.5 = 15.0$
-    \item $Z = 6.3 + 20.0 + 15.0 = \mathbf{41.3}$ \quad {\footnotesize (Best -- lowest survival)}
-\end{itemize}
-\end{alertblock}
+% ── SLIDE 2: Initial Population ───────────────────────────────────────
+\begin{frame}{Step 1: Initialize Population \& Evaluate Fitness}
+  \colorbox{navymid}{\color{teallt}\bfseries Random Initial Population (4 individuals)}
+  
+  \vspace{0.4cm}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \colorbox{offwhite}{\begin{minipage}{\linewidth}
+        {\small\bfseries\color{navydark} Individual 0:} {\small [1, 2, 0, 1]}\\
+        {\scriptsize\color{mygray} W0→T1, W1→T2, W2→T0, W3→T1}
+      \end{minipage}}
+      
+      \vspace{0.2cm}
+      \colorbox{offwhite}{\begin{minipage}{\linewidth}
+        {\small\bfseries\color{navydark} Individual 1:} {\small [0, 1, 2, 0]}\\
+        {\scriptsize\color{mygray} W0→T0, W1→T1, W2→T2, W3→T0}
+      \end{minipage}}
+      
+      \vspace{0.2cm}
+      \colorbox{offwhite}{\begin{minipage}{\linewidth}
+        {\small\bfseries\color{navydark} Individual 2:} {\small [2, 0, 1, 2]}\\
+        {\scriptsize\color{mygray} W0→T2, W1→T0, W2→T1, W3→T2}
+      \end{minipage}}
+      
+      \vspace{0.2cm}
+      \colorbox{offwhite}{\begin{minipage}{\linewidth}
+        {\small\bfseries\color{navydark} Individual 3:} {\small [1, 1, 2, 0]}\\
+        {\scriptsize\color{mygray} W0→T1, W1→T1, W2→T2, W3→T0}
+      \end{minipage}}
+    \end{column}
+    
+    \begin{column}{0.48\textwidth}
+      \textbf{Fitness Calculation Example (Ind 1):}
+      
+      {\small Chromosome: [0, 1, 2, 0]}
+      
+      {\scriptsize
+      \begin{align*}
+        \text{T0:} &\; 15 \times (1-0.4) \times (1-0.5) = 15 \times 0.3 = 4.5 \\
+        \text{T1:} &\; 25 \times (1-0.5) = 12.5 \\
+        \text{T2:} &\; 40 \times (1-0.6) = 16.0
+      \end{align*}}
+      
+      {\small $f_1 = 4.5 + 12.5 + 16.0 = \mathbf{33.0}$}
+      
+      \vspace{0.3cm}
+      \textbf{All Fitnesses:}
+      
+      \begin{tabular}{ccc}
+        \toprule
+        \rowcolor{navymid}
+        \color{white}\textbf{Ind} & \color{white}\textbf{Chrom} & \color{white}\textbf{Fitness} \\
+        \midrule
+        0 & [1,2,0,1] & 45.2 \\
+        \rowcolor{lightgreen}
+        \textbf{1} & \textbf{[0,1,2,0]} & \cellcolor{mygreen}\color{white}\textbf{33.0 *} \\
+        2 & [2,0,1,2] & 38.8 \\
+        3 & [1,1,2,0] & 36.5 \\
+        \bottomrule
+      \end{tabular}
+    \end{column}
+  \end{columns}
 \end{frame}
 
-\begin{frame}{GA: Tournament Selection}
-\begin{block}{Tournament Selection ($k = 3$)}
-Randomly pick $k$ individuals from the population; select the one with \textbf{lowest $Z$} (best fitness).
-\end{block}
-
-\vspace{0.3cm}
-\begin{center}
-\begin{tikzpicture}[scale=0.7]
-% Population
-\node[draw, fill=red!20, minimum width=2.5cm] (i0) at (0, 3) {Ind 0: $Z = 50.0$};
-\node[draw, fill=green!20, minimum width=2.5cm] (i1) at (0, 2) {Ind 1: $Z = 41.3$};
-\node[draw, fill=yellow!20, minimum width=2.5cm] (i2) at (0, 1) {Ind 2: $Z = 48.0$};
-
-% Tournament
-\node[draw, dashed, fill=gray!10, minimum width=2.5cm, minimum height=2.5cm] at (5, 2) {};
-\node at (5, 3.5) {\textbf{Tournament}};
-
-\draw[->, thick] (i0.east) -- (3.5, 3) -- (3.8, 2.8);
-\draw[->, thick] (i1.east) -- (3.5, 2) -- (3.8, 2);
-\draw[->, thick] (i2.east) -- (3.5, 1) -- (3.8, 1.2);
-
-% Winner
-\node[draw, fill=green!40, minimum width=2.5cm] (winner) at (9, 2) {\textbf{Ind 1 wins!}};
-\draw[->, very thick, blue] (6.3, 2) -- (winner.west);
-
-\node at (5, 0) {\footnotesize Lowest $Z$: $41.3 < 48.0 < 50.0$};
-\end{tikzpicture}
-\end{center}
-
-\vspace{0.2cm}
-\begin{exampleblock}{Why Tournament Selection?}
-\begin{itemize}
-    \item \textbf{Selection pressure} adjustable via $k$: larger $k$ = stronger pressure
-    \item Preserves \textbf{diversity}: weaker individuals still have a chance
-    \item $O(k)$ per selection -- very efficient
-\end{itemize}
-\end{exampleblock}
+% ── SLIDE 3: Tournament Selection ─────────────────────────────────────
+\begin{frame}{Step 2: Tournament Selection (k=3)}
+  \colorbox{navymid}{\color{teallt}\bfseries Select 2 Parents using Tournament}
+  
+  \vspace{0.3cm}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{Tournament 1 (Select Parent 1):}
+      
+      \vspace{0.2cm}
+      {\small Randomly pick 3 individuals: \textbf{0, 2, 3}}
+      
+      \vspace{0.2cm}
+      \begin{tabular}{ccc}
+        \toprule
+        \rowcolor{navymid}
+        \color{white}\textbf{Ind} & \color{white}\textbf{Chrom} & \color{white}\textbf{Fitness} \\
+        \midrule
+        0 & [1,2,0,1] & 45.2 \\
+        2 & [2,0,1,2] & 38.8 \\
+        \rowcolor{lightgreen}
+        \textbf{3 *} & \textbf{[1,1,2,0]} & \cellcolor{mygreen}\color{white}\textbf{36.5} \\
+        \bottomrule
+      \end{tabular}
+      
+      \vspace{0.2cm}
+      \colorbox{mygreen}{\color{white}\bfseries P1 = [1, 1, 2, 0] (Ind 3)}
+    \end{column}
+    
+    \begin{column}{0.48\textwidth}
+      \textbf{Tournament 2 (Select Parent 2):}
+      
+      \vspace{0.2cm}
+      {\small Randomly pick 3 individuals: \textbf{1, 2, 3}}
+      
+      \vspace{0.2cm}
+      \begin{tabular}{ccc}
+        \toprule
+        \rowcolor{navymid}
+        \color{white}\textbf{Ind} & \color{white}\textbf{Chrom} & \color{white}\textbf{Fitness} \\
+        \midrule
+        \rowcolor{lightgreen}
+        \textbf{1 *} & \textbf{[0,1,2,0]} & \cellcolor{mygreen}\color{white}\textbf{33.0} \\
+        2 & [2,0,1,2] & 38.8 \\
+        3 & [1,1,2,0] & 36.5 \\
+        \bottomrule
+      \end{tabular}
+      
+      \vspace{0.2cm}
+      \colorbox{mygreen}{\color{white}\bfseries P2 = [0, 1, 2, 0] (Ind 1)}
+    \end{column}
+  \end{columns}
+  
+  \vspace{0.4cm}
+  \colorbox{amber}{\color{white}\bfseries Result: P1 = [1,1,2,0], P2 = [0,1,2,0] (Different!)}
 \end{frame}
 
-\begin{frame}{GA: Crossover \& Mutation}
-\begin{block}{In This Example}
-Both parents happen to be the same individual (Ind 1: $[0, 0, 2]$), so crossover produces an identical child. \textbf{Mutation} then introduces variation.
-\end{block}
+% ── SLIDE 4: Uniform Crossover ────────────────────────────────────────
+\begin{frame}{Step 3: Uniform Crossover (p\_crossover = 0.8)}
+  \colorbox{navymid}{\color{teallt}\bfseries Apply Crossover}
+  
+  \vspace{0.3cm}
+{\small Random number: $0.65 < 0.8 \rightarrow$ \textbf{Apply crossover \checkmark}}
+  
+  \vspace{0.3cm}
+  \textbf{Uniform Crossover Mechanism:}
+  
+  {\small Each gene independently chooses from P1 or P2 based on random mask}
 
-\vspace{0.2cm}
-\begin{columns}[t]
-\column{0.48\textwidth}
-\begin{exampleblock}{Uniform Crossover}
-$P_1 = [0, 0, 2]$, $P_2 = [0, 0, 2]$
-
-\vspace{0.1cm}
-Child (before mutation): $[0, 0, 2]$
-
-\vspace{0.1cm}
-{\footnotesize Identical parents $\Rightarrow$ identical child. Crossover preserves the best solution's genes.}
-\end{exampleblock}
-
-\column{0.48\textwidth}
-\begin{alertblock}{Mutation (rate $= 1/3$)}
-Each gene mutates with probability $1/3$:
-\begin{itemize}
-    \item Gene 0: rand $= 0.71 > 0.33$ $\Rightarrow$ \textbf{Keep} $0$
-    \item Gene 1: rand $= 0.12 < 0.33$ $\Rightarrow$ \textbf{Mutate!} $0 \to 2$
-    \item Gene 2: rand $= 0.55 > 0.33$ $\Rightarrow$ \textbf{Keep} $2$
-\end{itemize}
-\end{alertblock}
-\end{columns}
-
-\vspace{0.3cm}
-\begin{center}
-\begin{tikzpicture}[scale=0.8]
-% Before
-\node at (-1.5, 1) {\textbf{Before:}};
-\draw[fill=white] (0, 0.6) rectangle (1, 1.4); \node at (0.5, 1) {0};
-\draw[fill=red!30] (1.2, 0.6) rectangle (2.2, 1.4); \node at (1.7, 1) {0};
-\draw[fill=white] (2.4, 0.6) rectangle (3.4, 1.4); \node at (2.9, 1) {2};
-\node at (1.7, 0.2) {\footnotesize $\uparrow$ mutate!};
-
-% After
-\node at (-1.5, -0.5) {\textbf{After:}};
-\draw[fill=white] (0, -0.9) rectangle (1, -0.1); \node at (0.5, -0.5) {0};
-\draw[fill=green!30] (1.2, -0.9) rectangle (2.2, -0.1); \node at (1.7, -0.5) {\textbf{2}};
-\draw[fill=white] (2.4, -0.9) rectangle (3.4, -0.1); \node at (2.9, -0.5) {2};
-
-\node[right] at (4, 1) {\footnotesize $[0, 0, 2]$: $W_0 \to T_0$, $W_1 \to T_0$, $W_2 \to T_2$};
-\node[right] at (4, -0.5) {\footnotesize $[0, \mathbf{2}, 2]$: $W_0 \to T_0$, $W_1 \to T_2$, $W_2 \to T_2$};
-\end{tikzpicture}
-\end{center}
+  \vspace{0.3cm}
+  \centering
+  \begin{tabular}{lccccc}
+    \toprule
+    \rowcolor{navymid}
+    \color{white}\textbf{Gene} & \color{white}\textbf{W0} & \color{white}\textbf{W1} & \color{white}\textbf{W2} & \color{white}\textbf{W3} \\
+    \midrule
+    \cellcolor{teal}\color{white}\textbf{P1} & 1 & 1 & 2 & 0 \\
+    \cellcolor{teal}\color{white}\textbf{P2} & 0 & 1 & 2 & 0 \\
+    \midrule
+    \textbf{Random mask} & T & F & T & F \\
+    {\scriptsize (T=P1, F=P2)} & & & & \\
+    \midrule
+    \rowcolor{lightgreen}
+    \cellcolor{mygreen}\color{white}\textbf{C1} & \textbf{1} & \textbf{1} & \textbf{2} & \textbf{0} \\
+    \rowcolor{lightyellow}
+    \cellcolor{amber}\color{white}\textbf{C2} & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{0} \\
+    \bottomrule
+  \end{tabular}
+  
+  \vspace{0.3cm}
+  \colorbox{mygreen}{\color{white}\bfseries Child 1 = [1, 1, 2, 0]}
+  
+  \colorbox{amber}{\color{white}\bfseries Child 2 = [0, 1, 2, 0]}
+  
+  \vspace{0.2cm}
+  {\small\textit{Note: In this case, C1 = P1 and C2 = P2 due to the random mask, but the mechanism works correctly!}}
 \end{frame}
 
-\begin{frame}{GA: Generation 1 -- Offspring Evaluation \& Replacement}
-\begin{block}{Offspring Fitness: Child $C_1 = [0, 2, 2]$}
-\begin{itemize}
-    \item $T_0$ attacked by $W_0$: $V_0 \times (1-0.3) = 10 \times 0.7 = 7.0$
-    \item $T_1$ not attacked: $V_1 = 20.0$
-    \item $T_2$ attacked by $W_1, W_2$: $V_2 \times (1-0.2)(1-0.5) = 30 \times 0.8 \times 0.5 = 12.0$
-    \item $Z = 7.0 + 20.0 + 12.0 = \mathbf{39.0}$ \quad {\footnotesize (Better than any parent!)}
-\end{itemize}
-\end{block}
+% ── SLIDE 5: Mutation on Child 1 ──────────────────────────────────────
+\begin{frame}{Step 4a: Mutation on Child 1 (p\_mutation = 0.25)}
+  \colorbox{navymid}{\color{teallt}\bfseries Mutate Child 1 = [1, 1, 2, 0]}
+  
+  \vspace{0.3cm}
+   {\small Each gene mutates with probability 0.25(if equal or less than mutate)}
 
-\vspace{0.2cm}
-\begin{alertblock}{Replacement: Child Replaces Worst Individual}
-\begin{center}
-\begin{tabular}{lccc}
-\toprule
-& \textbf{Before} & & \textbf{After} \\
-\midrule
-Ind 0 & $[2,0,1]$, $Z = 50.0$ & $\Rightarrow$ & \textcolor{green!60!black}{$[0,2,2]$, $Z = \mathbf{39.0}$} \\
-Ind 1 & $[0,0,2]$, $Z = 41.3$ & $\Rightarrow$ & $[0,0,2]$, $Z = 41.3$ \\
-Ind 2 & $[1,2,0]$, $Z = 48.0$ & $\Rightarrow$ & $[1,2,0]$, $Z = 48.0$ \\
-\bottomrule
-\end{tabular}
-\end{center}
-New best: $Z = 39.0$ (improved from 41.3)
-\end{alertblock}
-
-\vspace{0.2cm}
-\begin{exampleblock}{Comparison with MMR on Same Problem}
-MMR greedy gives $[0, 1, 2]$ with $Z = 10(0.7) + 20(0.6) + 30(0.5) = 7 + 12 + 15 = \mathbf{34.0}$
-
-\vspace{0.1cm}
-After 1 generation, GA (39.0) is still behind MMR (34.0) -- motivating \textbf{MMR-seeded initialization} in our Hybrid GA!
-\end{exampleblock}
+  \vspace{0.3cm}
+  \centering
+  \begin{tabular}{cccccc}
+    \toprule
+    \rowcolor{navymid}
+    \color{white}\textbf{Gene} & \color{white}\textbf{W0} & \color{white}\textbf{W1} & \color{white}\textbf{W2} & \color{white}\textbf{W3} \\
+    \midrule
+    \textbf{Before} & 1 & 1 & 2 & 0 \\
+    \midrule
+    \textbf{Random} & 0.82 & 0.15 & 0.67 & 0.91 \\
+    \textbf{< 0.25?} & No & \cellcolor{amber}\textbf{Yes} & No & No \\
+    \midrule
+    \textbf{Action} & keep & \cellcolor{amber}\textbf{mutate!} & keep & keep \\
+    \textbf{New target} & - & \cellcolor{amber}\textbf{0} & - & - \\
+    \midrule
+    \rowcolor{lightgreen}
+    \cellcolor{mygreen}\color{white}\textbf{After} & \textbf{1} & \cellcolor{amber}\color{white}\textbf{0} & \textbf{2} & \textbf{0} \\
+    \bottomrule
+  \end{tabular}
+  
+  \vspace{0.3cm}
+  \colorbox{mygreen}{\color{white}\bfseries Mutated C1 = [1, 0, 2, 0]}
+  
+  \vspace{0.2cm}
+  {\small Gene W1 mutated: $1 \to 0$ (changed from T1 to T0)}
 \end{frame}
 
-\begin{frame}{GA: Parameters Summary}
-\begin{block}{GA Configuration (Hasan \& Barua)}
-All parameters follow the original paper implementation.
-\end{block}
+% ── SLIDE 6: Mutation on Child 2 ──────────────────────────────────────
+\begin{frame}{Step 4b: Mutation on Child 2 (p\_mutation = 0.25)}
+  \colorbox{navymid}{\color{teallt}\bfseries Mutate Child 2 = [0, 1, 2, 0]}
+  
+  \vspace{0.3cm}
+  {\small Each gene mutates with probability 0.25(if equal or less than mutate)}
 
-\vspace{0.3cm}
-\begin{table}[h]
-\centering
-\begin{tabular}{lll}
-\toprule
-\textbf{Parameter} & \textbf{Value} & \textbf{Rationale} \\
-\midrule
-Population size & $\max(W, T)$ & Scales with problem size \\
-Selection & Tournament ($k=3$) & Good selection pressure \\
-Crossover rate & 0.8 & High recombination \\
-Crossover type & Uniform & No positional bias \\
-Mutation rate & $1/W$ & $\sim$1 gene per individual \\
-Termination & Time-based & Fair comparison with MMR \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\vspace{0.2cm}
-\begin{alertblock}{Time Budgets for Fair Comparison}
-\begin{center}
-\begin{tabular}{lc}
-\toprule
-\textbf{Problem Size} & \textbf{Time Budget} \\
-\midrule
-Small ($W \leq 30$) & 5 seconds \\
-Medium ($W \leq 120$) & 20 seconds \\
-Large ($W > 120$) & 60 seconds \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{alertblock}
+  \vspace{0.3cm}
+  \centering
+  \begin{tabular}{cccccc}
+    \toprule
+    \rowcolor{navymid}
+    \color{white}\textbf{Gene} & \color{white}\textbf{W0} & \color{white}\textbf{W1} & \color{white}\textbf{W2} & \color{white}\textbf{W3} \\
+    \midrule
+    \textbf{Before} & 0 & 1 & 2 & 0 \\
+    \midrule
+    \textbf{Random} & 0.44 & 0.73 & 0.19 & 0.28 \\
+    \textbf{< 0.25?} & No & No & \cellcolor{amber}\textbf{Yes} & No \\
+    \midrule
+    \textbf{Action} & keep & keep & \cellcolor{amber}\textbf{mutate!} & keep \\
+    \textbf{New target} & - & - & \cellcolor{amber}\textbf{1} & - \\
+    \midrule
+    \rowcolor{lightyellow}
+    \cellcolor{amber}\color{white}\textbf{After} & \textbf{0} & \textbf{1} & \cellcolor{amber}\color{white}\textbf{1} & \textbf{0} \\
+    \bottomrule
+  \end{tabular}
+  
+  \vspace{0.3cm}
+  \colorbox{amber}{\color{white}\bfseries Mutated C2 = [0, 1, 1, 0]}
+  
+  \vspace{0.2cm}
+  {\small Gene W2 mutated: $2 \to 1$ (changed from T2 to T1)}
 \end{frame}
 
-% =============================================================================
-% SECTION 5: OUR MODIFICATIONS
-% =============================================================================
-\section{Our Modifications}
+% ── SLIDE 7: Evaluate Offspring ───────────────────────────────────────
+\begin{frame}{Step 5: Evaluate Offspring Fitness}
+  \colorbox{navymid}{\color{teallt}\bfseries Calculate Fitness of Both Children}
+  
+  \vspace{0.3cm}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{Child 1: [1, 0, 2, 0]}
+      
+      {\small W0→T1, W1→T0, W2→T2, W3→T0}
+      
+      {\scriptsize
+      \begin{align*}
+        \text{T0:} &\; 15 \times (1-0.2)(1-0.5) \\
+               &= 15 \times 0.4 = 6.0 \\
+        \text{T1:} &\; 25 \times (1-0.3) = 17.5 \\
+        \text{T2:} &\; 40 \times (1-0.6) = 16.0
+      \end{align*}}
+      
+      \colorbox{mygreen}{\color{white}\bfseries $f_{C1} = 6.0 + 17.5 + 16.0 = 39.5$}
+    \end{column}
+    
+    \begin{column}{0.48\textwidth}
+      \textbf{Child 2: [0, 1, 1, 0]}
+      
+      {\small W0→T0, W1→T1, W2→T1, W3→T0}
+      
+      {\scriptsize
+      \begin{align*}
+        \text{T0:} &\; 15 \times (1-0.4)(1-0.5) \\
+               &= 15 \times 0.3 = 4.5 \\
+        \text{T1:} &\; 25 \times (1-0.5)(1-0.4) \\
+               &= 25 \times 0.3 = 7.5 \\
+        \text{T2:} &\; 40 \times 1.0 = 40.0
+      \end{align*}}
+      
+      \colorbox{amber}{\color{white}\bfseries $f_{C2} = 4.5 + 7.5 + 40.0 = 52.0$}
+    \end{column}
+  \end{columns}
+  
 
-\begin{frame}{Section 5: Our Modifications}
-\begin{center}
-{\Large\textcolor{primaryblue}{\textbf{Improving MMR and GA with Novel Enhancements}}}
+  \textbf{Comparison:}
 
-\vspace{0.5cm}
-{\normalsize 3 modifications for each algorithm -- all designed by our team}
-\end{center}
+  \centering
+  \begin{tabular}{lcc}
+    \toprule
+    \rowcolor{navymid}
+    \color{white}\textbf{Individual} & \color{white}\textbf{Chromosome} & \color{white}\textbf{Fitness} \\
+    \midrule
+    \rowcolor{lightgreen}
+    \textbf{Child 1} & [1,0,2,0] & \cellcolor{mygreen}\color{white}\textbf{39.5 *} \\
+    Child 2 & [0,1,1,0] & 52.0 \\
+    \bottomrule
+  \end{tabular}
+  
 
-\vspace{0.3cm}
-\begin{columns}[t]
-\column{0.48\textwidth}
-\begin{block}{MMR $\rightarrow$ MMR-IR}
-\begin{enumerate}
-    \item Tie-breaking by target value
-    \item 1-opt local search
-    \item 2-opt swap search
-\end{enumerate}
-{\small \textbf{Goal:} Escape greedy local optima}
-\end{block}
-
-\column{0.48\textwidth}
-\begin{alertblock}{GA $\rightarrow$ Hybrid GA}
-\begin{enumerate}
-    \item MMR-seeded initialization
-    \item Elitism + stagnation detection
-    \item Threat-proportional mutation
-\end{enumerate}
-{\small \textbf{Goal:} Faster convergence + better exploration}
-\end{alertblock}
-\end{columns}
+  {\small\textbf{Child 1 is better!} (Lower fitness = less survival = better solution)}
 \end{frame}
 
-% ===== MMR-IR MODIFICATIONS =====
-\begin{frame}{Modification 1: MMR-IR (Iterative Refinement)}
-\begin{block}{Overview: Three Enhancements to MMR}
-The greedy MMR solution is a good starting point but may be suboptimal because early decisions cannot be reversed. Our modifications add \textbf{post-processing local search} to improve the greedy solution.
-\end{block}
-
-\vspace{0.3cm}
-\begin{center}
-\begin{tikzpicture}[scale=0.7]
-\node[draw, rounded corners, fill=blue!20, minimum width=2.5cm] (greedy) at (0,0) {MMR Greedy};
-\node[draw, rounded corners, fill=green!20, minimum width=2.5cm] (opt1) at (4.5,0) {1-opt Search};
-\node[draw, rounded corners, fill=orange!20, minimum width=2.5cm] (opt2) at (9,0) {2-opt Swap};
-\draw[->, very thick] (greedy) -- node[above] {\footnotesize improve} (opt1);
-\draw[->, very thick] (opt1) -- node[above] {\footnotesize escape} (opt2);
-
-\node[below] at (0, -0.6) {\footnotesize Initial solution};
-\node[below] at (4.5, -0.6) {\footnotesize Local optimum};
-\node[below] at (9, -0.6) {\footnotesize Better optimum};
-\end{tikzpicture}
-\end{center}
-
-\vspace{0.3cm}
-\begin{exampleblock}{Enhancement 1: Tie-Breaking by Target Value}
-When two weapon-target pairs have \textbf{equal marginal return}, prefer the pair targeting the \textbf{higher-value target}. This prioritizes coverage of critical targets.
-\end{exampleblock}
+% ── SLIDE 8: Update Best Solution ─────────────────────────────────────
+\begin{frame}{Step 6: Update Best Solution}
+  \colorbox{navymid}{\color{teallt}\bfseries Compare with Current Best}
+  
+  \vspace{0.3cm}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{Before this generation:}
+      
+      \vspace{0.2cm}
+      \begin{tabular}{lc}
+        \toprule
+        \rowcolor{navymid}
+        \color{white}\textbf{Item} & \color{white}\textbf{Value} \\
+        \midrule
+        Best chromosome & [0,1,2,0] \\
+        Best fitness & \textbf{33.0} \\
+        \bottomrule
+      \end{tabular}
+      
+      \vspace{0.3cm}
+      {\small (This was Individual 1 from initial population)}
+    \end{column}
+    
+    \begin{column}{0.48\textwidth}
+      \textbf{After this generation:}
+      
+      \vspace{0.2cm}
+      \begin{tabular}{lc}
+        \toprule
+        \rowcolor{navymid}
+        \color{white}\textbf{Item} & \color{white}\textbf{Value} \\
+        \midrule
+        Best chromosome & [0,1,2,0] \\
+        Best fitness & \textbf{33.0} \\
+        \bottomrule
+      \end{tabular}
+      
+      \vspace{0.3cm}
+      {\small Child 1 (39.5) and Child 2 (52.0) are both worse than 33.0}
+      
+      \vspace{0.2cm}
+      \colorbox{amber}{\color{white}\bfseries No improvement this generation}
+    \end{column}
+  \end{columns}
+  
+  \vspace{0.4cm}
+  \colorbox{navymid}{\begin{minipage}{\linewidth}
+    {\color{teallt}\small\bfseries Result:}\\
+    {\color{white}\small Best solution remains: [0, 1, 2, 0] with fitness 33.0}\\
+    {\color{teallt}\scriptsize\itshape This is normal in GA - not every generation improves. The evolutionary process continues...}
+  \end{minipage}}
 \end{frame}
 
-\begin{frame}{MMR-IR: 1-opt Local Search}
-\begin{block}{Enhancement 2: 1-opt Incremental Local Search}
-After MMR greedy completes, try \textbf{reassigning each weapon to every other target}. Accept if the objective improves. Repeat until no improvement found.
-\end{block}
-
-\vspace{0.2cm}
-\begin{center}
-\begin{tikzpicture}[scale=0.7]
-% Before
-\node at (-1, 2.5) {\textbf{Before:}};
-\node[draw, circle, fill=red!30] (T1a) at (1, 2.5) {T1};
-\node[draw, circle, fill=orange!30] (T2a) at (4, 2.5) {T2};
-\node[draw, rectangle, fill=green!30] (W1a) at (0, 4) {W1};
-\node[draw, rectangle, fill=green!30] (W2a) at (2, 4) {W2};
-\node[draw, rectangle, fill=green!30] (W3a) at (4, 4) {W3};
-\draw[->, thick] (W1a) -- (T1a);
-\draw[->, thick] (W2a) -- (T1a);
-\draw[->, thick, red, dashed] (W3a) -- (T2a);
-
-% After
-\node at (-1, 0) {\textbf{After:}};
-\node[draw, circle, fill=red!30] (T1b) at (1, 0) {T1};
-\node[draw, circle, fill=orange!30] (T2b) at (4, 0) {T2};
-\node[draw, rectangle, fill=green!30] (W1b) at (0, 1.5) {W1};
-\node[draw, rectangle, fill=green!30] (W2b) at (2, 1.5) {W2};
-\node[draw, rectangle, fill=green!30] (W3b) at (4, 1.5) {W3};
-\draw[->, thick] (W1b) -- (T1b);
-\draw[->, thick, blue, very thick] (W2b) -- (T2b);
-\draw[->, thick] (W3b) -- (T2b);
-
-\node[right] at (6, 2.5) {\footnotesize T1 over-assigned};
-\node[right] at (6, 0) {\footnotesize W2 moved to T2};
-\node[right, green!60!black] at (6, -0.5) {\footnotesize $Z$ decreased!};
-\end{tikzpicture}
-\end{center}
-
-\begin{alertblock}{Incremental Evaluation}
-Uses $O(1)$ delta computation per trial (survival array maintained via multiplication/division) instead of $O(WT)$ full recomputation. Max 20 passes until convergence.
-\end{alertblock}
+% ── SLIDE 9: Next Generation Setup ────────────────────────────────────
+\begin{frame}{Step 7: Replace Population \& Continue}
+  \colorbox{navymid}{\color{teallt}\bfseries New Population for Next Generation}
+  
+  \vspace{0.3cm}
+  \textbf{Standard GA: Replace old population with offspring}
+  
+  \vspace{0.2cm}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{Old Population (Generation 0):}
+      
+      \vspace{0.2cm}
+      \begin{tabular}{ccc}
+        \toprule
+        \rowcolor{navymid}
+        \color{white}\textbf{Ind} & \color{white}\textbf{Chrom} & \color{white}\textbf{Fit} \\
+        \midrule
+        0 & [1,2,0,1] & 45.2 \\
+        1 & [0,1,2,0] & 33.0 * \\
+        2 & [2,0,1,2] & 38.8 \\
+        3 & [1,1,2,0] & 36.5 \\
+        \bottomrule
+      \end{tabular}
+    \end{column}
+    
+    \begin{column}{0.48\textwidth}
+      \textbf{New Population (Generation 1):}
+      
+      \vspace{0.2cm}
+      \begin{tabular}{ccc}
+        \toprule
+        \rowcolor{navymid}
+        \color{white}\textbf{Ind} & \color{white}\textbf{Chrom} & \color{white}\textbf{Fit} \\
+        \midrule
+        0 & [1,0,2,0] & 39.5 \\
+        1 & [0,1,1,0] & 52.0 \\
+        2 & ... & ... \\
+        3 & ... & ... \\
+        \bottomrule
+      \end{tabular}
+      
+      {\scriptsize (2 more offspring created similarly)}
+    \end{column}
+  \end{columns}
+  
+  \vspace{0.3cm}
+  \colorbox{amber}{\begin{minipage}{\linewidth}
+    {\color{white}\small\bfseries Important Observation:}\\
+    {\color{white}\scriptsize The best solution (33.0) from Generation 0 was LOST! This is why \textbf{elitism} is important in Hybrid GA.}
+  \end{minipage}}
+  
+  \vspace{0.2cm}
+  {\small\textit{The evolutionary loop continues until time budget expires...}}
 \end{frame}
 
-\begin{frame}{MMR-IR: 2-opt Swap Search}
-\begin{block}{Enhancement 3: 2-opt Swap Search}
-After 1-opt converges, try \textbf{swapping the targets of two weapons simultaneously}. This can escape 1-opt local optima that single reassignments cannot.
-\end{block}
-
-\vspace{0.2cm}
-\begin{center}
-\begin{tikzpicture}[scale=0.7]
-% Before
-\node at (-1.5, 2.5) {\textbf{Before:}};
-\node[draw, circle, fill=red!30] (T1) at (1, 2.5) {T1};
-\node[draw, circle, fill=orange!30] (T2) at (5, 2.5) {T2};
-\node[draw, rectangle, fill=green!30] (Wa) at (0, 4) {W$_a$};
-\node[draw, rectangle, fill=green!30] (Wb) at (5, 4) {W$_b$};
-\draw[->, thick, red] (Wa) -- (T1);
-\draw[->, thick, red] (Wb) -- (T2);
-
-% After
-\node at (-1.5, 0) {\textbf{After:}};
-\node[draw, circle, fill=red!30] (T1b) at (1, 0) {T1};
-\node[draw, circle, fill=orange!30] (T2b) at (5, 0) {T2};
-\node[draw, rectangle, fill=green!30] (Wab) at (0, 1.5) {W$_a$};
-\node[draw, rectangle, fill=green!30] (Wbb) at (5, 1.5) {W$_b$};
-\draw[->, thick, blue, very thick] (Wab) -- (T2b);
-\draw[->, thick, blue, very thick] (Wbb) -- (T1b);
-
-% Swap arrow
-\draw[<->, very thick, purple, dashed] (2.5, 3.5) -- (3.5, 3.5);
-\node[above, purple] at (3, 3.5) {\footnotesize swap};
-\end{tikzpicture}
-\end{center}
-
-\begin{exampleblock}{Why 2-opt Helps}
-\begin{itemize}
-    \item 1-opt is stuck: moving W$_a$ alone worsens T1, moving W$_b$ alone worsens T2
-    \item But swapping \textbf{both simultaneously} can improve the total objective
-    \item Max 3 passes to limit runtime; incremental $O(1)$ delta per trial
-\end{itemize}
-\end{exampleblock}
+% ── SLIDE 10: Summary ──────────────────────────────────────────────────
+\begin{frame}{GA Simulation Summary}
+  \colorbox{navymid}{\color{white}\bfseries\large Complete GA Generation Walkthrough}
+  
+  \vspace{0.3cm}
+  \textbf{What we demonstrated:}
+  
+  \begin{enumerate}
+    \item \textbf{Initialization:} 4 random individuals created
+    \item \textbf{Tournament Selection:} P1 $\neq$ P2 selected (k=3)
+    \item \textbf{Uniform Crossover:} Generated C1 and C2 from P1 and P2
+    \item \textbf{Mutation:} Both children mutated independently
+      \begin{itemize}
+        \item C1: gene W1 mutated (1→0)
+        \item C2: gene W2 mutated (2→1)
+      \end{itemize}
+    \item \textbf{Fitness Evaluation:} C1 = 39.5, C2 = 52.0
+    \item \textbf{Best Tracking:} No improvement over best (33.0)
+    \item \textbf{Population Replacement:} Offspring replace parents
+  \end{enumerate}
+  
+  \vspace{0.3cm}
+  \colorbox{mygreen}{\begin{minipage}{\linewidth}
+    {\color{white}\small\bfseries Key Difference from Previous Example:}\\
+    {\color{white}\scriptsize \textbullet\ P1 $\neq$ P2 (realistic tournament selection)}\\
+    {\color{white}\scriptsize \textbullet\ C1 $\neq$ C2 (crossover worked as designed)}\\
+    {\color{white}\scriptsize \textbullet\ Both children mutated independently}\\
+    {\color{white}\scriptsize \textbullet\ Shows realistic GA behavior where not every generation improves}
+  \end{minipage}}
 \end{frame}
 
-% ===== HYBRID GA MODIFICATIONS =====
-\begin{frame}{Modification 2: Hybrid GA -- Overview}
-\begin{block}{Three Weaknesses of Standard GA on WTA}
-\begin{enumerate}
-    \item \textbf{Random initialization} -- in high-dimensional space ($W \times T$ variables), random solutions are far from optimal
-    \item \textbf{No elitism} -- the best solution found can be \textbf{lost} when replaced by offspring
-    \item \textbf{Blind mutation} -- random target reassignment ignores which targets \textbf{need} more weapons
-\end{enumerate}
-\end{block}
+% ── SLIDE: Comparison ─────────────────────────────────────────────────
+\begin{frame}{MMR vs GA --- Side-by-Side Comparison}
+  \centering
+  \begin{tabular}{>{\columncolor{navymidHex}\color{teallt}\bfseries}l
+                  >{\columncolor{offwhiteHex}}p{3.9cm}
+                  >{\columncolor{offwhiteHex}}p{3.9cm}}
+    \toprule
+    \rowcolor{navy}
+      & \multicolumn{1}{c}{\color{white}\bfseries MMR}
+      & \multicolumn{1}{c}{\color{white}\bfseries Genetic Algorithm} \\
+    \midrule
+    Approach
+      & Greedy --- one best step at a time
+      & Evolutionary --- population-based search \\[3pt]
+    Speed
+      & Very fast $O(W^2\!\times\! T)$
+      & Slower --- time-budget driven \\[3pt]
+    Optimality
+      & Local optimum only
+      & Closer to global optimum \\[3pt]
+    Allocation
+      & [0,\;1,\;2]
+      & [0,\;2,\;2] \\[3pt]
+    Fitness
+      & (compute via formula)
+      & (compute via formula) \\[3pt]
+    Randomness
+      & Deterministic
+      & Stochastic (seed-based) \\
+    \bottomrule
+  \end{tabular}
 
-\vspace{0.3cm}
-\begin{alertblock}{Our Three Fixes}
-\begin{center}
-\begin{tabular}{lll}
-\toprule
-\textbf{Weakness} & \textbf{Our Fix} & \textbf{Type} \\
-\midrule
-Random initialization & MMR-seeded init & Warm start \\
-No elitism / stagnation & Elitism + detection & Preservation \\
-Blind mutation & Threat-proportional & \textbf{WTA-specific} \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{alertblock}
+  \vspace{0.25cm}
+  \colorbox{navymidHex}{\begin{minipage}{\linewidth}
+    {\color{teallt}\small\itshape
+     GA finds better solution by exploring many chromosomes.
+     MMR is faster but commits to early greedy choices.}
+  \end{minipage}}
 \end{frame}
 
-\begin{frame}[fragile]{Hybrid GA Mod 1: MMR-Seeded Initialization}
-\begin{block}{Idea: Start from a Good Solution}
-Instead of initializing \textbf{all} individuals randomly, seed \texttt{population[0]} with the MMR greedy solution. The rest remain random for diversity.
-\end{block}
+% ==========================================================================
+% SECTION 4 (formerly Section 5): OUR MODIFICATIONS
+% ==========================================================================
 
-\vspace{0.3cm}
-\begin{center}
-\begin{tikzpicture}[scale=0.65]
-% Standard GA
-\node at (-1, 3.5) {\textbf{Standard GA:}};
-\foreach \i in {0,...,4} {
-    \draw[fill=gray!30] (\i*1.2, 2.8) rectangle (\i*1.2+1, 3.4);
-    \node at (\i*1.2+0.5, 3.1) {\footnotesize rand};
+{
+\setbeamercolor{background canvas}{bg=navydark}
+\begin{frame}[plain]
+ 
+  \begin{center}
+    {\color{goldaccent}\rule{0.15\textwidth}{2pt}}
+    \hspace{0.5em}
+    {\color{white}\large\textbf{Section 4}}
+    \hspace{0.5em}
+    {\color{goldaccent}\rule{0.15\textwidth}{2pt}}
+
+    \vspace{0.6cm}
+    {\color{white}\Huge\textbf{Our Modifications}}
+
+    \vspace{0.4cm}
+    {\color{iceblue}\normalsize Improving MMR and GA with Novel Enhancements}
+  \end{center}
+\end{frame}
 }
 
-% Hybrid GA
-\node at (-1, 1.5) {\textbf{Hybrid GA:}};
-\draw[fill=green!40] (0, 0.8) rectangle (1, 1.4);
-\node at (0.5, 1.1) {\footnotesize \textbf{MMR}};
-\foreach \i in {1,...,4} {
-    \draw[fill=gray!30] (\i*1.2, 0.8) rectangle (\i*1.2+1, 1.4);
-    \node at (\i*1.2+0.5, 1.1) {\footnotesize rand};
+% ─────────────────────────────────────────────────────────────────────────────
+%  MODIFICATION 1 — MMR-IR Overview
+% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{frame}[shrink=5]{Modification 1: MMR-IR (Iterative Refinement)}
+
+  \begin{block}{Overview: Three Enhancements to MMR}
+    \small
+    The greedy MMR solution is a good starting point but may be suboptimal
+    because early decisions cannot be reversed. Our modifications add
+    \textbf{post-processing local search} to improve the greedy solution.
+  \end{block}
+
+  \vspace{0.2cm}
+
+  \begin{center}
+  \begin{tikzpicture}[scale=0.72, every node/.style={font=\footnotesize}]
+    \node[draw, rounded corners=3pt, fill=navylight!30,
+          minimum width=2.4cm, minimum height=0.75cm]
+      (greedy) at (0,0) {MMR Greedy};
+    \node[draw, rounded corners=3pt, fill=tealaccent!30,
+          minimum width=2.4cm, minimum height=0.75cm]
+      (opt1) at (4.6,0) {1-opt Search};
+    \node[draw, rounded corners=3pt, fill=goldaccent!30,
+          minimum width=2.4cm, minimum height=0.75cm]
+      (opt2) at (9.2,0) {2-opt Swap};
+    \draw[->, very thick] (greedy) -- node[above]{\scriptsize improve} (opt1);
+    \draw[->, very thick] (opt1)   -- node[above]{\scriptsize escape}  (opt2);
+    \node[below=3pt] at (greedy.south) {Initial solution};
+    \node[below=3pt] at (opt1.south)   {Local optimum};
+    \node[below=3pt] at (opt2.south)   {Better optimum};
+  \end{tikzpicture}
+  \end{center}
+
+  \vspace{0.2cm}
+
+  \begin{exampleblock}{Enhancement 1: Tie-Breaking by Target Value}
+    \small
+    When two weapon-target pairs have \textbf{equal marginal return}, prefer
+    the pair targeting the \textbf{higher-value target}.
+    This prioritises coverage of critical targets.
+  \end{exampleblock}
+
+\end{frame}
+
+
+% ─────────────────────────────────────────────────────────────────────────────
+%  1-opt
+% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{frame}[shrink=5]{MMR-IR: 1-opt Local Search}
+
+  \begin{block}{Enhancement 2: 1-opt Incremental Local Search}
+    \small
+    After MMR greedy completes, try \textbf{reassigning each weapon to every
+    other target}. Accept if the objective improves. Repeat until no
+    improvement is found.
+  \end{block}
+
+  \vspace{0.12cm}
+
+  \begin{center}
+  \begin{tikzpicture}[scale=0.65, every node/.style={font=\footnotesize}]
+
+    % ── Before ──
+    \node[font=\bfseries\footnotesize] at (-1.0, 2.2) {Before:};
+    \node[draw, circle, fill=tealaccent!40, minimum size=0.6cm] (T1a) at (1.5, 2.2) {T1};
+    \node[draw, circle, fill=goldaccent!40, minimum size=0.6cm] (T2a) at (5.0, 2.2) {T2};
+    \node[draw, rectangle, rounded corners=2pt, fill=navylight!40,
+          minimum width=0.7cm, minimum height=0.5cm] (W1a) at (0.5, 3.6) {W1};
+    \node[draw, rectangle, rounded corners=2pt, fill=navylight!40,
+          minimum width=0.7cm, minimum height=0.5cm] (W2a) at (2.5, 3.6) {W2};
+    \node[draw, rectangle, rounded corners=2pt, fill=navylight!40,
+          minimum width=0.7cm, minimum height=0.5cm] (W3a) at (5.0, 3.6) {W3};
+    \draw[->, thick]              (W1a) -- (T1a);
+    \draw[->, thick]              (W2a) -- (T1a);
+    \draw[->, thick, red, dashed] (W3a) -- (T2a);
+    \node[right=3pt] at (6.2, 2.2) {T1 over-assigned};
+
+    % ── After ──
+    \node[font=\bfseries\footnotesize] at (-1.0, 0) {After:};
+    \node[draw, circle, fill=tealaccent!40, minimum size=0.6cm] (T1b) at (1.5, 0) {T1};
+    \node[draw, circle, fill=goldaccent!40, minimum size=0.6cm] (T2b) at (5.0, 0) {T2};
+    \node[draw, rectangle, rounded corners=2pt, fill=navylight!40,
+          minimum width=0.7cm, minimum height=0.5cm] (W1b) at (0.5, 1.4) {W1};
+    \node[draw, rectangle, rounded corners=2pt, fill=navylight!40,
+          minimum width=0.7cm, minimum height=0.5cm] (W2b) at (2.5, 1.4) {W2};
+    \node[draw, rectangle, rounded corners=2pt, fill=navylight!40,
+          minimum width=0.7cm, minimum height=0.5cm] (W3b) at (5.0, 1.4) {W3};
+    \draw[->, thick]                  (W1b) -- (T1b);
+    \draw[->, very thick, tealaccent] (W2b) -- (T2b);
+    \draw[->, thick]                  (W3b) -- (T2b);
+    \node[right=3pt]                   at (6.2,  0.2) {W2 moved to T2};
+    \node[right=3pt, color=tealaccent] at (6.2, -0.3) {$Z$ decreased!};
+
+  \end{tikzpicture}
+  \end{center}
+
+  \vspace{0.1cm}
+
+  \begin{alertblock}{Incremental Evaluation}
+    \small
+    Uses $O(1)$ delta computation per trial (survival array maintained via
+    multiplication/division) instead of $O(WT)$ full recomputation.
+    Max 20 passes until convergence.
+  \end{alertblock}
+
+\end{frame}
+
+
+% ─────────────────────────────────────────────────────────────────────────────
+%  2-opt
+% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{frame}[shrink=5]{MMR-IR: 2-opt Swap Search}
+
+  \begin{block}{Enhancement 3: 2-opt Swap Search}
+    \small
+    After 1-opt converges, try \textbf{swapping the targets of two weapons
+    simultaneously}. This can escape 1-opt local optima that single
+    reassignments cannot.
+  \end{block}
+
+  \vspace{0.12cm}
+
+  \begin{center}
+  \begin{tikzpicture}[scale=0.70, every node/.style={font=\footnotesize}]
+
+    % ── Before ──
+    \node[font=\bfseries\footnotesize] at (-1.4, 2.2) {Before:};
+    \node[draw, circle, fill=tealaccent!40, minimum size=0.6cm] (T1)  at (1.5, 2.2) {T1};
+    \node[draw, circle, fill=goldaccent!40, minimum size=0.6cm] (T2)  at (5.5, 2.2) {T2};
+    \node[draw, rectangle, rounded corners=2pt, fill=navylight!40,
+          minimum width=0.7cm, minimum height=0.5cm] (Wa) at (1.5, 3.6) {W$_a$};
+    \node[draw, rectangle, rounded corners=2pt, fill=navylight!40,
+          minimum width=0.7cm, minimum height=0.5cm] (Wb) at (5.5, 3.6) {W$_b$};
+    \draw[->, thick, red] (Wa) -- (T1);
+    \draw[->, thick, red] (Wb) -- (T2);
+    \draw[<->, very thick, goldaccent, dashed] (2.7, 3.1) -- (4.3, 3.1);
+    \node[above=1pt, goldaccent] at (3.5, 3.1) {\scriptsize swap};
+
+    % ── After ──
+    \node[font=\bfseries\footnotesize] at (-1.4, 0) {After:};
+    \node[draw, circle, fill=tealaccent!40, minimum size=0.6cm] (T1b) at (1.5, 0) {T1};
+    \node[draw, circle, fill=goldaccent!40, minimum size=0.6cm] (T2b) at (5.5, 0) {T2};
+    \node[draw, rectangle, rounded corners=2pt, fill=navylight!40,
+          minimum width=0.7cm, minimum height=0.5cm] (Wab) at (1.5, 1.4) {W$_a$};
+    \node[draw, rectangle, rounded corners=2pt, fill=navylight!40,
+          minimum width=0.7cm, minimum height=0.5cm] (Wbb) at (5.5, 1.4) {W$_b$};
+    \draw[->, very thick, tealaccent] (Wab) -- (T2b);
+    \draw[->, very thick, tealaccent] (Wbb) -- (T1b);
+
+  \end{tikzpicture}
+  \end{center}
+
+  \vspace{0.1cm}
+
+  \begin{exampleblock}{Why 2-opt Helps}
+    \small
+    \begin{itemize}\setlength\itemsep{2pt}
+      \item[\color{goldaccent}$\blacktriangleright$]
+        1-opt is stuck: moving W$_a$ alone worsens T1; moving W$_b$ alone worsens T2
+      \item[\color{goldaccent}$\blacktriangleright$]
+        Swapping \textbf{both simultaneously} can improve the total objective
+      \item[\color{goldaccent}$\blacktriangleright$]
+        Max 3 passes to limit runtime; incremental $O(1)$ delta per trial
+    \end{itemize}
+  \end{exampleblock}
+
+\end{frame}
+
+
+% ─────────────────────────────────────────────────────────────────────────────
+%  MODIFICATION 2 — Hybrid GA Overview
+% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{frame}[shrink=3]{Modification 2: Hybrid GA --- Overview}
+
+  \begin{block}{Three Weaknesses of Standard GA on WTA}
+    \small
+    \begin{enumerate}\setlength\itemsep{3pt}
+      \item \textbf{Random initialization} --- in high-dimensional space
+            ($W \times T$ variables), random solutions are far from optimal
+      \item \textbf{No elitism} --- the best solution found can be \textbf{lost}
+            when replaced by offspring
+      \item \textbf{Blind mutation} --- random target reassignment ignores which
+            targets \textbf{need} more weapons
+    \end{enumerate}
+  \end{block}
+
+  \vspace{0.2cm}
+
+  \begin{alertblock}{Our Three Fixes}
+    \vspace{3pt}
+    \begin{center}
+    \small
+    \setlength{\tabcolsep}{9pt}
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{lll}
+      \toprule
+      \textbf{Weakness}        & \textbf{Our Fix}        & \textbf{Type}         \\
+      \midrule
+      Random initialisation    & MMR-seeded init         & Warm start            \\
+      No elitism / stagnation  & Elitism + detection     & Preservation          \\
+      Blind mutation           & Threat-proportional     & \textbf{WTA-specific} \\
+      \bottomrule
+    \end{tabular}
+    \end{center}
+    \vspace{2pt}
+  \end{alertblock}
+
+\end{frame}
+
+
+% ─────────────────────────────────────────────────────────────────────────────
+%  Hybrid GA — Mod 1: MMR-Seeded Init
+% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{frame}[shrink=5]{Hybrid GA Mod 1: MMR-Seeded Initialisation}
+
+  \begin{block}{Idea: Start from a Good Solution}
+    \small
+    Instead of initialising \textbf{all} individuals randomly, seed
+    \texttt{population[0]} with the MMR greedy solution.
+    The rest remain random for diversity.
+  \end{block}
+
+  \vspace{0.15cm}
+
+  \begin{center}
+  \begin{tikzpicture}[scale=0.68, every node/.style={font=\footnotesize}]
+
+    % Standard GA row
+    \node[font=\bfseries\footnotesize, anchor=east] at (-0.2, 3.05) {Standard GA:};
+    \foreach \i in {0,...,4} {
+      \draw[fill=navylight!30, rounded corners=2pt]
+        (\i*1.4, 2.7) rectangle (\i*1.4+1.1, 3.3);
+      \node at (\i*1.4+0.55, 3.0) {rand};
+    }
+
+    % Hybrid GA row
+    \node[font=\bfseries\footnotesize, anchor=east] at (-0.2, 1.05) {Hybrid GA:};
+    \draw[fill=tealaccent!50, rounded corners=2pt]
+      (0, 0.7) rectangle (1.1, 1.3);
+    \node[font=\footnotesize\bfseries] at (0.55, 1.0) {MMR};
+    \foreach \i in {1,...,4} {
+      \draw[fill=navylight!30, rounded corners=2pt]
+        (\i*1.4, 0.7) rectangle (\i*1.4+1.1, 1.3);
+      \node at (\i*1.4+0.55, 1.0) {rand};
+    }
+
+    \draw[->, thick, tealaccent]
+      (0.55, 1.3) -- (0.55, 1.9)
+      node[right=2pt, font=\scriptsize] {good start!};
+
+  \end{tikzpicture}
+  \end{center}
+
+  \vspace{0.12cm}
+
+  \begin{exampleblock}{Why This Works}
+    \small
+    \begin{itemize}\setlength\itemsep{2pt}
+      \item[\color{goldaccent}$\blacktriangleright$]
+        MMR gives a \textbf{near-optimal} starting point in $O(W^2T)$ time
+      \item[\color{goldaccent}$\blacktriangleright$]
+        GA then \textbf{refines} this via crossover and mutation
+      \item[\color{goldaccent}$\blacktriangleright$]
+        Random individuals provide \textbf{genetic diversity} to avoid local optima
+      \item[\color{goldaccent}$\blacktriangleright$]
+        For large instances ($W=375$), this saves hundreds of wasted generations
+    \end{itemize}
+  \end{exampleblock}
+
+\end{frame}
+
+
+% ─────────────────────────────────────────────────────────────────────────────
+%  Hybrid GA — Mod 2: Elitism + Stagnation
+% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{frame}[shrink=5]{Hybrid GA Mod 2: Elitism + Stagnation Detection}
+
+  \begin{block}{Idea: Never Lose the Best --- Re-diversify When Stuck}
+    \small
+    \begin{itemize}\setlength\itemsep{3pt}
+      \item[\color{goldaccent}$\blacktriangleright$]
+        \textbf{Elitism:} Preserve top 10\,\% of population each generation
+      \item[\color{goldaccent}$\blacktriangleright$]
+        \textbf{Stagnation detection:} If best fitness is unchanged for
+        5 consecutive generations, inject fresh random individuals to re-diversify
+    \end{itemize}
+  \end{block}
+
+  \vspace{0.15cm}
+
+  \begin{center}
+  \begin{tikzpicture}[scale=0.68, every node/.style={font=\footnotesize}]
+
+    \node[draw, rounded corners=3pt, fill=navymid!60, text=white,
+          minimum width=3.2cm, minimum height=0.75cm] (gen1) at (0, 3)
+      {Generation $g$};
+
+    \node[draw, rounded corners=3pt, fill=navymid!60, text=white,
+          minimum width=3.2cm, minimum height=0.75cm] (gen2) at (0, 0)
+      {Generation $g+1$};
+
+    \draw[->, very thick, tealaccent]
+      (-2.0, 3) -- (-2.0, 0)
+      node[midway, left=2pt] {Top 10\%};
+
+    \draw[->, thick]
+      (2.0, 3) -- (2.0, 0)
+      node[midway, right=2pt] {Offspring (90\%)};
+
+    \node[draw, dashed, rounded corners=3pt, fill=goldaccent!20,
+          text width=3.6cm, align=center, font=\scriptsize] (stag) at (7.2, 1.5)
+      {If stagnant $\geq$ 5 gens:\\[1pt]inject random individuals};
+
+    \draw[->, thick, goldaccent, dashed] (stag.west) -- (2.6, 0.4);
+
+  \end{tikzpicture}
+  \end{center}
+
+  \vspace{0.1cm}
+
+  \begin{alertblock}{Without Elitism (Standard GA)}
+    \small
+    A good solution in generation $g$ can be completely lost if all offspring
+    are worse --- especially problematic with small time budgets.
+  \end{alertblock}
+
+\end{frame}
+
+
+% ─────────────────────────────────────────────────────────────────────────────
+%  Hybrid GA — Mod 3: Threat-Proportional Mutation
+% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{frame}[shrink=5]{Hybrid GA Mod 3: Threat-Proportional Mutation}
+
+  \begin{block}{Idea: Domain-Aware Mutation (Novel, WTA-Specific)}
+    \small
+    Instead of mutating to a \textbf{uniformly random} target, bias mutation
+    toward targets with \textbf{high remaining threat}:
+    \[
+      \text{remaining\_threat}[j]
+        = V_j \times \prod_{i:\,x_i = j} (1 - p_{ij})
+    \]
+    \textbf{Mutation target selection:}\quad
+    $P(\text{mutate to } j) \propto \text{remaining\_threat}[j]$
+  \end{block}
+
+  \vspace{0.15cm}
+
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \begin{exampleblock}{Standard Mutation}
+        \small
+        \begin{itemize}\setlength\itemsep{2pt}
+          \item[\color{goldaccent}$\blacktriangleright$]
+            Pick random target uniformly
+          \item[\color{goldaccent}$\blacktriangleright$]
+            May reassign to an already well-covered target
+          \item[\color{goldaccent}$\blacktriangleright$]
+            No domain knowledge used
+        \end{itemize}
+      \end{exampleblock}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{alertblock}{Threat-Proportional Mutation}
+        \small
+        \begin{itemize}\setlength\itemsep{2pt}
+          \item[\color{goldaccent}$\blacktriangleright$]
+            High-value, poorly-covered targets attract more mutations
+          \item[\color{goldaccent}$\blacktriangleright$]
+            Focuses search where improvement is \textbf{most needed}
+          \item[\color{goldaccent}$\blacktriangleright$]
+            \textbf{Novel:} Our original WTA-specific contribution
+        \end{itemize}
+      \end{alertblock}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.15cm}
+
+  \begin{block}{Concrete Example}
+    \small
+    If T1 ($V=100$, survival$=0.6$) and T2 ($V=20$, survival$=0.1$):\\[3pt]
+    \quad threat$_1 = 100 \times 0.6 = 60$,\qquad
+         threat$_2 = 20 \times 0.1 = 2$\\[3pt]
+    $\Rightarrow$ T1 is $30\times$ more likely to receive a mutated weapon than T2
+  \end{block}
+
+\end{frame}
+
+
+% ─────────────────────────────────────────────────────────────────────────────
+%  Hybrid GA — Summary
+% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{frame}[shrink=5]{Hybrid GA: Modifications Summary}
+
+  \begin{center}
+  \begin{tikzpicture}[scale=0.62, transform shape,
+                      every node/.style={font=\small}]
+
+    \node[draw, rounded corners=4pt, fill=navymid!40, text=white,
+          text width=3.6cm, align=center, minimum height=1.3cm]
+      (problem) at (0, 4.2)
+      {\textbf{Standard GA Problems}\\[3pt]
+       Random init \\ No elitism \\ Blind mutation};
+
+    \node[draw, rounded corners=4pt, fill=tealaccent!40,
+          text width=2.8cm, align=center, minimum height=1.1cm]
+      (fix1) at (-4.2, 0)
+      {\textbf{Fix 1}\\[2pt]MMR Seed\\(warm start)};
+
+    \node[draw, rounded corners=4pt, fill=tealaccent!40,
+          text width=2.8cm, align=center, minimum height=1.1cm]
+      (fix2) at (0, 0)
+      {\textbf{Fix 2}\\[2pt]Elitism +\\Stagnation};
+
+    \node[draw, rounded corners=4pt, fill=tealaccent!40,
+          text width=2.8cm, align=center, minimum height=1.1cm]
+      (fix3) at (4.2, 0)
+      {\textbf{Fix 3}\\[2pt]Threat-Prop.\\Mutation};
+
+    \node[draw, rounded corners=4pt, fill=navydark, text=white,
+          text width=3.6cm, align=center, minimum height=1.3cm]
+      (result) at (0, -3.2)
+      {\textbf{Hybrid GA}\\[3pt]36--54\% better\\on large instances};
+
+    \draw[->, thick] (problem) -- (fix1);
+    \draw[->, thick] (problem) -- (fix2);
+    \draw[->, thick] (problem) -- (fix3);
+    \draw[->, thick] (fix1) -- (result);
+    \draw[->, thick] (fix2) -- (result);
+    \draw[->, thick] (fix3) -- (result);
+
+  \end{tikzpicture}
+  \end{center}
+
+  \vspace{0.1cm}
+
+  \begin{alertblock}{Key Insight}
+    \small
+    Each modification targets a \textbf{specific weakness}. Together, they
+    transform a struggling standard GA into a competitive solver that matches
+    or beats MMR on all problem sizes.
+  \end{alertblock}
+
+\end{frame}
+% SECTION 5: EXPERIMENTAL SETUP
+% % ==========================================================================
+
+{
+\setbeamercolor{background canvas}{bg=navydark}
+\begin{frame}[plain]
+
+  \begin{center}
+    {\color{goldaccent}\rule{0.15\textwidth}{2pt}}
+    \hspace{0.5em}
+    {\color{white}\large\textbf{Section 5}}
+    \hspace{0.5em}
+    {\color{goldaccent}\rule{0.15\textwidth}{2pt}}
+
+    \vspace{0.6cm}
+    {\color{white}\Huge\textbf{Experimental Setup}}
+
+    \vspace{0.4cm}
+    {\color{iceblue}\normalsize Dataset Design, Benchmark Protocol, and Setup}\\[6pt]
+    {\color{iceblue}\normalsize 180 instances, 4 algorithms, 9 categories}
+  \end{center}
+\end{frame}
 }
-
-% Arrow
-\draw[->, thick, green!60!black] (0.5, 1.4) -- (0.5, 2) node[right] {\footnotesize good start!};
-\end{tikzpicture}
-\end{center}
-
-\begin{exampleblock}{Why This Works}
-\begin{itemize}
-    \item MMR gives a \textbf{near-optimal} starting point in $O(W^2T)$ time
-    \item GA then \textbf{refines} this solution via crossover and mutation
-    \item Random individuals provide \textbf{genetic diversity} to avoid local optima
-    \item For large instances ($W=375$), this saves hundreds of wasted generations
-\end{itemize}
-\end{exampleblock}
-\end{frame}
-
-\begin{frame}{Hybrid GA Mod 2: Elitism + Stagnation Detection}
-\begin{block}{Idea: Never Lose the Best, Re-diversify When Stuck}
-\begin{itemize}
-    \item \textbf{Elitism:} Preserve top 10\% of population each generation (directly copied to next generation without modification)
-    \item \textbf{Stagnation detection:} If best fitness unchanged for 5 consecutive generations, inject fresh random individuals to re-diversify
-\end{itemize}
-\end{block}
-
-\vspace{0.2cm}
-\begin{center}
-\begin{tikzpicture}[scale=0.6]
-% Generation flow
-\node[draw, fill=blue!20, minimum width=3cm] (gen1) at (0, 3) {Generation $g$};
-\node[draw, fill=blue!20, minimum width=3cm] (gen2) at (0, 0) {Generation $g+1$};
-
-% Elite arrow
-\draw[->, very thick, green!60!black] (-2, 3) -- (-2, 0) node[midway, left] {\footnotesize Top 10\%};
-
-% Offspring arrow
-\draw[->, thick] (2, 3) -- (2, 0) node[midway, right] {\footnotesize Offspring (90\%)};
-
-% Stagnation
-\node[draw, dashed, fill=red!10, text width=4cm, align=center] at (7, 1.5) {If stagnant $\geq$ 5 gens:\\ inject random individuals};
-\draw[->, thick, red, dashed] (5.5, 1.5) -- (3, 0.5);
-\end{tikzpicture}
-\end{center}
-
-\begin{alertblock}{Without Elitism (Standard GA)}
-A good solution in generation $g$ can be completely lost if all offspring are worse. This is especially problematic with small time budgets.
-\end{alertblock}
-\end{frame}
-
-\begin{frame}{Hybrid GA Mod 3: Threat-Proportional Mutation}
-\begin{block}{Idea: Domain-Aware Mutation (Novel, WTA-Specific)}
-Instead of mutating to a \textbf{uniformly random} target, bias mutation toward targets with \textbf{high remaining threat}:
-$$\text{remaining\_threat}[j] = V_j \times \prod_{i: x_i = j} (1 - p_{ij})$$
-
-\textbf{Mutation target selection:} $P(\text{mutate to } j) \propto \text{remaining\_threat}[j]$
-\end{block}
-
-\vspace{0.2cm}
-\begin{columns}[t]
-\column{0.48\textwidth}
-\begin{exampleblock}{Standard Mutation}
-\begin{itemize}
-    \item Pick random target uniformly
-    \item May reassign to already well-covered target (wasted mutation)
-    \item No domain knowledge used
-\end{itemize}
-\end{exampleblock}
-
-\column{0.48\textwidth}
-\begin{alertblock}{Threat-Proportional Mutation}
-\begin{itemize}
-    \item High-value, poorly-covered targets get more mutations
-    \item Focuses search where improvement is \textbf{most needed}
-    \item \textbf{Novel:} This is our original WTA-specific contribution
-\end{itemize}
-\end{alertblock}
-\end{columns}
-
-\vspace{0.2cm}
-\begin{block}{Example}
-If T1 ($V=100$, survival=0.6) and T2 ($V=20$, survival=0.1): \\
-threat$_1 = 100 \times 0.6 = 60$, threat$_2 = 20 \times 0.1 = 2$ \\
-$\Rightarrow$ T1 is 30$\times$ more likely to receive a mutated weapon than T2
-\end{block}
-\end{frame}
-
-\begin{frame}{Hybrid GA: Modifications Summary}
-\begin{center}
-\begin{tikzpicture}[scale=0.6, transform shape]
-\node[draw, rounded corners, fill=red!20, text width=3.5cm, align=center] (problem) at (0, 4) {\textbf{Standard GA Problems}\\Random init\\No elitism\\Blind mutation};
-
-\node[draw, rounded corners, fill=green!20, text width=3cm, align=center] (fix1) at (-4, 0) {\textbf{Fix 1:}\\MMR Seed\\(warm start)};
-\node[draw, rounded corners, fill=green!20, text width=3cm, align=center] (fix2) at (0, 0) {\textbf{Fix 2:}\\Elitism +\\Stagnation};
-\node[draw, rounded corners, fill=green!20, text width=3cm, align=center] (fix3) at (4, 0) {\textbf{Fix 3:}\\Threat-Prop.\\Mutation};
-
-\node[draw, rounded corners, fill=blue!20, text width=3.5cm, align=center] (result) at (0, -3) {\textbf{Hybrid GA}\\12--52\% better\\on large instances};
-
-\draw[->, thick] (problem) -- (fix1);
-\draw[->, thick] (problem) -- (fix2);
-\draw[->, thick] (problem) -- (fix3);
-\draw[->, thick] (fix1) -- (result);
-\draw[->, thick] (fix2) -- (result);
-\draw[->, thick] (fix3) -- (result);
-\end{tikzpicture}
-\end{center}
-
-\begin{alertblock}{Key Insight}
-Each modification targets a \textbf{specific weakness}. Together, they transform a struggling standard GA into a competitive solver that matches or beats MMR on all problem sizes.
-\end{alertblock}
-\end{frame}
-
-% =============================================================================
-% SECTION 6: EXPERIMENTAL SETUP
-% =============================================================================
-\section{Experiments \& Results}
-
-\begin{frame}{Section 6: Experimental Setup}
-\begin{center}
-{\Large\textcolor{primaryblue}{\textbf{Dataset Design, Setup, and Results}}}
-
-\vspace{0.5cm}
-{\normalsize 180 instances, 4 algorithms, 9 categories}
-\end{center}
-\end{frame}
 
 \begin{frame}{Dataset Design: Custom Synthetic Benchmark}
-\begin{block}{Why Design Our Own Dataset?}
-We created a synthetic dataset to systematically test \textbf{scaling behavior} across two dimensions: \textbf{problem size} (small/medium/large) and \textbf{resource availability} (balanced/scarce/rich).
-\end{block}
 
-\vspace{0.2cm}
-\begin{table}[h]
-\centering
-\small
-\begin{tabular}{llccc}
-\toprule
-\textbf{Tier} & \textbf{Scenario} & \textbf{Weapons ($W$)} & \textbf{Targets ($T$)} & \textbf{Instances} \\
-\midrule
-Small & Balanced ($W = T$) & 20 & 20 & 20 \\
-Small & Scarce ($W < T$) & 10 & 20 & 20 \\
-Small & Rich ($W > T$) & 30 & 20 & 20 \\
-\midrule
-Medium & Balanced & 100 & 100 & 20 \\
-Medium & Scarce & 50 & 100 & 20 \\
-Medium & Rich & 150 & 100 & 20 \\
-\midrule
-Large & Balanced & 250 & 250 & 20 \\
-Large & Scarce & 125 & 250 & 20 \\
-Large & Rich & 375 & 250 & 20 \\
-\bottomrule
-\end{tabular}
-\end{table}
+  \begin{block}{Why Design Our Own Dataset?}
+    We created a synthetic dataset to systematically test \textbf{scaling behavior} across two dimensions: \textbf{problem size} (small/medium/large) and \textbf{resource availability} (balanced/scarce/rich).
+  \end{block}
 
-\begin{center}
-\textbf{Total: 180 instances} (9 categories $\times$ 20 instances each)
-\end{center}
+  \vspace{0.2cm}
+  \begin{center}
+  \small
+  \begin{tabular}{llccc}
+    \toprule
+    \rowcolor{DarkSlate}
+    \textcolor{white}{\textbf{Tier}} &
+    \textcolor{white}{\textbf{Scenario}} &
+    \textcolor{white}{\textbf{Weapons ($W$)}} &
+    \textcolor{white}{\textbf{Targets ($T$)}} &
+    \textcolor{white}{\textbf{Instances}} \\
+    Small & Balanced ($W = T$) & 20 & 20 & 20 \\
+    Small & Scarce ($W < T$) & 10 & 20 & 20 \\
+    Small & Rich ($W > T$) & 30 & 20 & 20 \\
+    \midrule
+    Medium & Balanced & 100 & 100 & 20 \\
+    Medium & Scarce & 50 & 100 & 20 \\
+    Medium & Rich & 150 & 100 & 20 \\
+    \midrule
+    Large & Balanced & 250 & 250 & 20 \\
+    Large & Scarce & 125 & 250 & 20 \\
+    Large & Rich & 375 & 250 & 20 \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \vspace{0.2cm}
+  \begin{center}
+  {\small\bfseries\color{navydark} Total: 180 instances
+    (9 categories $\times$ 20 instances each)}
+  \end{center}
 \end{frame}
 
 \begin{frame}{Dataset Parameters and Scenarios}
-\begin{columns}[t]
-\column{0.48\textwidth}
-\begin{block}{Instance Parameters}
-\begin{itemize}
-    \item \textbf{Target values:} $V_j \sim U(10, 100)$ integers
-    \item \textbf{Kill probabilities:} $p_{ij} \sim U(0.05, 0.90)$
-    \item \textbf{RNG seed:} 42 (reproducible)
-    \item \textbf{Format:} JSON files
-\end{itemize}
-\end{block}
+  \begin{columns}[t]
 
-\begin{exampleblock}{Statistical Testing}
-\begin{itemize}
-    \item \textbf{Wilcoxon signed-rank test} ($\alpha = 0.05$) for pairwise algorithm comparison
-    \item 20 instances per category ensures statistical validity
-\end{itemize}
-\end{exampleblock}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Instance Parameters}
+        \begin{itemize}
+          \item[\color{goldaccent}$\blacktriangleright$] \textbf{Target values:} $V_j \sim U(10, 100)$ integers
+          \item[\color{goldaccent}$\blacktriangleright$] \textbf{Kill probabilities:} $p_{ij} \sim U(0.05, 0.90)$
+          \item[\color{goldaccent}$\blacktriangleright$] \textbf{RNG seed:} 42 (reproducible)
+          \item[\color{goldaccent}$\blacktriangleright$] \textbf{Format:} JSON files
+        \end{itemize}
+      \end{block}
 
-\column{0.48\textwidth}
-\begin{alertblock}{Scenario Rationale}
-\textbf{Balanced} ($W = T$): Standard benchmark; each weapon covers one target on average.
+      \begin{exampleblock}{Statistical Testing}
+        \begin{itemize}
+          \item[\color{goldaccent}$\blacktriangleright$] \textbf{Wilcoxon signed-rank test} ($\alpha = 0.05$) for pairwise algorithm comparison
+          \item[\color{goldaccent}$\blacktriangleright$] 20 instances per category ensures statistical validity
+        \end{itemize}
+      \end{exampleblock}
+    \end{column}
 
-\vspace{0.2cm}
-\textbf{Scarce} ($W < T$): Hardest scenario; not enough weapons for all targets. Unengaged targets have 100\% survival.
+    \begin{column}{0.48\textwidth}
+      \begin{alertblock}{Scenario Rationale}
+        \textbf{Balanced} ($W = T$): Standard benchmark; each weapon covers one target on average.
 
-\vspace{0.2cm}
-\textbf{Rich} ($W > T$): Easiest scenario; surplus weapons allow thorough coverage. Lower objective values expected.
-\end{alertblock}
-\end{columns}
+        \vspace{0.2cm}
+        \textbf{Scarce} ($W < T$): Hardest scenario; not enough weapons for all targets. Unengaged targets have 100\% survival.
+
+        \vspace{0.2cm}
+        \textbf{Rich} ($W > T$): Easiest scenario; surplus weapons allow thorough coverage. Lower objective values expected.
+      \end{alertblock}
+    \end{column}
+
+  \end{columns}
 \end{frame}
 
 \begin{frame}{Algorithms Compared}
-\begin{table}[h]
-\centering
-\begin{tabular}{lp{5cm}l}
-\toprule
-\textbf{Algorithm} & \textbf{Description} & \textbf{Type} \\
-\midrule
-\textbf{MMR (orig)} & Maximum Marginal Return greedy heuristic. Faithful implementation from Hasan \& Barua. & Heuristic \\
-\addlinespace
-\textbf{MMR-IR (mod)} & MMR + tie-breaking + 1-opt local search + 2-opt swap search. & Enhanced Heuristic \\
-\addlinespace
-\textbf{GA (orig)} & Standard Genetic Algorithm. Faithful implementation from Hasan \& Barua. & Metaheuristic \\
-\addlinespace
-\textbf{Hybrid GA (mod)} & GA + MMR seed + elitism + stagnation detection + threat-proportional mutation. & Enhanced Meta. \\
-\bottomrule
-\end{tabular}
-\end{table}
 
-\begin{block}{Fair Comparison}
-All algorithms run on the \textbf{same instances} with \textbf{same time budgets}. GA variants use identical time limits. Results measured as \textbf{expected survival value} $Z$ (lower = better).
-\end{block}
+  \begin{tikzpicture}
+    \fill[navymid, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\small\bfseries, anchor=west] at (0.2,0.225)
+      {Four algorithms evaluated on the same instances and time budgets};
+  \end{tikzpicture}
+
+  \vspace{0.3cm}
+  \begin{center}
+  \small
+  \begin{tabular}{lp{5cm}l}
+    \toprule
+    \rowcolor{DarkSlate}
+    \textcolor{white}{\textbf{Algorithm}} &
+    \textcolor{white}{\textbf{Description}} &
+    \textcolor{white}{\textbf{Type}} \\
+    \textbf{MMR (orig)} &
+      Maximum Marginal Return greedy heuristic. Faithful implementation from Hasan \& Barua. &
+      Heuristic \\[4pt]
+    \textbf{MMR-IR (mod)} &
+      MMR + tie-breaking + 1-opt local search + 2-opt swap search. &
+      Enhanced Heuristic \\[4pt]
+    \textbf{GA (orig)} &
+      Standard Genetic Algorithm. Faithful implementation from Hasan \& Barua. &
+      Metaheuristic \\[4pt]
+    \textbf{Hybrid GA (mod)} &
+      GA + MMR seed + elitism + stagnation detection + threat-proportional mutation. &
+      Enhanced Meta. \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \vspace{0.3cm}
+  \begin{tikzpicture}
+    \fill[navydark, rounded corners=3pt] (0,0) rectangle (10.5,0.45);
+    \node[white, font=\footnotesize\bfseries, anchor=west] at (0.2,0.225)
+      {\faInfoCircle\quad Results measured as expected survival value $Z$ (lower = better)};
+  \end{tikzpicture}
 \end{frame}
 
-% =============================================================================
-% RESULTS
-% =============================================================================
+% ==========================================================================
+% SECTION 6: EXPERIMENTAL RESULTS
+% ==========================================================================
 
-\begin{frame}{Results: Solution Quality -- Box Plots}
-\begin{center}
-\includegraphics[width=0.92\textwidth]{images/01_box_solution_quality.png}
-\end{center}
+{
+\setbeamercolor{background canvas}{bg=navydark}
+\begin{frame}[plain]
+  \begin{center}
+    {\color{goldaccent}\rule{0.15\textwidth}{2pt}}
+    \hspace{0.5em}
+    {\color{white}\large\textbf{Section 6}}
+    \hspace{0.5em}
+    {\color{goldaccent}\rule{0.15\textwidth}{2pt}}
 
-\vspace{-0.2cm}
-{\footnotesize Box plots show distribution of objective values (lower = better) across balanced instances per tier.}
+    \vspace{0.6cm}
+    {\color{white}\Huge\textbf{Experimental Results}}
+
+    \vspace{0.4cm}
+    {\color{iceblue}\normalsize Solution quality, scalability, and key findings}
+  \end{center}
+\end{frame}
+}
+
+% ── SLIDE: Solution quality distribution (wide figure shown alone) ───
+\begin{frame}{Solution Quality Distribution (Balanced)}
+  \centering
+  \includegraphics[width=0.96\textwidth,height=0.54\textheight,keepaspectratio]{images/01_box_solution_quality.png}\\[2pt]
+  {\scriptsize\color{navymid}Distribution of objective values by algorithm and tier}
+
+  \vspace{0.06cm}
+  \begin{block}{Result Description}
+    {\scriptsize
+    \begin{itemize}\itemsep2pt
+      \item Dispersion increases with problem size, confirming large-tier instances are significantly harder.
+      \item MMR-IR median is consistently below MMR, showing stable quality gain after local refinement.
+      \item GA\_Original shows high spread on medium/large tiers; Hybrid GA is both lower and tighter.
+    \end{itemize}}
+  \end{block}
 \end{frame}
 
-\begin{frame}{Results: Mean Objective Value by Tier}
-\begin{center}
-\includegraphics[width=0.92\textwidth]{images/02_bar_mean_objective.png}
-\end{center}
+% ── SLIDE: Mean objective + runtime (matched ratios) ──────────────────
+\begin{frame}{Mean Objective Value \& Mean Runtime Scalability}
+  \begin{columns}[T]
+    \begin{column}{0.49\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{images/02_bar_mean_objective.png}\\
+      {\scriptsize\color{navymid}Mean objective value ($Z$) by tier}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{images/04_line_time_scalability.png}\\
+      {\scriptsize\color{navymid}Mean runtime (seconds, log-log scale)}
+    \end{column}
+  \end{columns}
 
-\vspace{-0.2cm}
-{\footnotesize GA (orig) falls dramatically behind on medium and large tiers due to random initialization + no elitism.}
+  \vspace{0.04cm}
+  \begin{exampleblock}{Result Description}
+    {\scriptsize
+    \begin{itemize}\itemsep2pt
+      \item Quality gap between GA\_Original and Hybrid GA widens as tier size grows.
+      \item MMR/MMR-IR require much lower mean runtime across all scales; GA variants approach the available time budget.
+      \item Hybrid GA converts the same budget into better solutions through stronger initialization and retention.
+    \end{itemize}}
+  \end{exampleblock}
 \end{frame}
 
-\begin{frame}{Results: Improvement of Modifications}
-\begin{center}
-\includegraphics[width=0.92\textwidth]{images/03_bar_improvement.png}
-\end{center}
+% ── SLIDE: Improvement + gap (same visual box for both) ───────────────
+\begin{frame}{Improvement (\%) \& Optimality Gap}
+  \begin{columns}[T]
+    \begin{column}{0.49\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{images/03_bar_improvement.png}\\
+      {\scriptsize\color{navymid}Modified vs. original (\% gain)}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{images/05_bar_gap.png}\\
+      {\scriptsize\color{navymid}Gap from best-known solution}
+    \end{column}
+  \end{columns}
 
-\vspace{-0.2cm}
-{\footnotesize Percentage improvement of modified algorithms over their original counterparts. GA improvement grows with problem size.}
+  \vspace{0.04cm}
+  \begin{alertblock}{Result Description}
+    {\scriptsize
+    \begin{itemize}\itemsep2pt
+      \item MMR-IR gives modest but consistent gains; Hybrid GA gives large gains on medium/large tiers.
+      \item GA\_Original has the largest optimality gap, especially in large instances.
+      \item Modified variants reduce gap substantially and track near best-known performance.
+    \end{itemize}}
+  \end{alertblock}
 \end{frame}
 
-\begin{frame}{Results: Runtime Scalability}
-\begin{center}
-\includegraphics[width=0.92\textwidth]{images/04_line_time_scalability.png}
-\end{center}
+% ── SLIDE: Scenario comparison (very wide figure shown alone) ─────────
+\begin{frame}{Scenario Sensitivity Across Tiers}
+  \centering
+  \includegraphics[width=0.96\textwidth,height=0.54\textheight,keepaspectratio]{images/06_scenario_comparison.png}\\[2pt]
+  {\scriptsize\color{navymid}Balanced vs. scarce vs. rich, separated by tier}
 
-\vspace{-0.2cm}
-{\footnotesize Log-log scale. MMR variants are orders of magnitude faster. GA variants use their full time budget.}
+  \vspace{0.06cm}
+  \begin{block}{Result Description}
+    {\scriptsize
+    \begin{itemize}\itemsep2pt
+      \item Scarce is consistently hardest (highest residual survival), rich is easiest, balanced is intermediate.
+      \item Ranking is stable across tiers, confirming dataset design is behaviorally consistent.
+      \item Hybrid GA keeps stronger quality than GA\_Original in all three scenario types.
+    \end{itemize}}
+  \end{block}
 \end{frame}
 
-\begin{frame}{Results: Optimality Gap}
-\begin{center}
-\includegraphics[width=0.92\textwidth]{images/05_bar_gap.png}
-\end{center}
+% ── SLIDE: Distribution + scenario improvement ────────────────────────
+\begin{frame}{Distribution Shape \& Improvement by Scenario}
+  \begin{columns}[T]
+    \begin{column}{0.49\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{images/07_violin_value_dist.png}\\
+      {\scriptsize\color{navymid}Distribution overlap: original vs modified}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{images/08_bar_scenario_improvement.png}\\
+      {\scriptsize\color{navymid}Mean improvement by scenario type}
+    \end{column}
+  \end{columns}
 
-\vspace{-0.2cm}
-{\footnotesize Gap from best-known solution. GA (orig) has the largest gap, especially on large instances.}
+  \vspace{0.04cm}
+  \begin{exampleblock}{Result Description}
+    {\scriptsize
+    \begin{itemize}\itemsep2pt
+      \item Violin plots show a clear downward shift for modified algorithms (lower residual survival).
+      \item Improvement is positive across scenario types, not restricted to a single operating condition.
+      \item This indicates the modifications are robust rather than overfitted to one scenario.
+    \end{itemize}}
+  \end{exampleblock}
 \end{frame}
 
-\begin{frame}{Results: Scenario Comparison}
-\begin{center}
-\includegraphics[width=0.92\textwidth]{images/06_scenario_comparison.png}
-\end{center}
+% ── SLIDE: GA improvement vs size (key story shown alone) ─────────────
+\begin{frame}{Hybrid GA Improvement vs.\ Problem Size}
+  \centering
+  \includegraphics[width=0.92\textwidth,height=0.54\textheight,keepaspectratio]{images/09_ga_improvement_vs_size.png}\\[2pt]
+  {\scriptsize\color{navymid}Hybrid GA gain over GA\_Original across small/medium/large}
 
-\vspace{-0.2cm}
-{\footnotesize Performance across balanced, scarce, and rich scenarios. Scarce has highest objective (hardest), rich has lowest (easiest).}
+  \vspace{0.06cm}
+  \begin{alertblock}{Result Description (Key Story)}
+    {\scriptsize
+    \begin{itemize}\itemsep2pt
+      \item Hybrid GA benefit scales with problem size and becomes strongest in large-tier instances.
+      \item This directly supports our claim that domain-aware hybridization matters most at scale.
+      \item Under the same runtime budget, Hybrid GA uses search effort much more effectively.
+    \end{itemize}}
+  \end{alertblock}
 \end{frame}
 
-\begin{frame}{Results: Value Distributions}
-\begin{center}
-\includegraphics[width=0.92\textwidth]{images/07_violin_value_dist.png}
-\end{center}
-
-\vspace{-0.2cm}
-{\footnotesize Violin plots showing the distribution of objective values for original vs. modified algorithms.}
+% ── SLIDE: Why GA_Original Underperforms ──────────────────────────────
+\begin{frame}{Why GA\_Original Underperforms at Scale}
+  \begin{columns}[T]
+    \begin{column}{0.54\textwidth}
+      \begin{alertblock}{The Scaling Problem}
+        {\small
+        \begin{itemize}\itemsep4pt
+          \item[\color{white}$\bullet$] \textbf{Population too large:}
+            $\textit{pop\_size} = \max(W,T) = 375$ for large\_rich
+          \item[\color{white}$\bullet$] \textbf{Only $\approx$160 generations}
+            from a purely random start in a 60s budget
+          \item[\color{white}$\bullet$] \textbf{No elitism:}
+            best solution can be overwritten between generations
+          \item[\color{white}$\bullet$] \textbf{Blind mutation:}
+            uniform random target ignores high-threat areas
+        \end{itemize}
+        }
+      \end{alertblock}
+    \end{column}
+    \begin{column}{0.43\textwidth}
+      \begin{block}{Our Fix (Hybrid GA)}
+        {\small
+        \begin{itemize}\itemsep4pt
+          \item[\color{goldaccent}$\checkmark$] MMR-seeded initialisation
+            gives a strong starting individual
+          \item[\color{goldaccent}$\checkmark$] Elitism preserves top 10\%
+            each generation
+          \item[\color{goldaccent}$\checkmark$] Stagnation detection
+            injects diversity after 5 flat generations
+          \item[\color{goldaccent}$\checkmark$] Threat-proportional mutation
+            focuses on high-value under-covered targets
+        \end{itemize}
+        }
+      \end{block}
+    \end{column}
+  \end{columns}
 \end{frame}
 
-\begin{frame}{Results: Improvement by Scenario}
-\begin{center}
-\includegraphics[width=0.92\textwidth]{images/08_bar_scenario_improvement.png}
-\end{center}
-
-\vspace{-0.2cm}
-{\footnotesize Improvement percentage broken down by scenario type (balanced, scarce, rich).}
-\end{frame}
-
-\begin{frame}{Results: GA Improvement vs. Problem Size}
-\begin{center}
-\includegraphics[width=0.92\textwidth]{images/09_ga_improvement_vs_size.png}
-\end{center}
-
-\vspace{-0.2cm}
-{\footnotesize \textbf{Key finding:} Hybrid GA improvement over standard GA grows dramatically with problem size -- from $\sim$-2\% (small) to $\sim$52\% (large).}
-\end{frame}
-
+% ── SLIDE: Key Findings ───────────────────────────────────────────────
 \begin{frame}{Key Findings}
-\begin{block}{MMR-IR vs MMR (Original)}
-\begin{itemize}
-    \item \textbf{Consistent improvement:} 0.1--3.1\% across all tiers and scenarios
-    \item 1-opt and 2-opt local search reliably escape greedy suboptimality
-    \item Negligible additional runtime (local search is $O(1)$ per trial)
-\end{itemize}
-\end{block}
 
-\begin{alertblock}{Hybrid GA vs GA (Original) -- The Main Story}
-\begin{itemize}
-    \item \textbf{Small:} -2--1\% improvement (modest)
-    \item \textbf{Medium:} 10--41\% improvement (significant)
-    \item \textbf{Large:} \textbf{12--52\% improvement} (dramatic)
-    \item Improvement \textbf{grows with problem size} -- exactly where it matters most
-\end{itemize}
-\end{alertblock}
+  \begin{tikzpicture}
+    \fill[navymid, rounded corners=3pt] (0,0) rectangle (12,0.42);
+    \node[white, font=\small\bfseries, anchor=west] at (0.2,0.21)
+      {Summary of results across 720 experiment rows (180 instances $\times$ 4 algorithms)};
+  \end{tikzpicture}
 
-\begin{exampleblock}{Statistical Significance}
-Wilcoxon signed-rank test ($\alpha = 0.05$): All pairwise comparisons between original and modified algorithms are \textbf{statistically significant} across all tiers.
-\end{exampleblock}
+  \vspace{0.25cm}
+  \begin{columns}[T]
+    \begin{column}{0.49\textwidth}
+      \begin{block}{MMR vs.\ MMR-IR}
+        {\small
+        \begin{itemize}\itemsep3pt
+          \item MMR-IR improves MMR by
+            \textbf{0.2--4.8\%} consistently across all tiers
+          \item Improvement grows with tier size
+          \item All improvements statistically significant
+            (Wilcoxon $p < 0.05$)
+        \end{itemize}
+        }
+      \end{block}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \begin{block}{GA\_Original vs.\ Hybrid~GA}
+        {\small
+        \begin{itemize}\itemsep3pt
+          \item Hybrid GA improves GA\_Original by
+            \textbf{36--54\%} on large-tier instances
+          \item Our 3 modifications directly address
+            random init, elitism loss, and blind mutation
+          \item Hybrid GA + MMR-IR achieves
+            best overall performance
+        \end{itemize}
+        }
+      \end{block}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.2cm}
+  \colorbox{navymidHex}{\begin{minipage}{\linewidth}
+    \vspace{5pt}
+    {\color{teallt}\small\itshape\centering
+     Statistical validation: Wilcoxon signed-rank test ($\alpha = 0.05$) confirms all
+     pairwise comparisons are significant. 20 instances per category.\par}
+    \vspace{5pt}
+  \end{minipage}}
+
 \end{frame}
-
-\begin{frame}{Why GA (Original) Fails at Scale}
-\begin{alertblock}{Root Cause Analysis}
-Three compounding factors explain why standard GA underperforms on medium/large instances:
-\end{alertblock}
-
-\vspace{0.2cm}
-\begin{enumerate}
-    \item \textbf{Large population, limited time:}
-    \begin{itemize}
-        \item Population size $= \max(W, T)$. For large\_rich: $\max(375, 250) = 375$ individuals
-        \item With 60s time budget: only $\sim$160 generations completed
-        \item 160 generations are insufficient to evolve 375-dimensional random solutions
-    \end{itemize}
-
-    \item \textbf{Random initialization:}
-    \begin{itemize}
-        \item All individuals start as random assignments -- far from any good solution
-        \item In 375-dimensional space, random solutions have extremely high objective values
-    \end{itemize}
-
-    \item \textbf{No elitism:}
-    \begin{itemize}
-        \item The best solution found in early generations can be \textbf{lost}
-        \item Replaced by offspring that may be worse
-    \end{itemize}
-\end{enumerate}
-
-\vspace{0.2cm}
-\begin{block}{Our Hybrid GA Fixes All Three}
-MMR seed (warm start) + Elitism (preservation) + Threat-proportional mutation (guided search)
-\end{block}
-\end{frame}
-
-\begin{frame}{Results Summary Table}
-\begin{table}[h]
-\centering
-\small
-\begin{tabular}{lrrrr}
-\toprule
-\textbf{Category} & \textbf{MMR (orig)} & \textbf{MMR-IR} & \textbf{GA (orig)} & \textbf{Hybrid GA} \\
-\midrule
-small\_balanced & 174 & 170 & 165 & 168 \\
-small\_scarce & 475 & 471 & 462 & 465 \\
-small\_rich & 74.5 & 72.2 & 72.1 & 71.2 \\
-\midrule
-medium\_balanced & 645 & 642 & 907 & 645 \\
-medium\_scarce & 2085 & 2079 & 2310 & 2082 \\
-medium\_rich & 243 & 243 & 412 & 243 \\
-\midrule
-large\_balanced & 1475 & 1473 & 2369 & 1474 \\
-large\_scarce & 5169 & 5164 & 5888 & 5169 \\
-large\_rich & 549 & 549 & 1140 & 549 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\vspace{0.2cm}
-{\footnotesize Mean objective values (lower = better). \textbf{Bold observation:} GA (orig) diverges dramatically on medium/large tiers. Hybrid GA brings it back to MMR-level performance. MMR-IR consistently improves over MMR by small but statistically significant margins.}
-\end{frame}
-
-% =============================================================================
-% SECTION 7: REPRODUCIBILITY
-% =============================================================================
-\section{Reproducibility}
 
 \begin{frame}[fragile]{Reproducibility: GitHub Repository}
-\begin{block}{Single Master Script}
-All experiments are reproducible with a single command:
-\begin{center}
-\texttt{python run\_all.py}
-\end{center}
-Generates dataset $\rightarrow$ runs all 4 algorithms on 180 instances $\rightarrow$ produces 9 plots.
+  \begin{block}{Single Master Script}
+    All experiments are reproducible with a single command:
+    \begin{center}
+      \texttt{python run\_all.py}
+    \end{center}
+    Generates dataset $\rightarrow$ runs all 4 algorithms on 180 instances $\rightarrow$ produces 9 plots.
+  \end{block}
 
-\textbf{Runtime:} $\sim$3.5 hours total.
-\end{block}
+  \vspace{0.1cm}
 
-\vspace{0.2cm}
-\begin{exampleblock}{Repository Structure}
-\small
+  \begin{exampleblock}{Repository Structure}
+\scriptsize
 \begin{verbatim}
 CSE_462-Algorithm-Engineering-Sessional/
   codes/
@@ -2135,89 +2992,96 @@ CSE_462-Algorithm-Engineering-Sessional/
   datasets/              # JSON instances
   results/figures/       # 9 PNG plots
 \end{verbatim}
-\end{exampleblock}
+  \end{exampleblock}
 \end{frame}
 
 \begin{frame}{GitHub Link}
-\begin{center}
-\vspace{1cm}
-{\Large\textbf{GitHub Repository:}}
+  \begin{center}
+    \vspace{0.8cm}
+    {\Large\textbf{GitHub Repository:}}
 
-\vspace{0.5cm}
-{\large\url{https://github.com/Arimotokika/CSE_462-Algorithm-Engineering-Sessional}}
+    \vspace{0.4cm}
+    {\large\url{https://github.com/Arimotokika/CSE_462-Algorithm-Engineering-Sessional}}
 
-\vspace{1cm}
-\begin{block}{Quick Test (5 instances, $\sim$1 minute)}
-\begin{center}
-\texttt{python experiment\_runner.py --categories small\_balanced --instances 1-5}
+    \vspace{0.8cm}
+    \begin{block}{Quick Reproduction Command}
+      \small
+      \texttt{python run\_all.py}
+    \end{block}
 
-\texttt{python analysis.py}
-\end{center}
-\end{block}
-\end{center}
+    \vspace{0.25cm}
+    {\scriptsize Contains all code, datasets, and instructions required to reproduce the plots shown in this presentation.}
+  \end{center}
 \end{frame}
 
-% =============================================================================
+% ==========================================================================
 % REFERENCES
-% =============================================================================
-\section{References}
+% ==========================================================================
 
-\begin{frame}{References}
-\begin{columns}[t]
-\column{0.48\textwidth}
-\scriptsize
-\begin{thebibliography}{99}
-\bibitem{intechopen2020}
-Hasan, M. \& Barua, A. (2020). \textit{Weapon Target Assignment}. IntechOpen. DOI: 10.5772/intechopen.93665
-
-\bibitem{ahuja2007}
-Ahuja, R. K., et al. (2007). \textit{Exact and heuristic algorithms for the weapon-target assignment problem}. Operations Research.
-
-\bibitem{lee2003}
-Lee, Z. J., et al. (2003). \textit{Efficiently solving general weapon-target assignment problem by genetic algorithms with greedy eugenics}. IEEE Trans. SMC.
-
-\bibitem{manne1958}
-Manne, A. S. (1958). \textit{A target-assignment problem}. Operations Research.
-
-\bibitem{bertsimas2025}
-Bertsimas, D., et al. (2025). \textit{Solving large-scale WTA using branch-price-and-cut}. Naval Research Logistics.
-\end{thebibliography}
-
-\column{0.48\textwidth}
-\scriptsize
-\begin{thebibliography}{99}
-\setcounter{enumiv}{5}
-\bibitem{andersen2022}
-Andersen, A. C., et al. (2022). \textit{The weapon-target assignment problem: Exact and approximate algorithms}. Ann. Oper. Res.
-
-\bibitem{kwon1999}
-Kwon, O., et al. (1999). \textit{A Lagrangian relaxation approach to targeting}. Naval Research Logistics.
-
-\bibitem{kline2020}
-Kline, A. G., et al. (2020). \textit{Heuristic and metaheuristic for static weapon-target assignment}. J. Global Optim.
-
-\bibitem{lee2002}
-Lee, Z. J., et al. (2002). \textit{Immunity-based ant colony optimization for weapon-target assignment}. Applied Soft Computing.
-
-\bibitem{lloyd1986}
-Lloyd, S. P., et al. (1986). \textit{Weapons allocation is NP-complete}. IEEE.
-\end{thebibliography}
-\end{columns}
+% --- References (single column) ---
+\begin{frame}[shrink=5]{References}
+  \tiny
+  \raggedright
+  \begin{itemize}\setlength\itemsep{4pt}
+    \item[\hypertarget{ref1}{[1]}] \textbf{Ahuja, R. K., et al. (2007).} Exact and heuristic algorithms for the weapon-target assignment problem. \textit{Operations Research}.
+    \item[\hypertarget{ref2}{[2]}] \textbf{Bertsimas, D., et al. (2025).} Solving large-scale WTA using branch-price-and-cut. \textit{Naval Research Logistics}.
+    \item[\hypertarget{ref3}{[3]}] \textbf{Andersen, A. C., et al. (2022).} WTA: Exact and approximate algorithms. \textit{Annals of Operations Research}.
+    \item[\hypertarget{ref4}{[4]}] \textbf{Camm, J. D., et al. (2002).} Nature reserve site selection. \textit{Operations Research}.
+    \item[\hypertarget{ref5}{[5]}] \textbf{Kwon, O., et al. (1999).} Lagrangian relaxation approach to targeting problem. \textit{Naval Research Logistics}.
+    \item[\hypertarget{ref6}{[6]}] \textbf{Kim, K., et al. (2022).} WTA model for ground combat using MINLP. \textit{Mathematical Problems in Engineering}.
+    \item[\hypertarget{ref7}{[7]}] \textbf{Kline, A. G., et al. (2020).} Heuristic and metaheuristic approaches for the static weapon-target assignment problem. \textit{J. Global Optim}.
+    \item[\hypertarget{ref8}{[8]}] \textbf{Sonuc, E., et al. (2020).} Weapon target assignment problem. \textit{IntechOpen}.
+    \item[\hypertarget{ref9}{[9]}] \textbf{Xin, B., et al. (2018).} Marginal-return-based heuristic for sensor-weapon-target assignment. \textit{IEEE Trans. SMC}.
+    \item[\hypertarget{ref10}{[10]}] \textbf{Lee, Z. J., et al. (2003).} Hybrid ACO-GA for WTA. \textit{IDEAL 2003}.
+    \item[\hypertarget{ref11}{[11]}] \textbf{Bogdanowicz, Z. R., et al. (2013).} Optimization of weapon-target pairings. \textit{IEEE Trans. Cybernetics}.
+    \item[\hypertarget{ref12}{[12]}] \textbf{Lee, Z. J., et al. (2002).} Immunity-based ACO for WTA. \textit{Applied Soft Computing}.
+    \item[\hypertarget{ref13}{[13]}] \textbf{Hu, X., et al. (2018).} Improved ACO algorithm for WTA. \textit{Mathematical Problems in Engineering}.
+    \item[\hypertarget{ref14}{[14]}] \textbf{Li, Y., et al. (2017).} Modified Pareto ACO for bi-objective WTA. \textit{Int. J. Aerospace Engineering}.
+    \item[\hypertarget{ref15}{[15]}] \textbf{Lloyd, S. P., et al. (1986).} Weapons allocation: a problem of many local optima. \textit{IEEE}.
+  \end{itemize}
 \end{frame}
 
-% =============================================================================
-% THANK YOU
-% =============================================================================
+% ==========================================================================
+% THANK YOU SLIDE
+% ==========================================================================
 
+{
+\setbeamercolor{background canvas}{bg=navydark}
 \begin{frame}[plain]
-\begin{center}
-\vspace{2cm}
-{\Huge\textbf{\textcolor{primaryblue}{Thank You!}}}
+  \begin{center}
+    \vspace{1.2cm}
 
-\vspace{1cm}
-{\Large Questions?}
+    {\color{goldaccent}\rule{0.25\textwidth}{2pt}}
 
-\end{center}
+    \vspace{0.5cm}
+    {\color{white}\Huge\bfseries Thank You}
+
+    \vspace{0.4cm}
+    {\color{iceblue}\large Questions \& Discussion}
+
+    \vspace{0.6cm}
+    {\color{goldaccent}\rule{0.25\textwidth}{2pt}}
+
+    \vspace{0.8cm}
+
+    {\color{mygray}\small
+      \begin{tabular}{l@{\quad}l}
+        Hozifa Rahman Hamim      & (ID: 1705083) \\[3pt]
+        Md.\ Azizul Haque Nadim  & (ID: 1905059) \\[3pt]
+        Sadia Tabassum           & (ID: 1905091) \\[3pt]
+        Ahmmad Nur Swapnil       & (ID: 2005009) \\[3pt]
+        Most.\ Sonia Khatun      & (ID: 2005025) \\[3pt]
+        Shahriar Ahmed Seam      & (ID: 2005093) \\
+      \end{tabular}
+    }
+
+    \vspace{0.4cm}
+    {\color{iceblue}\small
+      CSE 462 --- Algorithm Engineering Sessional\\[2pt]
+      Department of CSE, BUET
+    }
+  \end{center}
 \end{frame}
+}
 
 \end{document}

@@ -241,6 +241,22 @@ def plot_time_scalability(df):
     balanced = df[df["scenario"] == "balanced"].copy()
     summary = balanced.groupby(["tier", "algorithm"])["time_sec"].mean().reset_index()
 
+    def _fmt_runtime_label(t):
+        if t >= 10:
+            return f"{t:.1f}s"
+        if t >= 1:
+            return f"{t:.2f}s"
+        if t >= 0.1:
+            return f"{t:.3f}s"
+        return f"{t:.4f}s"
+
+    point_offsets = {
+        "MMR_Original": (0, -10),
+        "MMR_Modified": (0, 10),
+        "GA_Original": (0, 10),
+        "GA_Modified": (0, -10),
+    }
+
     # Extended x-axis range for trend line extrapolation
     size_vals = np.array(sorted(TIER_SIZES.values()))
     x_fine = np.logspace(np.log10(size_vals[0] * 0.7),
@@ -254,6 +270,19 @@ def plot_time_scalability(df):
 
         # Plot actual data points
         ax.plot(sizes, times, "o", color=ALGO_COLORS[algo], markersize=8, zorder=5)
+
+        # Annotate each node with the actual mean runtime value.
+        dx, dy = point_offsets.get(algo, (0, 8))
+        for s, t in zip(sizes, times):
+            if t <= 0:
+                continue
+            ax.annotate(_fmt_runtime_label(float(t)), (s, t),
+                        textcoords="offset points", xytext=(dx, dy),
+                        ha="center", va="bottom" if dy >= 0 else "top",
+                        fontsize=7, color=ALGO_COLORS[algo],
+                        bbox=dict(boxstyle="round,pad=0.15",
+                                  fc="white", ec=ALGO_COLORS[algo],
+                                  alpha=0.75, linewidth=0.6))
 
         # Power-law trend line: log(t) = a*log(n) + b
         if len(sizes) >= 2:

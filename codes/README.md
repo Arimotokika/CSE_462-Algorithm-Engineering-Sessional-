@@ -11,7 +11,7 @@ All source code for the Weapon-Target Assignment (WTA) experiments.
 | `run_all.py` | **Master script** — runs the full pipeline end-to-end |
 | `dataset_generator.py` | Generates 180 synthetic WTA instances across 9 categories |
 | `experiment_runner.py` | Runs all 4 algorithms on every instance, saves results to CSV |
-| `analysis.py` | Loads CSV results, generates 8 plots + Wilcoxon statistical tests |
+| `analysis.py` | Loads CSV results, generates 9 plots + Wilcoxon statistical tests |
 | `mmr_original.py` | MMR greedy heuristic (Hasan & Barua, faithful implementation) |
 | `mmr_modified.py` | MMR-IR: greedy + 1-opt + 2-opt local search (our modification) |
 | `ga_original.py` | Standard GA (Hasan & Barua, faithful implementation) |
@@ -33,7 +33,7 @@ source ../.venv/Scripts/activate
 ..\.venv\Scripts\activate
 
 # Install packages
-pip install numpy pandas matplotlib seaborn scipy
+pip install -r requirements.txt
 ```
 
 ---
@@ -44,7 +44,7 @@ pip install numpy pandas matplotlib seaborn scipy
 ```bash
 python run_all.py
 ```
-*Runtime: ~3.5 hours total.*
+*Runtime: approximately 3 to 4 hours total (large tiers dominate).* 
 
 ---
 
@@ -115,6 +115,9 @@ After full pipeline:
 - `results/figures/06_scenario_comparison.png` — Balanced vs scarce vs rich
 - `results/figures/07_violin_value_dist.png` — Value distributions
 - `results/figures/08_bar_scenario_improvement.png` — Improvement by scenario
+- `results/figures/09_ga_improvement_vs_size.png` — Hybrid GA gain vs problem size
+
+All generated figures are intended to match the plots used in the Checkpoint 2 presentation.
 
 ---
 
@@ -131,3 +134,9 @@ Options:
   --append      Append to existing CSV instead of overwriting
                 Use this when running tiers separately
 ```
+
+## Reproducibility Contract
+
+- Single-command reproduction entrypoint is `python run_all.py`.
+- Do not manually edit `results/experiment_results.csv`.
+- Regenerate figures with `python analysis.py` after any experiment rerun.

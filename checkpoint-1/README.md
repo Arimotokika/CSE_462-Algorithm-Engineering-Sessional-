@@ -1,69 +1,34 @@
-# Weapon-Target Assignment Problem - Presentation
+# Checkpoint 1 README
+
+This folder contains the Checkpoint 1 deliverables for the WTA sessional.
+
+Checkpoint 1 focuses on:
+
+- formal problem definition,
+- hardness and reduction-based discussion,
+- survey of existing algorithm families,
+- early demonstration content before the full Checkpoint 2 implementation.
 
 ## Files
 
-- `presentation.tex` - Main combined LaTeX beamer presentation
-- `iron_dome_example.gif` - Animated GIF showing Iron Dome concept
+- `guidelines.txt` - official checkpoint requirements.
+- `presentation.tex` - Checkpoint 1 slide deck source.
+- `images/` - supporting visual assets used by the slides.
 
-## Compilation Instructions
+## Build Instructions
 
-### Option 1: Using pdfLaTeX (Static Image)
-
-If you want to use a static image instead of animation:
-
-1. Convert the GIF to PNG using any image converter
-2. Rename to `iron_dome_example.png`
-3. Compile with: `pdflatex presentation.tex`
-
-### Option 2: Using animate package (Animated PDF)
-
-To include the animated GIF in PDF:
-
-1. Convert GIF to individual frames: Use `ffmpeg` or online tools
-   ```
-   ffmpeg -i iron_dome_example.gif -vsync 0 frame%03d.png
-   ```
-2. Use the `animate` package in LaTeX (already included)
-3. Replace the `\includegraphics` with `\animategraphics`
-
-### Option 3: Online LaTeX Editors
-
-- Upload to Overleaf
-- Convert GIF to PNG first for compatibility
-
-## Presentation Structure (15 minutes total)
-
-| Section | Topic                                 | Time    |
-| ------- | ------------------------------------- | ------- |
-| 1       | Problem Definition                    | 2.5 min |
-| 2       | NP-Hardness Proofs                    | 2.5 min |
-| 3       | Algorithm Survey                      | 2.5 min |
-| 4       | Implementation Algorithms (MMR & ACO) | 2.5 min |
-| 5       | Experimental Design                   | 2.5 min |
-| 6       | Applications                          | 2.5 min |
-
-## Content Sources
-
-Content compiled from team member files:
-
-- `definition.tex` - Problem definition and formulation
-- `np-hard.tex` - Polynomial-time reductions
-- `algorithm-table.tex` - Algorithm survey
-- `proposed algo/mmr.tex` - MMR algorithm details
-- `proposed algo/antcolony.tex` - ACO algorithm details
-- `experiment.tex` - Experimental design
-- `application.tex` - Real-world applications
-
-## Quick Start
+Compile inside this folder:
 
 ```bash
 pdflatex presentation.tex
-pdflatex presentation.tex  # Run twice for TOC/references
+pdflatex presentation.tex
 ```
 
-## Notes
+Two passes are recommended for stable table-of-contents and references.
 
-- Uses Madrid beamer theme with seahorse color theme
-- 16:9 aspect ratio (aspectratio=169)
-- Professional blue color scheme
-- Clean, minimal design for academic presentation
+## Scope Note
+
+This is an archived milestone. The final implementation, experiments, and reproducibility pipeline are documented in:
+
+- `../checkpoint-2/README.md`
+- `../codes/README.md`
