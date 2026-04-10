@@ -2871,7 +2871,7 @@
   \begin{exampleblock}{Result Description}
     {\scriptsize
     \begin{itemize}\itemsep2pt
-      \item Both algorithm pairs show positive gain across size tiers.
+      \item MMR-IR stays positive across all size tiers; Hybrid GA is mixed on small but strongly positive on medium/large.
       \item Hybrid GA exhibits the stronger scale effect, while MMR-IR provides consistent incremental gain.
       \item Showing both together highlights complementary impact: large GA uplift plus stable MMR refinement.
     \end{itemize}}
@@ -2931,11 +2931,10 @@
       \begin{block}{MMR vs.\ MMR-IR}
         {\small
         \begin{itemize}\itemsep3pt
-          \item MMR-IR improves MMR by
-            \textbf{0.2--4.8\%} consistently across all tiers
-          \item Improvement grows with tier size
-          \item All improvements statistically significant
-            (Wilcoxon $p < 0.05$)
+          \item Balanced-tier gains: \textbf{2.44\%, 0.46\%, 0.13\%}
+            (small/medium/large)
+          \item Positive in all 9 categories
+          \item Significant in \textbf{9/9} categories (Wilcoxon, $\alpha=0.05$)
         \end{itemize}
         }
       \end{block}
@@ -2944,12 +2943,12 @@
       \begin{block}{GA\_Original vs.\ Hybrid~GA}
         {\small
         \begin{itemize}\itemsep3pt
-          \item Hybrid GA improves GA\_Original by
-            \textbf{36--54\%} on large-tier instances
+          \item Balanced-tier change: \textbf{-2.04\%, 28.85\%, 37.70\%}
+            (small/medium/large)
           \item Our 3 modifications directly address
             random init, elitism loss, and blind mutation
-          \item Hybrid GA + MMR-IR achieves
-            best overall performance
+          \item Significant in \textbf{6/9} categories; all three small-tier
+            categories are non-significant
         \end{itemize}
         }
       \end{block}
@@ -2960,8 +2959,8 @@
   \colorbox{navymidHex}{\begin{minipage}{\linewidth}
     \vspace{5pt}
     {\color{teallt}\small\itshape\centering
-     Statistical validation: Wilcoxon signed-rank test ($\alpha = 0.05$) confirms all
-     pairwise comparisons are significant. 20 instances per category.\par}
+     Statistical validation: Wilcoxon signed-rank test ($\alpha = 0.05$):
+     MMR-IR significant in 9/9 categories, Hybrid GA in 6/9. 20 instances per category.\par}
     \vspace{5pt}
   \end{minipage}}
 

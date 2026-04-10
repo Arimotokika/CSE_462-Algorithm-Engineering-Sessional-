@@ -586,8 +586,8 @@ def print_summary(df):
     pivot_t.columns = [ALGO_LABELS.get(c, c) for c in pivot_t.columns]
     print(pivot_t.round(4).to_string())
 
-    # Wilcoxon signed-rank tests
-    print("\n--- Wilcoxon Signed-Rank Tests (alpha=0.05) ---")
+    # Wilcoxon signed-rank tests (balanced tiers)
+    print("\n--- Wilcoxon Signed-Rank Tests (Balanced tiers, alpha=0.05) ---")
     test_pairs = [("MMR_Original", "MMR_Modified"),
                   ("GA_Original",  "GA_Modified")]
     for tier in TIERS:
@@ -609,6 +609,30 @@ def print_summary(df):
                       f"| W={stat:8.1f}  p={pval:.4f}  {sig}")
             except Exception as e:
                 print(f"  {tier:6s} | {ALGO_LABELS[orig_algo]:15s} vs {ALGO_LABELS[mod_algo]:18s} "
+                      f"| Error: {e}")
+
+    # Per-category Wilcoxon tests (all 9 categories)
+    print("\n--- Wilcoxon Signed-Rank Tests (Per category, alpha=0.05) ---")
+    cat_order = [c for c in ALL_CATS if c in df["category"].astype(str).unique()]
+    for cat in cat_order:
+        sub = df[df["category"].astype(str) == cat]
+        for orig_algo, mod_algo in test_pairs:
+            orig_vals = sub[sub["algorithm"] == orig_algo].sort_values("instance_id")["value"].values
+            mod_vals  = sub[sub["algorithm"] == mod_algo].sort_values("instance_id")["value"].values
+            if len(orig_vals) < 5 or len(mod_vals) < 5:
+                continue
+            diff = orig_vals - mod_vals
+            if np.all(diff == 0):
+                print(f"  {cat:15s} | {ALGO_LABELS[orig_algo]:15s} vs {ALGO_LABELS[mod_algo]:18s} "
+                      f"| identical (no difference)")
+                continue
+            try:
+                stat, pval = stats.wilcoxon(orig_vals, mod_vals, alternative="greater")
+                sig = "***" if pval < 0.001 else "**" if pval < 0.01 else "*" if pval < 0.05 else "ns"
+                print(f"  {cat:15s} | {ALGO_LABELS[orig_algo]:15s} vs {ALGO_LABELS[mod_algo]:18s} "
+                      f"| W={stat:8.1f}  p={pval:.6f}  {sig}")
+            except Exception as e:
+                print(f"  {cat:15s} | {ALGO_LABELS[orig_algo]:15s} vs {ALGO_LABELS[mod_algo]:18s} "
                       f"| Error: {e}")
 
     # All-scenario summary

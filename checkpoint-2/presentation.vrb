@@ -1,0 +1,28 @@
+\frametitle{Reproducibility: GitHub Repository}
+\begin{block}{Single Master Script}
+    All experiments are reproducible with a single command:
+    \begin{center}
+      \texttt{python run\_all.py}
+    \end{center}
+    Generates dataset $\rightarrow$ runs all 4 algorithms on 180 instances $\rightarrow$ produces 10 plots.
+  \end{block}
+
+  \vspace{0.1cm}
+
+  \begin{exampleblock}{Repository Structure}
+\scriptsize
+\begin{verbatim}
+CSE_462-Algorithm-Engineering-Sessional/
+  codes/
+    run_all.py           # Master script
+    dataset_generator.py # 180 instances
+    experiment_runner.py # Run all algorithms
+    analysis.py          # 10 plots + stats
+    mmr_original.py      # MMR (Hasan & Barua)
+    mmr_modified.py      # MMR-IR (ours)
+    ga_original.py       # GA (Hasan & Barua)
+    ga_modified.py       # Hybrid GA (ours)
+  datasets/              # JSON instances
+  results/figures/       # 10 PNG plots
+\end{verbatim}
+  \end{exampleblock}
