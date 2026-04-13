@@ -21,7 +21,7 @@ loss of the best solution found so far.  We preserve the top 10% of
 individuals (elitism) to guarantee monotonic improvement.  Additionally,
 we track a stagnation counter: if the global best has not improved for
 STAGNATION_LIMIT generations, we inject fresh random individuals to
-re-diversify the population and escape local optima.
+re-diversify the population while preserving the current elites.
 
 Modification 3: Threat-Proportional Mutation (WTA-Specific)
 ------------------------------------------------------------
@@ -221,12 +221,16 @@ def ga_modified(instance: Dict[str, Any],
             stagnation_count += 1
 
         if stagnation_count >= STAGNATION_LIMIT:
-            # Inject fresh random individuals (replace worst, keep elites)
-            for idx in sorted_idx[-elite_count:]:
-                if idx < len(population):
-                    population[idx] = _random_individual(n_weapons, n_targets, rng)
-                    fitnesses[idx]  = compute_solution_value(
-                        population[idx], target_values, kill_prob, n_targets)
+            # Re-diversify the current generation without touching elites.
+            current_sorted_idx = np.argsort(fitnesses)
+            non_elite_idx = current_sorted_idx[elite_count:]
+            refresh_count = min(elite_count, len(non_elite_idx))
+            refresh_slots = non_elite_idx[-refresh_count:]
+
+            for idx in refresh_slots:
+                population[idx] = _random_individual(n_weapons, n_targets, rng)
+                fitnesses[idx]  = compute_solution_value(
+                    population[idx], target_values, kill_prob, n_targets)
             stagnation_count = 0
 
     elapsed = time.perf_counter() - t0

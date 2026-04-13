@@ -23,7 +23,7 @@ Guideline source: `guidelines.txt` in this folder.
 - Original algorithms: MMR and GA.
 - Modified algorithms:
   - MMR-IR: tie-aware greedy plus local refinement (1-opt and 2-opt).
-  - Hybrid GA: MMR seeding, elitism with stagnation handling, and threat-proportional mutation.
+  - Hybrid GA: MMR seeding, elitism with stagnation-triggered re-diversification, and threat-proportional mutation.
 
 ## Dataset and Experiment Protocol
 
@@ -60,7 +60,7 @@ Pipeline stages executed by the script:
 Expected outputs from full run:
 
 - 1 CSV result table (`experiment_results.csv`)
-- 9 analysis figures (`01` through `09` PNG plots)
+- 10 analysis figures (`01` through `10` PNG plots)
 
 Generated artifacts are stored in:
 

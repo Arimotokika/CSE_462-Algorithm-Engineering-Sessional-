@@ -30,7 +30,7 @@ where:
 - MMR (original): greedy marginal-return heuristic.
 - MMR-IR (modified): tie-aware greedy plus 1-opt and 2-opt refinement.
 - GA (original): baseline GA with tournament selection, crossover, mutation, time budget.
-- Hybrid GA (modified): MMR-seeded population, elitism with stagnation recovery, and threat-proportional mutation.
+- Hybrid GA (modified): MMR-seeded population, elitism with stagnation-triggered re-diversification, and threat-proportional mutation.
 
 ### Benchmark Design
 
@@ -62,7 +62,7 @@ python run_all.py
 
 1. dataset generation,
 2. experiment execution for all 4 algorithms,
-3. analysis and figure generation (9 plots).
+3. analysis and figure generation (10 plots).
 
 Generated outputs:
 

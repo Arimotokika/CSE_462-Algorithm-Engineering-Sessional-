@@ -18,8 +18,8 @@ Plots generated (saved to results/figures/):
   06_scenario_comparison.png      -- balanced vs scarce vs rich per tier
   07_violin_value_dist.png        -- violin plots: modified vs original
   08_bar_scenario_improvement.png -- improvement % by scenario type
-    09_ga_improvement_vs_size.png   -- Hybrid GA gain over GA across size/scenario
-    10_mmr_improvement_vs_size.png  -- MMR-IR gain over MMR across size/scenario
+  09_ga_improvement_vs_size.png   -- Hybrid GA gain over GA across size/scenario
+  10_mmr_improvement_vs_size.png  -- MMR-IR gain over MMR across size/scenario
 """
 
 import os

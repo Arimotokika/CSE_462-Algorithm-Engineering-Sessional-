@@ -11,7 +11,7 @@ This folder contains all executable code for dataset generation, experiments, an
 | `run_all.py`           | **Master script** — runs the full pipeline end-to-end                           |
 | `dataset_generator.py` | Generates 180 synthetic WTA instances across 9 categories                       |
 | `experiment_runner.py` | Runs all 4 algorithms on every instance, saves results to CSV                   |
-| `analysis.py`          | Loads CSV results, generates 9 plots + Wilcoxon statistical tests               |
+| `analysis.py`          | Loads CSV results, generates 10 plots + Wilcoxon statistical tests              |
 | `mmr_original.py`      | MMR greedy heuristic (Hasan & Barua, faithful implementation)                   |
 | `mmr_modified.py`      | MMR-IR: greedy + 1-opt + 2-opt local search (our modification)                  |
 | `ga_original.py`       | Standard GA (Hasan & Barua, faithful implementation)                            |
@@ -129,6 +129,8 @@ After full pipeline:
 - `results/figures/07_violin_value_dist.png` — Value distributions
 - `results/figures/08_bar_scenario_improvement.png` — Improvement by scenario
 - `results/figures/09_ga_improvement_vs_size.png` — Hybrid GA gain vs problem size
+
+- `results/figures/10_mmr_improvement_vs_size.png` -- MMR-IR gain vs problem size
 
 All generated figures are intended to match the plots used in the Checkpoint 2 presentation.
 

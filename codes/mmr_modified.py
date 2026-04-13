@@ -14,8 +14,8 @@ Proposed Modifications
 ----------------------
 1. Tie-breaking by Target Priority:
    Original MMR breaks ties arbitrarily.  We break ties in favour of the
-   highest-value target, concentrating early fire on the most threatening
-   targets.
+   highest current-value target, concentrating early fire on the most
+   threatening targets that remain under-covered at that step.
 
 2. Iterative 1-opt Local Search:
    After the greedy pass, for each weapon try reassigning to every other
@@ -60,11 +60,12 @@ def _greedy_pass(
         for k in unallocated_weapons:
             for i in range(n_targets):
                 decrease = current_values[i] * kill_prob[k][i]
-                # Modification 1: break ties by target value (higher = preferred)
+                # Break ties by the current residual target value, not the
+                # original static target value.
                 if (decrease > max_decrease) or (
                     abs(decrease - max_decrease) < 1e-12
                     and best_target >= 0
-                    and target_values[i] > target_values[best_target]
+                    and current_values[i] > current_values[best_target]
                 ):
                     max_decrease = decrease
                     best_target  = i
