@@ -48,9 +48,11 @@
 \begin{abstract}
 The Weapon-Target Assignment (WTA) problem asks how to allocate a finite set of
 weapons to a set of targets so as to minimise the expected total survival value
-of those targets.  It is NP-complete, and practical instances arising in air
-defence and ground-combat scenarios can have hundreds of weapons and targets,
-rendering exact methods infeasible within real-time constraints.  This paper
+of those targets.  It is NP-complete, and recent exact methods have improved
+scalability for centralized static instances \cite{bertsimas2025}.  In
+practice, however, many deployments still require lightweight methods with
+predictable runtime under strict decision windows and constrained compute.
+This paper
 presents two algorithm engineering contributions.  First, we augment the
 classic Maximum Marginal Return (MMR) greedy heuristic with (i) tie-breaking
 by target value, (ii) a 1-opt iterative local-search pass, and (iii) a 2-opt
@@ -88,15 +90,23 @@ available stock.
 Real-world systems such as Israel's Iron Dome require near-optimal WTA decisions
 within seconds: incoming rockets must be assigned to interceptors before they
 reach their targets \cite{kline2020}.  This tension between solution quality and
-runtime is the core algorithmic challenge.
+runtime remains central in operational settings.
 
-WTA belongs to the class of NP-complete problems \cite{ahuja2007,lloyd1986}, so practical
-solvers rely on heuristics and metaheuristics.  Two widely studied baseline
-approaches are the Maximum Marginal Return (MMR) greedy heuristic and a
-Genetic Algorithm (GA) \cite{ahuja2007,kline2020}.  MMR is extremely fast but
-commits irrevocably to early greedy choices.  Standard GA explores the solution
-space more broadly but suffers from slow convergence, solution loss between
-generations, and uninformed mutation in large-dimensional instances.
+Recent branch-price-and-cut methods show that centralized exact optimization can
+scale to very large static WTA instances \cite{bertsimas2025}.  Our focus is
+therefore complementary: we target settings where lightweight implementations,
+low overhead, and bounded runtime are preferred, such as compute-constrained or
+time-critical deployments.
+
+WTA belongs to the class of NP-complete problems \cite{ahuja2007,lloyd1986},
+so practical systems often combine exact methods (when centralized resources
+permit) with heuristics and metaheuristics for fast decision-making.
+Two widely studied baseline heuristic/metaheuristic approaches are the
+Maximum Marginal Return (MMR) greedy heuristic and a Genetic Algorithm (GA)
+\cite{ahuja2007,kline2020}.  MMR is extremely fast but commits irrevocably to
+early greedy choices.  Standard GA explores the solution space more broadly
+but suffers from slow convergence, solution loss between generations, and
+uninformed mutation in large-dimensional instances.
 
 This paper makes the following contributions:
 
@@ -106,7 +116,7 @@ This paper makes the following contributions:
         $O(1)$ incremental objective evaluation per trial.
   \item We propose \textbf{Hybrid GA}, which addresses three identified
         weaknesses of standard GA through MMR-seeded initialisation, elitism
-        with stagnation detection, and a novel threat-proportional mutation
+      with stagnation detection, and a threat-proportional mutation
         operator.
   \item We design and open-source a structured 180-instance synthetic
         benchmark covering small, medium, and large problem sizes under
@@ -149,7 +159,7 @@ Under the standard independence assumption, the probability that target $j$
 survives all assigned weapons is
 $\prod_{i=1}^{m}(1-p_{ij})^{x_{ij}}$.
 The static WTA problem (target-based formulation) is
-\cite{ahuja2007,hasan2020}:
+\cite{ahuja2007,andersen2022}:
 
 \begin{equation}
   \text{Minimise}\quad Z = \sum_{j=1}^{n} V_j \prod_{i=1}^{m} (1-p_{ij})^{x_{ij}}
@@ -173,8 +183,7 @@ are equivalent.
 
 We establish NP-completeness via two polynomial-time reductions.
 The primary formal citation is the classical conference result
-\cite{lloyd1986}; we also reviewed a worked pedagogical subset-product
-construction in \cite{nearly42np}.
+\cite{lloyd1986}.
 
 \subsubsection{Reduction 1: Subset Product $\leq_p$ WTA}
 
@@ -265,17 +274,21 @@ category.
   \label{tab:survey}
   \centering
   \small
+  \setlength{\tabcolsep}{4pt}
+  \renewcommand{\arraystretch}{1.08}
+  \resizebox{\columnwidth}{!}{%
   \begin{tabular}{llll}
     \toprule
-    Category      & Complexity          & Max Scale      & Use Case \\
+    Category      & Typical Complexity  & Deployment Need & Use Case \\
     \midrule
-    Exact         & $O(2^{mn})$         & $< 1000$ vars  & Global optimality \\
-    Approximation & $O(\mathrm{poly})$  & $> 10000$      & Theoretical bounds \\
-    Randomised    & $O(S \cdot mn)$     & Any            & Baseline \\
-    Heuristic     & $O(mn)$--$O(m^2n^2)$ & $> 1000$    & Real-time \\
-    Metaheuristic & $O(I \cdot P \cdot mn)$ & $> 10000$ & Large-scale \\
+    Exact         & Exponential worst-case & Centralized, solver-heavy & Global optimality \\
+    Approximation & $O(\mathrm{poly})$  & Moderate       & Theoretical bounds \\
+    Randomised    & $O(S \cdot mn)$     & Low            & Baseline \\
+    Heuristic     & $O(mn)$--$O(m^2n^2)$ & Low            & Real-time \\
+    Metaheuristic & $O(I \cdot P \cdot mn)$ & Moderate  & Large-scale quality \\
     \bottomrule
   \end{tabular}
+  }
 \end{table}
 
 % ─────────────────────────────────────────────────────────────────────────────
@@ -458,7 +471,7 @@ of the population (excluding elites) is replaced with freshly randomised
 individuals to re-introduce diversity.  This prevents premature convergence
 while still preserving the best solutions found.
 
-\subsubsection{Fix 3: Threat-Proportional Mutation (Novel WTA-Specific Operator)}
+\subsubsection{Fix 3: Threat-Proportional Mutation (Domain-Aware WTA-Specific Operator)}
 
 Instead of selecting a mutation target uniformly at random, we bias the
 selection proportionally to the \emph{remaining threat} of each target:
@@ -469,13 +482,23 @@ The mutation target is drawn from the categorical distribution
 $P(\text{mutate to } j) \propto \text{threat}[j]$.
 Intuitively, targets with high remaining survival value (high $V_j$ and few
 or ineffective weapons assigned) attract more mutations than already
-well-covered targets.  This is a novel, WTA-specific contribution: it
+well-covered targets.  This is a domain-aware, WTA-specific contribution: it
 embeds domain knowledge directly into the search operator.
 
 \textbf{Concrete example.} Suppose T1 has $V_1 = 100$ and current survival
 $0.6$ (threat$_1 = 60$), while T2 has $V_2 = 20$ and survival $0.1$
 (threat$_2 = 2$).  T1 is $30\times$ more likely to receive a mutated weapon
 than T2.
+
+% ── Fig 1: Box plot (full width) ─────────────────────────────────────────────
+\begin{figure*}[!t]
+  \centering
+  \includegraphics[width=\textwidth]{01_box_solution_quality.png}
+  \caption{Distribution of objective values ($Z$, lower is better) for all four
+    algorithms across small, medium, and large tiers (balanced scenario).
+    Boxes show IQR; whiskers extend to 1.5$\times$IQR; circles are outliers.}
+  \label{fig:box}
+\end{figure*}
 
 % ─────────────────────────────────────────────────────────────────────────────
 \section{Experimental Setup}
@@ -537,8 +560,7 @@ Four algorithms are evaluated on every instance:
 
 \begin{enumerate}
   \item \textbf{MMR (original)}: Maximum Marginal Return greedy heuristic,
-        faithful reimplementation following Ahuja et al.\ \cite{ahuja2007}
-        and the algorithm description in \cite{hasan2020}.
+    faithful reimplementation following Ahuja et al.\ \cite{ahuja2007}.
   \item \textbf{MMR-IR (modified)}: MMR with tie-breaking, 1-opt ($\leq 20$
         passes), and 2-opt ($\leq 3$ passes) as described in
         Section~\ref{sec:mmrir}.
@@ -550,7 +572,15 @@ Four algorithms are evaluated on every instance:
         threat-proportional mutation; same time budget as GA.
 \end{enumerate}
 
-The time budget is set proportionally to problem size.
+Although Section~\ref{sec:problem} presents the standard weapon-type
+formulation, the executable benchmark uses a flat weapon-token representation:
+each weapon unit is one assignment variable (one chromosome gene), and each
+unit has its own kill-probability row in the instance matrix.  This preserves
+the same objective structure while simplifying implementation interfaces.
+
+For GA and Hybrid GA, the wall-clock time budget follows the implementation
+rule used in \texttt{ga\_original.py}: 5 s if $\max(W,T) \leq 30$, 20 s if
+$\max(W,T) \leq 120$, and 60 s otherwise.
 The performance metric is the objective value $Z$ (lower is better).
 All algorithms are implemented in Python with a shared random seed (42) for
 stochastic methods.
@@ -563,6 +593,8 @@ test} using the one-sided alternative ``original $>$ modified''
 Tests are run category-wise for both pairs (MMR vs.\ MMR-IR and
 GA vs.\ Hybrid GA).  The Wilcoxon test is appropriate here because it makes
 no normality assumption and is robust to non-Gaussian objective distributions.
+Under this setup, a significant result indicates that the original method tends
+to yield larger objective values than the modified method.
 
 % ─────────────────────────────────────────────────────────────────────────────
 \section{Experimental Results}
@@ -570,16 +602,6 @@ no normality assumption and is robust to non-Gaussian objective distributions.
 
 Four algorithms produce a total of $180 \times 4 = 720$ result rows.
 We report core comparative findings first, then additional diagnostics.
-
-% ── Fig 1: Box plot (full width) ─────────────────────────────────────────────
-\begin{figure*}[!t]
-  \centering
-  \includegraphics[width=\textwidth]{01_box_solution_quality.png}
-  \caption{Distribution of objective values ($Z$, lower is better) for all four
-    algorithms across small, medium, and large tiers (balanced scenario).
-    Boxes show IQR; whiskers extend to 1.5$\times$IQR; circles are outliers.}
-  \label{fig:box}
-\end{figure*}
 
 \subsection{Solution Quality Distribution}
 
@@ -603,6 +625,17 @@ small-tier overlap is visibly larger.
 
 \subsection{Mean Objective Value and Optimality Gap}
 
+
+Figure~\ref{fig:mean_obj} shows that the quality gap between GA (original) and
+Hybrid GA widens as instance size grows.  In the balanced small tier, GA
+(original) has lower mean $Z$ than Hybrid GA (164.70 vs.\ 168.00), but this
+relation reverses strongly in medium and large tiers (906.80 vs.\ 644.51, and
+2369.05 vs.\ 1474.28).  Figure~\ref{fig:gap} confirms that GA (original) has
+the largest gap from best-known solutions on large-tier instances.
+\FloatBarrier
+
+
+
 % ── Fig 3: Mean objective + gap (side by side, full width) ───────────────────
 \begin{figure}[!t]
   \centering
@@ -619,14 +652,6 @@ small-tier overlap is visibly larger.
     minimum value found across all four algorithms for each instance.}
   \label{fig:gap}
 \end{figure}
-
-Figure~\ref{fig:mean_obj} shows that the quality gap between GA (original) and
-Hybrid GA widens as instance size grows.  In the balanced small tier, GA
-(original) has lower mean $Z$ than Hybrid GA (164.70 vs.\ 168.00), but this
-relation reverses strongly in medium and large tiers (906.80 vs.\ 644.51, and
-2369.05 vs.\ 1474.28).  Figure~\ref{fig:gap} confirms that GA (original) has
-the largest gap from best-known solutions on large-tier instances.
-\FloatBarrier
 
 \subsection{Improvement Percentages}
 
@@ -659,14 +684,6 @@ each modified algorithm over its baseline.
   \label{fig:imp_tier}
 \end{figure}
 
-\begin{figure}[!t]
-  \centering
-  \includegraphics[width=\columnwidth]{08_bar_scenario_improvement.png}
-  \caption{Percentage improvement of modified algorithms over their baselines,
-    broken down by scenario type (balanced / scarce / rich), averaged across
-    tiers.}
-  \label{fig:imp_scenario}
-\end{figure}
 
 Figure~\ref{fig:imp_tier} confirms that MMR-IR remains positive in every
 balanced tier, while Hybrid GA is mixed in small tier and strongly positive in
@@ -685,6 +702,16 @@ same budget due to the warm start and directed search operators.  The log-log
 slopes confirm that both MMR and MMR-IR scale sub-quadratically, while GA
 variants are dominated by the fixed time budget.
 \FloatBarrier
+
+
+\begin{figure}[!t]
+  \centering
+  \includegraphics[width=\columnwidth]{08_bar_scenario_improvement.png}
+  \caption{Percentage improvement of modified algorithms over their baselines,
+    broken down by scenario type (balanced / scarce / rich), averaged across
+    tiers.}
+  \label{fig:imp_scenario}
+\end{figure}
 
 % ── Fig 5: Log-log runtime (full width) ──────────────────────────────────────
 \begin{figure}[!t]
@@ -776,7 +803,7 @@ Using the one-sided Wilcoxon signed-rank test
 This paper addressed the Weapon-Target Assignment problem from an algorithm
 engineering perspective, identifying structural weaknesses in two well-studied
 baseline approaches — MMR and standard GA — and proposing targeted
-modifications that provably improve performance.
+modifications that empirically improve performance on our benchmark.
 
 \textbf{MMR-IR} augments the greedy heuristic with tie-aware allocation and
 two local-search phases (1-opt and 2-opt) using $O(1)$ incremental
@@ -787,7 +814,7 @@ evaluation.  On balanced tiers, it improves MMR by 2.44\%, 0.46\%, and
 \textbf{Hybrid GA} directly addresses the three failure modes of standard GA
 on large WTA instances -- random initialisation, solution loss, and uninformed
 mutation -- through MMR seeding, elitism with stagnation detection, and the
-novel threat-proportional mutation operator.  On balanced tiers, it changes
+threat-proportional mutation operator.  On balanced tiers, it changes
 GA performance by -2.04\%, 28.85\%, and 37.70\% (small/medium/large).  The
 method is strongly effective in medium/large categories and significant in
 6 of 9 categories overall.
@@ -812,20 +839,22 @@ All code, datasets, and instructions are available at:
 All 180 instances, the four algorithm implementations, and the analysis
 pipeline are reproduced by executing the single master script:
 \begin{center}
+  \texttt{cd codes}\
+  \texttt{pip install -r requirements.txt}\
   \texttt{python run\_all.py}
 \end{center}
+On our setup, full reproduction takes approximately 3--4 hours
+(large-tier categories dominate runtime).
 
 \clearpage
 
 % ─────────────────────────────────────────────────────────────────────────────
 \IEEEtriggeratref{10}
 \IEEEtriggercmd{\enlargethispage{-5in}}
-\begin{thebibliography}{17}
+\begin{thebibliography}{15}
 \bibitem{kline2020} A.~G. Kline, D.~K. Ahner, and B.~J. Lunday, ``A heuristic and metaheuristic approach to the static weapon target assignment problem,'' \textit{Journal of Global Optimization}, vol.~78, no.~4, pp.~791--812, 2020.
 \bibitem{ahuja2007} R.~K. Ahuja, A.~Kumar, K.~Jha, and J.~B. Orlin, ``Exact and heuristic algorithms for the weapon-target assignment problem,'' \textit{Operations Research}, vol.~55, no.~6, pp.~1136--1146, 2007.
 \bibitem{lloyd1986} S.~P. Lloyd and H.~S. Witsenhausen, ``Weapons allocation is NP-complete,'' in \textit{Proc. Summer Computer Simulation Conference}, pp.~1054--1058, 1986.
-\bibitem{hasan2020} M.~B. Hasan and Y.~Barua, ``Weapon target assignment,'' in \textit{Concepts, Applications and Emerging Opportunities in Industrial Engineering}, G.~Moynihan, Ed. London, U.K.: IntechOpen, 2020, doi: 10.5772/intechopen.93665.
-\bibitem{nearly42np} ``Weapon-target assignment problem,'' \textit{nearly42.org}, Dec.~14, 2013. [Online]. Available: https://www.nearly42.org/cstheory/weapon-target-assignment-problem/ (accessed: Apr.~11, 2026).
 \bibitem{bertsimas2025} D.~Bertsimas and A.~Paskov, ``Solving large-scale weapon target assignment problems in seconds using branch-price-and-cut,'' \textit{Naval Research Logistics}, vol.~72, no.~5, pp.~735--749, 2025.
 \bibitem{andersen2022} A.~C. Andersen, K.~Pavlikov, and T.~A.~M. Toffolo, ``Weapon-target assignment problem: exact and approximate solution algorithms,'' \textit{Annals of Operations Research}, vol.~312, no.~2, pp.~581--606, 2022.
 \bibitem{camm2002} J.~D. Camm, S.~Polasky, A.~Solow, and B.~Csuti, ``A note on optimal algorithms for reserve site selection,'' \textit{Operations Research}, vol.~50, no.~3, pp.~495--501, 2002.
