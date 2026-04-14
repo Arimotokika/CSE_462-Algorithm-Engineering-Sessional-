@@ -1,0 +1,289 @@
+(.venv) (base) PS D:\Algo_Sonia\CSE_462-Algorithm-Engineering-Sessional-\codes> python .\run_all.py 
+============================================================
+WTA Checkpoint 2 - Full Pipeline (MMR + GA)
+============================================================
+
+[1/3] Generating benchmark dataset …
+  [balanced] small_balanced     W= 20 T= 20 -> 20 instances
+  [scarce  ] small_scarce       W= 10 T= 20 -> 20 instances
+  [rich    ] small_rich         W= 30 T= 20 -> 20 instances
+  [balanced] medium_balanced    W=100 T=100 -> 20 instances
+  [scarce  ] medium_scarce      W= 50 T=100 -> 20 instances
+  [rich    ] medium_rich        W=150 T=100 -> 20 instances
+  [balanced] large_balanced     W=250 T=250 -> 20 instances
+  [scarce  ] large_scarce       W=125 T=250 -> 20 instances
+  [rich    ] large_rich         W=375 T=250 -> 20 instances
+
+Metadata saved -> datasets\metadata.json
+Total instances: 180
+
+[2/3] Running experiments …
+  [small_balanced    ] instance   1/20 ... done in 10.0s  MMR-O=213.06  MMR-M=204.88  GA-O=198.30  GA-M=206.09
+  [small_balanced    ] instance   2/20 ... done in 10.0s  MMR-O=162.92  MMR-M=158.71  GA-O=161.52  GA-M=158.71
+  [small_balanced    ] instance   3/20 ... done in 10.0s  MMR-O=165.19  MMR-M=143.98  GA-O=146.00  GA-M=145.18
+  [small_balanced    ] instance   4/20 ... done in 10.0s  MMR-O=117.10  MMR-M=117.10  GA-O=108.94  GA-M=117.10
+  [small_balanced    ] instance   5/20 ... done in 10.0s  MMR-O=174.82  MMR-M=158.40  GA-O=142.82  GA-M=153.86
+  [small_balanced    ] instance   6/20 ... done in 10.0s  MMR-O=111.91  MMR-M=111.91  GA-O=107.75  GA-M=110.86
+  [small_balanced    ] instance   7/20 ... done in 10.0s  MMR-O=189.69  MMR-M=187.68  GA-O=187.01  GA-M=187.68
+  [small_balanced    ] instance   8/20 ... done in 10.0s  MMR-O=150.74  MMR-M=143.50  GA-O=137.09  GA-M=144.80
+  [small_balanced    ] instance   9/20 ... done in 10.0s  MMR-O=123.35  MMR-M=122.78  GA-O=120.35  GA-M=118.42
+  [small_balanced    ] instance  10/20 ... done in 10.0s  MMR-O=146.98  MMR-M=146.98  GA-O=137.11  GA-M=141.58
+  [small_balanced    ] instance  11/20 ... done in 10.0s  MMR-O=191.00  MMR-M=190.12  GA-O=190.64  GA-M=190.12
+  [small_balanced    ] instance  12/20 ... done in 10.0s  MMR-O=234.65  MMR-M=233.24  GA-O=216.26  GA-M=227.30
+  [small_balanced    ] instance  13/20 ... done in 10.0s  MMR-O=206.25  MMR-M=199.58  GA-O=184.48  GA-M=199.58
+  [small_balanced    ] instance  14/20 ... done in 10.0s  MMR-O=189.32  MMR-M=187.82  GA-O=176.25  GA-M=189.32
+  [small_balanced    ] instance  15/20 ... done in 10.0s  MMR-O=201.60  MMR-M=199.05  GA-O=194.89  GA-M=199.31
+  [small_balanced    ] instance  16/20 ... done in 10.0s  MMR-O=167.74  MMR-M=165.10  GA-O=162.01  GA-M=157.50
+  [small_balanced    ] instance  17/20 ... done in 10.0s  MMR-O=203.36  MMR-M=199.15  GA-O=203.33  GA-M=199.15
+  [small_balanced    ] instance  18/20 ... done in 10.0s  MMR-O=220.59  MMR-M=212.73  GA-O=206.82  GA-M=200.05
+  [small_balanced    ] instance  19/20 ... done in 10.0s  MMR-O=156.42  MMR-M=156.14  GA-O=141.51  GA-M=156.42
+  [small_balanced    ] instance  20/20 ... done in 10.0s  MMR-O=157.96  MMR-M=157.96  GA-O=148.33  GA-M=157.96
+  [small_scarce      ] instance   1/20 ... done in 10.0s  MMR-O=587.36  MMR-M=587.36  GA-O=569.59  GA-M=569.59
+  [small_scarce      ] instance   2/20 ... done in 10.0s  MMR-O=447.85  MMR-M=447.85  GA-O=447.85  GA-M=447.85
+  [small_scarce      ] instance   3/20 ... done in 10.0s  MMR-O=554.08  MMR-M=549.75  GA-O=537.25  GA-M=545.03
+  [small_scarce      ] instance   4/20 ... done in 10.0s  MMR-O=465.29  MMR-M=463.68  GA-O=463.76  GA-M=463.68
+  [small_scarce      ] instance   5/20 ... done in 10.0s  MMR-O=391.06  MMR-M=391.06  GA-O=387.07  GA-M=387.61
+  [small_scarce      ] instance   6/20 ... done in 10.0s  MMR-O=480.88  MMR-M=474.68  GA-O=468.10  GA-M=470.45
+  [small_scarce      ] instance   7/20 ... done in 10.0s  MMR-O=430.74  MMR-M=418.98  GA-O=418.98  GA-M=418.98
+  [small_scarce      ] instance   8/20 ... done in 10.0s  MMR-O=494.39  MMR-M=494.39  GA-O=472.30  GA-M=481.79
+  [small_scarce      ] instance   9/20 ... done in 10.0s  MMR-O=532.17  MMR-M=518.59  GA-O=507.63  GA-M=513.71
+  [small_scarce      ] instance  10/20 ... done in 10.0s  MMR-O=471.74  MMR-M=468.61  GA-O=460.71  GA-M=460.71
+  [small_scarce      ] instance  11/20 ... done in 10.0s  MMR-O=497.36  MMR-M=493.39  GA-O=493.39  GA-M=493.39
+  [small_scarce      ] instance  12/20 ... done in 10.0s  MMR-O=420.87  MMR-M=420.87  GA-O=410.85  GA-M=410.85
+  [small_scarce      ] instance  13/20 ... done in 10.0s  MMR-O=401.01  MMR-M=391.05  GA-O=391.05  GA-M=391.05
+  [small_scarce      ] instance  14/20 ... done in 10.0s  MMR-O=551.35  MMR-M=551.35  GA-O=530.28  GA-M=530.28
+  [small_scarce      ] instance  15/20 ... done in 10.0s  MMR-O=414.73  MMR-M=400.23  GA-O=396.69  GA-M=400.23
+  [small_scarce      ] instance  16/20 ... done in 10.0s  MMR-O=431.44  MMR-M=431.44  GA-O=405.96  GA-M=416.53
+  [small_scarce      ] instance  17/20 ... done in 10.0s  MMR-O=539.74  MMR-M=539.74  GA-O=528.95  GA-M=539.74
+  [small_scarce      ] instance  18/20 ... done in 10.0s  MMR-O=481.45  MMR-M=467.80  GA-O=459.08  GA-M=467.80
+  [small_scarce      ] instance  19/20 ... done in 10.0s  MMR-O=462.33  MMR-M=461.57  GA-O=443.41  GA-M=445.23
+  [small_scarce      ] instance  20/20 ... done in 10.0s  MMR-O=453.14  MMR-M=453.14  GA-O=446.53  GA-M=446.53
+  [small_rich        ] instance   1/20 ... done in 10.0s  MMR-O=95.52  MMR-M=92.87  GA-O=95.53  GA-M=92.71
+  [small_rich        ] instance   2/20 ... done in 10.0s  MMR-O=87.10  MMR-M=87.10  GA-O=87.38  GA-M=82.68
+  [small_rich        ] instance   3/20 ... done in 10.0s  MMR-O=80.83  MMR-M=80.17  GA-O=79.28  GA-M=76.33
+  [small_rich        ] instance   4/20 ... done in 10.0s  MMR-O=76.33  MMR-M=72.02  GA-O=73.38  GA-M=71.97
+  [small_rich        ] instance   5/20 ... done in 10.0s  MMR-O=66.01  MMR-M=64.09  GA-O=62.73  GA-M=65.74
+  [small_rich        ] instance   6/20 ... done in 10.0s  MMR-O=82.01  MMR-M=75.50  GA-O=74.19  GA-M=78.37
+  [small_rich        ] instance   7/20 ... done in 10.0s  MMR-O=58.87  MMR-M=57.15  GA-O=60.24  GA-M=56.49
+  [small_rich        ] instance   8/20 ... done in 10.0s  MMR-O=72.12  MMR-M=71.53  GA-O=71.03  GA-M=69.33
+  [small_rich        ] instance   9/20 ... done in 10.0s  MMR-O=65.41  MMR-M=62.66  GA-O=60.96  GA-M=61.05
+  [small_rich        ] instance  10/20 ... done in 10.0s  MMR-O=73.22  MMR-M=73.17  GA-O=65.77  GA-M=67.07
+  [small_rich        ] instance  11/20 ... done in 10.0s  MMR-O=79.75  MMR-M=79.42  GA-O=79.54  GA-M=78.53
+  [small_rich        ] instance  12/20 ... done in 10.0s  MMR-O=67.33  MMR-M=63.83  GA-O=64.49  GA-M=66.97
+  [small_rich        ] instance  13/20 ... done in 10.0s  MMR-O=83.18  MMR-M=78.86  GA-O=73.85  GA-M=74.90
+  [small_rich        ] instance  14/20 ... done in 10.0s  MMR-O=59.70  MMR-M=56.78  GA-O=61.22  GA-M=58.91
+  [small_rich        ] instance  15/20 ... done in 10.0s  MMR-O=78.41  MMR-M=75.69  GA-O=72.87  GA-M=76.06
+  [small_rich        ] instance  16/20 ... done in 10.0s  MMR-O=68.28  MMR-M=67.10  GA-O=64.35  GA-M=62.90
+  [small_rich        ] instance  17/20 ... done in 10.0s  MMR-O=67.29  MMR-M=62.31  GA-O=65.53  GA-M=60.18
+  [small_rich        ] instance  18/20 ... done in 10.0s  MMR-O=67.71  MMR-M=64.13  GA-O=62.50  GA-M=64.32
+  [small_rich        ] instance  19/20 ... done in 10.0s  MMR-O=77.63  MMR-M=77.63  GA-O=82.91  GA-M=77.63
+  [small_rich        ] instance  20/20 ... done in 10.0s  MMR-O=82.52  MMR-M=81.39  GA-O=80.38  GA-M=81.39
+  [medium_balanced   ] instance   1/20 ... done in 40.1s  MMR-O=636.55  MMR-M=633.55  GA-O=942.97  GA-M=636.55
+  [medium_balanced   ] instance   2/20 ... done in 40.1s  MMR-O=607.26  MMR-M=604.58  GA-O=833.44  GA-M=607.26
+  [medium_balanced   ] instance   3/20 ... done in 40.1s  MMR-O=666.15  MMR-M=660.88  GA-O=943.85  GA-M=666.15
+  [medium_balanced   ] instance   4/20 ... done in 40.1s  MMR-O=623.77  MMR-M=620.36  GA-O=896.25  GA-M=623.77
+  [medium_balanced   ] instance   5/20 ... done in 40.1s  MMR-O=648.48  MMR-M=647.49  GA-O=942.42  GA-M=648.48
+  [medium_balanced   ] instance   6/20 ... done in 40.1s  MMR-O=620.41  MMR-M=617.07  GA-O=867.19  GA-M=620.41
+  [medium_balanced   ] instance   7/20 ... done in 40.1s  MMR-O=605.23  MMR-M=599.07  GA-O=826.16  GA-M=605.23
+  [medium_balanced   ] instance   8/20 ... done in 40.1s  MMR-O=605.44  MMR-M=603.01  GA-O=817.67  GA-M=604.74
+  [medium_balanced   ] instance   9/20 ... done in 40.1s  MMR-O=626.39  MMR-M=625.45  GA-O=882.69  GA-M=626.39
+  [medium_balanced   ] instance  10/20 ... done in 40.1s  MMR-O=698.14  MMR-M=697.51  GA-O=983.90  GA-M=698.14
+  [medium_balanced   ] instance  11/20 ... done in 40.1s  MMR-O=671.21  MMR-M=666.25  GA-O=972.81  GA-M=670.53
+  [medium_balanced   ] instance  12/20 ... done in 40.1s  MMR-O=635.17  MMR-M=632.54  GA-O=876.43  GA-M=635.17
+  [medium_balanced   ] instance  13/20 ... done in 40.1s  MMR-O=624.42  MMR-M=621.75  GA-O=868.17  GA-M=624.42
+  [medium_balanced   ] instance  14/20 ... done in 40.1s  MMR-O=668.01  MMR-M=666.73  GA-O=912.20  GA-M=668.01
+  [medium_balanced   ] instance  15/20 ... done in 40.1s  MMR-O=710.36  MMR-M=708.03  GA-O=968.55  GA-M=710.36
+  [medium_balanced   ] instance  16/20 ... done in 40.1s  MMR-O=604.86  MMR-M=603.25  GA-O=895.60  GA-M=604.86
+  [medium_balanced   ] instance  17/20 ... done in 40.1s  MMR-O=611.40  MMR-M=608.65  GA-O=827.20  GA-M=611.40
+  [medium_balanced   ] instance  18/20 ... done in 40.1s  MMR-O=671.17  MMR-M=665.57  GA-O=925.75  GA-M=671.17
+  [medium_balanced   ] instance  19/20 ... done in 40.1s  MMR-O=676.49  MMR-M=672.64  GA-O=935.21  GA-M=676.49
+  [medium_balanced   ] instance  20/20 ... done in 40.1s  MMR-O=682.26  MMR-M=679.39  GA-O=985.09  GA-M=682.26
+  [medium_scarce     ] instance   1/20 ... done in 40.0s  MMR-O=2593.96  MMR-M=2588.06  GA-O=2879.34  GA-M=2592.90
+  [medium_scarce     ] instance   2/20 ... done in 40.0s  MMR-O=2176.26  MMR-M=2169.27  GA-O=2430.20  GA-M=2168.30
+  [medium_scarce     ] instance   3/20 ... done in 40.0s  MMR-O=1921.88  MMR-M=1914.85  GA-O=2143.51  GA-M=1917.51
+  [medium_scarce     ] instance   4/20 ... done in 40.0s  MMR-O=1912.39  MMR-M=1909.34  GA-O=2150.92  GA-M=1912.39
+  [medium_scarce     ] instance   5/20 ... done in 40.0s  MMR-O=1974.05  MMR-M=1972.51  GA-O=2204.12  GA-M=1961.36
+  [medium_scarce     ] instance   6/20 ... done in 40.0s  MMR-O=2021.76  MMR-M=2015.91  GA-O=2201.40  GA-M=2021.76
+  [medium_scarce     ] instance   7/20 ... done in 40.0s  MMR-O=2080.18  MMR-M=2077.87  GA-O=2272.80  GA-M=2073.69
+  [medium_scarce     ] instance   8/20 ... done in 40.1s  MMR-O=2386.38  MMR-M=2376.88  GA-O=2558.79  GA-M=2386.38
+  [medium_scarce     ] instance   9/20 ... done in 40.0s  MMR-O=1802.61  MMR-M=1798.34  GA-O=2134.87  GA-M=1802.61
+  [medium_scarce     ] instance  10/20 ... done in 40.0s  MMR-O=1981.27  MMR-M=1969.48  GA-O=2164.70  GA-M=1981.27
+  [medium_scarce     ] instance  11/20 ... done in 40.0s  MMR-O=2209.91  MMR-M=2208.14  GA-O=2503.92  GA-M=2204.75
+  [medium_scarce     ] instance  12/20 ... done in 40.1s  MMR-O=2041.72  MMR-M=2041.72  GA-O=2299.57  GA-M=2040.46
+  [medium_scarce     ] instance  13/20 ... done in 40.0s  MMR-O=2290.53  MMR-M=2276.67  GA-O=2526.57  GA-M=2290.53
+  [medium_scarce     ] instance  14/20 ... done in 40.0s  MMR-O=2036.83  MMR-M=2025.29  GA-O=2228.57  GA-M=2024.47
+  [medium_scarce     ] instance  15/20 ... done in 40.0s  MMR-O=2183.94  MMR-M=2179.53  GA-O=2385.98  GA-M=2183.94
+  [medium_scarce     ] instance  16/20 ... done in 40.0s  MMR-O=2094.52  MMR-M=2079.49  GA-O=2289.03  GA-M=2094.52
+  [medium_scarce     ] instance  17/20 ... done in 40.0s  MMR-O=1891.15  MMR-M=1887.25  GA-O=2065.90  GA-M=1883.55
+  [medium_scarce     ] instance  18/20 ... done in 40.0s  MMR-O=2103.88  MMR-M=2091.03  GA-O=2246.27  GA-M=2103.88
+  [medium_scarce     ] instance  19/20 ... done in 40.0s  MMR-O=1926.60  MMR-M=1926.60  GA-O=2148.07  GA-M=1923.69
+  [medium_scarce     ] instance  20/20 ... done in 40.0s  MMR-O=2074.19  MMR-M=2070.30  GA-O=2337.10  GA-M=2072.96
+  [medium_rich       ] instance   1/20 ... done in 120.1s  MMR-O=249.74  MMR-M=249.16  GA-O=450.31  GA-M=249.70
+  [medium_rich       ] instance   2/20 ... done in 120.1s  MMR-O=253.50  MMR-M=252.28  GA-O=431.85  GA-M=252.61
+  [medium_rich       ] instance   3/20 ... done in 120.1s  MMR-O=236.84  MMR-M=235.84  GA-O=389.74  GA-M=236.84
+  [medium_rich       ] instance   4/20 ... done in 120.2s  MMR-O=234.02  MMR-M=233.01  GA-O=403.41  GA-M=233.62
+  [medium_rich       ] instance   5/20 ... done in 120.1s  MMR-O=267.69  MMR-M=266.09  GA-O=476.29  GA-M=267.69
+  [medium_rich       ] instance   6/20 ... done in 120.1s  MMR-O=247.69  MMR-M=246.96  GA-O=391.76  GA-M=247.69
+  [medium_rich       ] instance   7/20 ... done in 120.1s  MMR-O=260.06  MMR-M=258.98  GA-O=439.10  GA-M=259.66
+  [medium_rich       ] instance   8/20 ... done in 120.1s  MMR-O=259.11  MMR-M=258.47  GA-O=424.49  GA-M=259.11
+  [medium_rich       ] instance   9/20 ... done in 120.1s  MMR-O=234.44  MMR-M=233.11  GA-O=423.91  GA-M=234.44
+  [medium_rich       ] instance  10/20 ... done in 120.1s  MMR-O=263.29  MMR-M=261.14  GA-O=422.88  GA-M=263.16
+  [medium_rich       ] instance  11/20 ... done in 120.1s  MMR-O=259.55  MMR-M=258.73  GA-O=409.80  GA-M=259.05
+  [medium_rich       ] instance  12/20 ... done in 120.2s  MMR-O=252.31  MMR-M=251.34  GA-O=422.41  GA-M=252.28
+  [medium_rich       ] instance  13/20 ... done in 120.1s  MMR-O=221.60  MMR-M=221.21  GA-O=367.25  GA-M=221.60
+  [medium_rich       ] instance  14/20 ... done in 120.1s  MMR-O=213.84  MMR-M=213.19  GA-O=382.36  GA-M=213.60
+  [medium_rich       ] instance  15/20 ... done in 120.1s  MMR-O=249.38  MMR-M=248.52  GA-O=402.03  GA-M=249.38
+  [medium_rich       ] instance  16/20 ... done in 120.2s  MMR-O=234.87  MMR-M=233.64  GA-O=388.15  GA-M=234.11
+  [medium_rich       ] instance  17/20 ... done in 120.1s  MMR-O=262.60  MMR-M=261.70  GA-O=442.50  GA-M=261.10
+  [medium_rich       ] instance  18/20 ... done in 120.1s  MMR-O=226.49  MMR-M=225.75  GA-O=382.42  GA-M=226.49
+  [medium_rich       ] instance  19/20 ... done in 120.1s  MMR-O=219.79  MMR-M=219.39  GA-O=375.74  GA-M=219.23
+  [medium_rich       ] instance  20/20 ... done in 120.1s  MMR-O=222.69  MMR-M=222.16  GA-O=386.77  GA-M=222.69
+  [large_balanced    ] instance   1/20 ... done in 120.8s  MMR-O=1448.73  MMR-M=1446.79  GA-O=2343.86  GA-M=1448.25
+  [large_balanced    ] instance   2/20 ... done in 120.7s  MMR-O=1478.81  MMR-M=1476.25  GA-O=2287.40  GA-M=1478.81
+  [large_balanced    ] instance   3/20 ... done in 120.8s  MMR-O=1531.30  MMR-M=1527.34  GA-O=2542.06  GA-M=1531.30
+  [large_balanced    ] instance   4/20 ... done in 120.7s  MMR-O=1491.01  MMR-M=1486.91  GA-O=2315.76  GA-M=1491.01
+  [large_balanced    ] instance   5/20 ... done in 120.7s  MMR-O=1471.10  MMR-M=1470.04  GA-O=2345.39  GA-M=1471.10
+  [large_balanced    ] instance   6/20 ... done in 120.7s  MMR-O=1499.63  MMR-M=1498.99  GA-O=2467.29  GA-M=1499.63
+  [large_balanced    ] instance   7/20 ... done in 120.8s  MMR-O=1425.97  MMR-M=1425.04  GA-O=2275.61  GA-M=1425.80
+  [large_balanced    ] instance   8/20 ... done in 120.7s  MMR-O=1449.28  MMR-M=1447.07  GA-O=2363.59  GA-M=1449.28
+  [large_balanced    ] instance   9/20 ... done in 120.7s  MMR-O=1507.99  MMR-M=1505.56  GA-O=2587.81  GA-M=1507.99
+  [large_balanced    ] instance  10/20 ... done in 120.7s  MMR-O=1501.95  MMR-M=1500.53  GA-O=2416.88  GA-M=1501.95
+  [large_balanced    ] instance  11/20 ... done in 120.8s  MMR-O=1498.15  MMR-M=1497.83  GA-O=2387.06  GA-M=1498.15
+  [large_balanced    ] instance  12/20 ... done in 120.8s  MMR-O=1489.46  MMR-M=1485.01  GA-O=2385.45  GA-M=1487.39
+  [large_balanced    ] instance  13/20 ... done in 120.7s  MMR-O=1492.00  MMR-M=1491.40  GA-O=2277.89  GA-M=1491.93
+  [large_balanced    ] instance  14/20 ... done in 120.7s  MMR-O=1388.38  MMR-M=1386.79  GA-O=2230.28  GA-M=1387.16
+  [large_balanced    ] instance  15/20 ... done in 120.7s  MMR-O=1495.87  MMR-M=1495.16  GA-O=2352.54  GA-M=1495.87
+  [large_balanced    ] instance  16/20 ... done in 120.7s  MMR-O=1487.43  MMR-M=1486.94  GA-O=2471.82  GA-M=1487.43
+  [large_balanced    ] instance  17/20 ... done in 120.7s  MMR-O=1468.80  MMR-M=1467.12  GA-O=2364.64  GA-M=1468.76
+  [large_balanced    ] instance  18/20 ... done in 120.7s  MMR-O=1414.49  MMR-M=1411.58  GA-O=2156.92  GA-M=1414.18
+  [large_balanced    ] instance  19/20 ... done in 120.7s  MMR-O=1503.88  MMR-M=1500.85  GA-O=2372.88  GA-M=1502.26
+  [large_balanced    ] instance  20/20 ... done in 120.8s  MMR-O=1448.07  MMR-M=1445.56  GA-O=2219.59  GA-M=1446.93
+  [large_scarce      ] instance   1/20 ... done in 120.2s  MMR-O=5265.75  MMR-M=5257.98  GA-O=5890.81  GA-M=5258.88
+  [large_scarce      ] instance   2/20 ... done in 120.2s  MMR-O=5110.91  MMR-M=5105.00  GA-O=5888.00  GA-M=5110.91
+  [large_scarce      ] instance   3/20 ... done in 120.2s  MMR-O=5049.75  MMR-M=5041.25  GA-O=5796.78  GA-M=5049.75
+  [large_scarce      ] instance   4/20 ... done in 120.2s  MMR-O=5027.77  MMR-M=5025.24  GA-O=5879.41  GA-M=5027.77
+  [large_scarce      ] instance   5/20 ... done in 120.2s  MMR-O=5744.88  MMR-M=5735.33  GA-O=6379.40  GA-M=5744.88
+  [large_scarce      ] instance   6/20 ... done in 120.2s  MMR-O=5474.68  MMR-M=5466.17  GA-O=6421.07  GA-M=5473.18
+  [large_scarce      ] instance   7/20 ... done in 120.2s  MMR-O=5063.40  MMR-M=5059.19  GA-O=5762.44  GA-M=5063.40
+  [large_scarce      ] instance   8/20 ... done in 120.2s  MMR-O=5118.33  MMR-M=5113.26  GA-O=5799.11  GA-M=5118.33
+  [large_scarce      ] instance   9/20 ... done in 120.2s  MMR-O=5441.61  MMR-M=5435.03  GA-O=6144.46  GA-M=5441.61
+  [large_scarce      ] instance  10/20 ... done in 120.2s  MMR-O=4826.74  MMR-M=4822.70  GA-O=5464.51  GA-M=4826.74
+  [large_scarce      ] instance  11/20 ... done in 120.2s  MMR-O=4947.95  MMR-M=4941.99  GA-O=5632.07  GA-M=4947.95
+  [large_scarce      ] instance  12/20 ... done in 120.2s  MMR-O=5214.41  MMR-M=5207.64  GA-O=5945.86  GA-M=5214.41
+  [large_scarce      ] instance  13/20 ... done in 120.2s  MMR-O=4779.88  MMR-M=4777.74  GA-O=5507.75  GA-M=4779.88
+  [large_scarce      ] instance  14/20 ... done in 120.2s  MMR-O=5293.48  MMR-M=5289.83  GA-O=5939.83  GA-M=5293.48
+  [large_scarce      ] instance  15/20 ... done in 120.2s  MMR-O=4909.81  MMR-M=4904.78  GA-O=5632.53  GA-M=4909.81
+  [large_scarce      ] instance  16/20 ... done in 120.2s  MMR-O=5132.80  MMR-M=5130.47  GA-O=5905.75  GA-M=5132.80
+  [large_scarce      ] instance  17/20 ... done in 120.2s  MMR-O=5309.93  MMR-M=5308.63  GA-O=6083.77  GA-M=5309.93
+  [large_scarce      ] instance  18/20 ... done in 120.2s  MMR-O=5148.41  MMR-M=5145.56  GA-O=5827.04  GA-M=5148.41
+  [large_scarce      ] instance  19/20 ... done in 120.2s  MMR-O=5417.02  MMR-M=5411.96  GA-O=6058.79  GA-M=5417.02
+  [large_scarce      ] instance  20/20 ... done in 120.2s  MMR-O=5109.44  MMR-M=5093.89  GA-O=5786.99  GA-M=5109.44
+  [large_rich        ] instance   1/20 ... done in 121.5s  MMR-O=509.74  MMR-M=509.24  GA-O=1084.31  GA-M=509.74
+  [large_rich        ] instance   2/20 ... done in 121.5s  MMR-O=552.82  MMR-M=552.09  GA-O=1159.94  GA-M=552.82
+  [large_rich        ] instance   3/20 ... done in 121.6s  MMR-O=571.20  MMR-M=570.01  GA-O=1102.11  GA-M=570.42
+  [large_rich        ] instance   4/20 ... done in 121.5s  MMR-O=561.15  MMR-M=560.69  GA-O=1214.49  GA-M=561.15
+  [large_rich        ] instance   5/20 ... done in 121.5s  MMR-O=573.82  MMR-M=573.56  GA-O=1161.29  GA-M=573.82
+  [large_rich        ] instance   6/20 ... done in 121.5s  MMR-O=538.17  MMR-M=538.00  GA-O=1095.17  GA-M=538.17
+  [large_rich        ] instance   7/20 ... done in 121.5s  MMR-O=548.73  MMR-M=548.32  GA-O=1208.54  GA-M=548.73
+  [large_rich        ] instance   8/20 ... done in 121.5s  MMR-O=494.64  MMR-M=493.33  GA-O=1067.24  GA-M=494.64
+  [large_rich        ] instance   9/20 ... done in 121.6s  MMR-O=550.22  MMR-M=548.65  GA-O=1089.52  GA-M=549.81
+  [large_rich        ] instance  10/20 ... done in 121.6s  MMR-O=545.51  MMR-M=544.92  GA-O=1102.00  GA-M=545.48
+  [large_rich        ] instance  11/20 ... done in 121.5s  MMR-O=555.72  MMR-M=555.19  GA-O=1183.85  GA-M=555.72
+  [large_rich        ] instance  12/20 ... done in 121.6s  MMR-O=510.32  MMR-M=509.07  GA-O=1063.97  GA-M=509.81
+  [large_rich        ] instance  13/20 ... done in 121.6s  MMR-O=606.01  MMR-M=605.61  GA-O=1226.14  GA-M=605.97
+  [large_rich        ] instance  14/20 ... done in 121.7s  MMR-O=556.37  MMR-M=556.08  GA-O=1059.45  GA-M=556.20
+  [large_rich        ] instance  15/20 ... done in 121.6s  MMR-O=554.60  MMR-M=553.48  GA-O=1179.99  GA-M=553.98
+  [large_rich        ] instance  16/20 ... done in 121.5s  MMR-O=549.38  MMR-M=547.34  GA-O=1151.93  GA-M=549.38
+  [large_rich        ] instance  17/20 ... done in 121.5s  MMR-O=523.40  MMR-M=523.24  GA-O=1081.86  GA-M=523.40
+  [large_rich        ] instance  18/20 ... done in 121.6s  MMR-O=530.31  MMR-M=529.12  GA-O=1060.40  GA-M=529.71
+  [large_rich        ] instance  19/20 ... done in 121.6s  MMR-O=596.65  MMR-M=595.64  GA-O=1212.39  GA-M=595.86
+  [large_rich        ] instance  20/20 ... done in 121.5s  MMR-O=558.49  MMR-M=557.87  GA-O=1171.05  GA-M=558.49
+
+Results saved -> results\experiment_results.csv
+Total rows: 720  |  Total time: 11855.3 s
+
+[3/3] Generating plots and statistics …
+Loading results ...
+  720 rows, 9 categories, 4 algorithms
+
+Generating plots ...
+  Saved: results/figures\01_box_solution_quality.png
+  Saved: results/figures\02_bar_mean_objective.png
+  Saved: results/figures\03_bar_improvement.png
+  Saved: results/figures\04_line_time_scalability.png
+  Saved: results/figures\05_bar_gap.png
+  Saved: results/figures\06_scenario_comparison.png
+  Saved: results/figures\07_violin_value_dist.png
+  Saved: results/figures\08_bar_scenario_improvement.png
+  Saved: results/figures\09_ga_improvement_vs_size.png
+  Saved: results/figures\10_mmr_improvement_vs_size.png
+
+================================================================================
+SUMMARY TABLES
+================================================================================
+
+--- Mean Objective Value (Balanced) ---
+        MMR (orig)  MMR-IR (mod)  GA (orig)  Hybrid GA (mod)
+tier
+small       174.23        169.84     163.57           168.05
+medium      644.66        641.69     905.18           644.59
+large      1474.61       1472.64    2358.24          1474.26
+
+--- Mean Runtime in seconds (Balanced) ---
+        MMR (orig)  MMR-IR (mod)  GA (orig)  Hybrid GA (mod)
+tier
+small       0.0001        0.0006     5.0002           5.0003
+medium      0.0150        0.0327    20.0025          20.0024
+large       0.2282        0.4340    60.0138          60.0144
+
+--- Wilcoxon Signed-Rank Tests (Balanced tiers, alpha=0.05) ---
+  small  | MMR (orig)      vs MMR-IR (mod)       | W=   136.0  p=0.0002  ***
+  small  | GA (orig)       vs Hybrid GA (mod)    | W=    41.0  p=0.9932  ns
+  medium | MMR (orig)      vs MMR-IR (mod)       | W=   210.0  p=0.0000  ***
+  medium | GA (orig)       vs Hybrid GA (mod)    | W=   210.0  p=0.0000  ***
+  large  | MMR (orig)      vs MMR-IR (mod)       | W=   210.0  p=0.0000  ***
+  large  | GA (orig)       vs Hybrid GA (mod)    | W=   210.0  p=0.0000  ***
+
+--- Wilcoxon Signed-Rank Tests (Per category, alpha=0.05) ---
+  small_balanced  | MMR (orig)      vs MMR-IR (mod)       | W=   136.0  p=0.000219  ***
+  small_balanced  | GA (orig)       vs Hybrid GA (mod)    | W=    41.0  p=0.993192  ns
+  small_scarce    | MMR (orig)      vs MMR-IR (mod)       | W=    66.0  p=0.001673  **
+  small_scarce    | GA (orig)       vs Hybrid GA (mod)    | W=     1.0  p=0.997780  ns
+  small_rich      | MMR (orig)      vs MMR-IR (mod)       | W=   171.0  p=0.000098  ***
+  small_rich      | GA (orig)       vs Hybrid GA (mod)    | W=   132.0  p=0.164991  ns
+  medium_balanced | MMR (orig)      vs MMR-IR (mod)       | W=   210.0  p=0.000001  ***
+  medium_balanced | GA (orig)       vs Hybrid GA (mod)    | W=   210.0  p=0.000001  ***
+  medium_scarce   | MMR (orig)      vs MMR-IR (mod)       | W=   171.0  p=0.000098  ***
+  medium_scarce   | GA (orig)       vs Hybrid GA (mod)    | W=   210.0  p=0.000001  ***
+  medium_rich     | MMR (orig)      vs MMR-IR (mod)       | W=   210.0  p=0.000001  ***
+  medium_rich     | GA (orig)       vs Hybrid GA (mod)    | W=   210.0  p=0.000001  ***
+  large_balanced  | MMR (orig)      vs MMR-IR (mod)       | W=   210.0  p=0.000001  ***
+  large_balanced  | GA (orig)       vs Hybrid GA (mod)    | W=   210.0  p=0.000001  ***
+  large_scarce    | MMR (orig)      vs MMR-IR (mod)       | W=   210.0  p=0.000001  ***
+  large_scarce    | GA (orig)       vs Hybrid GA (mod)    | W=   210.0  p=0.000001  ***
+  large_rich      | MMR (orig)      vs MMR-IR (mod)       | W=   210.0  p=0.000001  ***
+  large_rich      | GA (orig)       vs Hybrid GA (mod)    | W=   210.0  p=0.000001  ***
+
+--- Mean Objective Value (All Scenarios) ---
+                 MMR (orig)  MMR-IR (mod)  GA (orig)  Hybrid GA (mod)
+tier   scenario
+small  balanced      174.23        169.84     163.57           168.05
+       scarce        475.45        471.28     461.97           465.05
+       rich           74.46         72.17      71.91            71.18
+medium balanced      644.66        641.69     905.18           644.59
+       scarce       2085.20       2078.93    2308.58          2082.04
+       rich          243.48        242.53     410.66           243.20
+large  balanced     1474.61       1472.64    2358.24          1474.26
+       scarce       5169.35       5163.68    5887.32          5168.93
+       rich          549.36        548.57    1133.78           549.16
+
+================================================================================
+
+Done!
+
+============================================================
+Pipeline complete.
+  Results : results/experiment_results.csv
+  Figures : results/figures/
+============================================================
+(.venv) (base) PS D:\Algo_Sonia\CSE_462-Algorithm-Engineering-Sessional-\codes> 
